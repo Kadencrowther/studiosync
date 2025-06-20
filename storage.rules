@@ -1,0 +1,176 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function to check if user is a Director
+    function isDirector(studioId) {
+      let instructorQuery = get(/databases/$(database)/documents/Studios/$(studioId)/Users/$(request.auth.uid));
+      return instructorQuery != null && instructorQuery.data.Role == "Director";
+    }
+
+    // Studios collection
+    match /Studios/{studioId} {
+      allow read: if true;
+      
+      // Allow creation of subcollections during onboarding
+      match /Locations/{locationId} {
+        allow read: if request.auth != null;
+        allow create: if request.auth != null && 
+          exists(/databases/$(database)/documents/Studios/$(studioId));
+      }
+      
+      match /Instructors/{instructorId} {
+        allow read: if request.auth != null;
+        allow create: if request.auth != null && 
+          exists(/databases/$(database)/documents/Studios/$(studioId));
+      }
+      
+      match /Seasons/{seasonId} {
+        allow read: if request.auth != null;
+        allow create: if request.auth != null && 
+          exists(/databases/$(database)/documents/Studios/$(studioId));
+      }
+      
+      // Users subcollection (for Directors and other users)
+      match /Users/{userId} {
+        allow read: if request.auth != null;
+        allow write: if request.auth != null && request.auth.uid == userId;
+      }
+      
+      // PaymentProcessing subcollection
+      match /PaymentProcessing/{docId} {
+        allow read: if request.auth != null;
+        allow create: if request.auth != null && 
+          exists(/databases/$(database)/documents/Studios/$(studioId));
+      }
+      
+      // Instructors subcollection
+      match /Instructors/{instructorId} {
+        // Allow read for everyone (needed for login)
+        allow read: if true;
+        
+        // Allow write if it's their own profile and email matches
+        allow write: if request.auth != null && (
+          request.auth.token.email == resource.data.Email || 
+          request.auth.token.email == request.resource.data.Email
+        );
+        
+        // Allow profile image and name updates
+        allow update: if request.auth != null && 
+          request.auth.token.email == resource.data.Email &&
+          request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['ProfileImage', 'FirstName', 'LastName', 'Email']);
+      }
+      
+      // Studio-level Skills collection
+      match /Skills/{skillId} {
+        allow read: if request.auth != null;
+        allow create, update, delete: if request.auth != null;
+      }
+      
+      // Students subcollection
+      match /Students/{studentId} {
+        // Allow read for authenticated users
+        allow read: if request.auth != null;
+        // Allow full access for Directors
+        allow write: if request.auth != null && isDirector(studioId);
+        
+        // Student's SkillProgress subcollection
+        match /SkillProgress/{skillId} {
+          allow read: if request.auth != null;
+          allow write: if request.auth != null;
+        }
+      }
+      
+      // Classes subcollection
+      match /Classes/{classId} {
+        allow read: if request.auth != null;
+        
+        // Attendance subcollection
+        match /Attendance/{date} {
+          allow read: if request.auth != null;
+          allow write: if request.auth != null;
+        }
+      }
+
+      // TimeEntries subcollection
+      match /TimeEntries/{instructorId} {
+        // Allow instructors to read/write their own time entries
+        allow read: if request.auth != null && 
+          (request.auth.uid == instructorId || isDirector(studioId));
+        allow write: if request.auth != null && 
+          request.auth.uid == instructorId;
+        
+        // TimeEntries dates subcollection
+        match /dates/{dateId} {
+          allow read: if request.auth != null && 
+            (request.auth.uid == instructorId || isDirector(studioId));
+          allow write: if request.auth != null && 
+            request.auth.uid == instructorId;
+        }
+      }
+
+      // Add specific rules for Director-only collections or documents
+      match /Reports/{reportId} {
+        allow read, write: if request.auth != null && isDirector(studioId);
+      }
+
+      // Add rules for any other Director-specific collections
+      match /DirectorData/{docId} {
+        allow read, write: if request.auth != null && isDirector(studioId);
+      }
+    }
+  }
+}
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Allow access to all document types during onboarding
+    match /DriversLicenseFront/{studioId}/{fileName} {
+      allow read: if true;
+      allow write: if true;  // Allow unauthenticated writes during onboarding
+    }
+
+    match /DriversLicenseBack/{studioId}/{fileName} {
+      allow read: if true;
+      allow write: if true;  // Allow unauthenticated writes during onboarding
+    }
+
+    match /VoidedCheck/{studioId}/{fileName} {
+      allow read: if true;
+      allow write: if true;  // Allow unauthenticated writes during onboarding
+    }
+
+    match /MerchantStatement/{studioId}/{fileName} {
+      allow read: if true;
+      allow write: if true;  // Allow unauthenticated writes during onboarding
+    }
+
+    // Add specific rule for StudentImages
+    match /StudentImages/{fileName} {
+      allow read: if true;
+      allow write: if true;  // Allow uploads during registration
+    }
+
+    // Keep existing rules
+    function isDirector(studioId) {
+      let instructorQuery = get(/databases/$(database)/documents/Studios/$(studioId)/Instructors/$(request.auth.uid));
+      return instructorQuery != null && instructorQuery.data.Role == "Director";
+    }
+
+    function isInstructor(studioId) {
+      return request.auth != null && 
+        exists(/databases/$(database)/documents/Studios/$(studioId)/Instructors/$(request.auth.uid));
+    }
+
+    match /StudioLogos/{studioId}/{allPaths=**} {
+      allow read: if true;
+      allow write: if request.auth != null && (isDirector(studioId) || isInstructor(studioId));
+    }
+
+    // Generic rule for other document types during onboarding
+    match /{documentType}/{studioId}/{fileName} {
+      allow read: if true;
+      allow write: if true;
+    }
+  }
+}

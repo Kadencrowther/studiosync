@@ -1,0 +1,6 @@
+FOR DATABASE HELPS WE WILL BE USING PASCAL METHOD
+
+which means feilds int the documents database will be in pascal case
+so that means if we have a field called "name" in the database it will be called "Name" in the code
+and if we hae  feild caled last name in the database it will be called "LastName" in the code
+

@@ -1,0 +1,732 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Simple admin role check
+    function isAdmin(studioId) {
+      let user = get(/databases/$(database)/documents/Studios/$(studioId)/Users/$(request.auth.uid));
+      let roles = user.data.Role;
+      
+      return user != null && 
+             user.data != null && 
+             (
+               // Handle string role
+               (roles is string && (roles == 'Owner' || roles == 'Director' || roles == 'Admin')) ||
+               // Handle array role
+               (roles is list && roles.hasAny(['Owner', 'Director', 'Admin']))
+             );
+    }
+
+    // Simplified admin role check function
+    function hasAdminRole(studioId) {
+      let user = get(/databases/$(database)/documents/Studios/$(studioId)/Users/$(request.auth.uid));
+      let roles = user.data.Role;
+      let adminRoles = ['Owner', 'Director', 'Admin'];
+      
+      return user != null && (
+        (roles is string && adminRoles.hasAny([roles])) ||
+        (roles is list && roles.hasAny(adminRoles))
+      );
+    }
+
+    // Helper function to check if user is a Director
+    function isDirector(studioId) {
+      let instructorQuery = get(/databases/$(database)/documents/Studios/$(studioId)/Instructors/$(request.auth.uid));
+      return instructorQuery != null && instructorQuery.data.Role == "Director";
+    }
+
+    // Helper function to check if user is an instructor for the studio
+    function isInstructor(studioId) {
+      let instructorDoc = get(/databases/$(database)/documents/Studios/$(studioId)/Instructors/$(request.auth.uid));
+      return request.auth != null && 
+        instructorDoc != null &&
+        instructorDoc.data != null;
+    }
+
+    // HELPER FUNCTIONS - Keep only these versions
+    function getFamilyByFirebaseUid(studioId, uid) {
+      let familyQuery = get(/databases/$(database)/documents/Studios/$(studioId)/Families)
+                       .where("FirebaseUid", "==", uid)
+                       .limit(1);
+      return familyQuery != null ? familyQuery : null;
+    }
+
+    function studentBelongsToFamily(firebaseUid, studentId) {
+      let family = getFamilyByFirebaseUid(firebaseUid);
+      return family != null && family.Students.hasAny([studentId]);
+    }
+
+    // Helper function to check if a student belongs to the authenticated user's family
+    function studentBelongsToAuthFamily(studioId, studentId) {
+      let family = get(/databases/$(database)/documents/Studios/$(studioId)/Families/$(request.auth.token.familyId));
+      return family != null && 
+             family.data != null &&
+             family.data.Students != null && 
+             family.data.Students.hasAny([studentId]);
+    }
+
+    // CLASSES AND ATTENDANCE
+    match /Studios/{studioId} {
+      // STUDENTS AND SKILLPROGRESS
+      match /Students/{studentId} {
+        // Base student document access
+        allow read: if request.auth != null && (
+          isDirector(studioId) || 
+          isInstructor(studioId) ||
+          exists(/databases/$(database)/documents/Studios/$(studioId)/Families)
+            .where("FirebaseUid", "==", request.auth.uid)
+            .where("Students", "array-contains", studentId)
+        );
+
+        // SkillProgress subcollection
+        match /SkillProgress/{skillId} {
+          allow read: if request.auth != null && (
+            isDirector(studioId) || 
+            isInstructor(studioId) ||
+            exists(/databases/$(database)/documents/Studios/$(studioId)/Families)
+              .where("FirebaseUid", "==", request.auth.uid)
+              .where("Students", "array-contains", studentId)
+          );
+        }
+      }
+
+      // CLASSES AND ATTENDANCE
+      match /Classes/{classId} {
+        allow read: if request.auth != null && (
+          isDirector(studioId) || 
+          isInstructor(studioId) ||
+          exists(/databases/$(database)/documents/Studios/$(studioId)/Families)
+            .where("FirebaseUid", "==", request.auth.uid)
+            .where("Students", "array-contains-any", resource.data.Students)
+        );
+
+        // Attendance subcollection
+        match /Attendance/{attendanceId} {
+          allow read: if request.auth != null && (
+            isDirector(studioId) || 
+            isInstructor(studioId) ||
+            exists(/databases/$(database)/documents/Studios/$(studioId)/Families)
+              .where("FirebaseUid", "==", request.auth.uid)
+              .where("Students", "array-contains-any", 
+                get(/databases/$(database)/documents/Studios/$(studioId)/Classes/$(classId)).data.Students)
+          );
+        }
+
+        // Add specific rules for Students subcollection
+        match /Students/{studentId} {
+          allow read: if request.auth != null && (
+            isDirector(studioId) || 
+            isInstructor(studioId) ||
+            exists(/databases/$(database)/documents/Studios/$(studioId)/Families)
+              .where("FirebaseUid", "==", request.auth.uid)
+              .where("Students", "array-contains", studentId)
+          );
+        }
+      }
+
+      // Allow creation of studio document if user is authenticated and studioId matches their uid
+      allow create: if request.auth != null 
+        && request.auth.uid == studioId;  // This ensures the studio doc ID matches the user's ID
+
+      // Allow read of studio document
+      allow read: if request.auth != null;
+
+      // 1. Fix the Charges-Payments collection rule
+      match /Charges-Payments/{docId} {
+        // Allow read access
+        allow read: if request.auth != null;
+        
+        // Allow write access
+        allow write, create, update, delete: if request.auth != null;
+        
+        // Allow access to nested subcollections
+        match /Payments/{paymentId} {
+          allow read, write, create, update, delete: if request.auth != null;
+        }
+      }
+
+      // 2. Update the Families rules to specifically allow payment array updates
+      match /Families/{familyId} {
+        // Keep existing read rules
+        allow read: if true;
+        
+        // Add specific rules for family payment updates
+        allow update: if request.auth != null && (
+          // Allow families to update their own payment information
+          resource.data.FirebaseUid == request.auth.uid || 
+          // Or if user is admin/director
+          isDirector(studioId) || 
+          isInstructor(studioId)
+        );
+        
+        // Add Charges subcollection
+        match /Charges/{chargeId} {
+          allow read, write, create, update, delete: if request.auth != null;
+        }
+        
+        // Add UpcomingCharges subcollection
+        match /UpcomingCharges/{chargeId} {
+          allow read, write, create, update, delete: if request.auth != null;
+        }
+      }
+
+      // Studio-level Charges subcollection
+      match /Charges/{chargeId} {
+        allow read, write, create, update, delete: if request.auth != null;
+      }
+
+      // Studio-level UpcomingCharges subcollection
+      match /UpcomingCharges/{chargeId} {
+        allow read, write, create, update, delete: if request.auth != null;
+      }
+
+      // Studio-level Payments subcollection
+      match /Payments/{paymentId} {
+        allow read, write, create, update, delete: if request.auth != null;
+      }
+
+      // Add Payments subcollection to Families
+      match /Families/{familyId}/Payments/{paymentId} {
+        allow read, write, create, update, delete: if request.auth != null;
+      }
+    }
+
+    match /users/{userId} {
+      // Allow creation of user document if user is authenticated and userId matches their uid
+      allow create: if request.auth != null 
+        && request.auth.uid == userId;
+
+      // Allow read of user document
+      allow read: if request.auth != null;
+    }
+
+    // Studios collection
+    match /Studios/{studioId} {
+      // Allow reading
+      allow read: if true;
+      
+      // Allow Step 1 updates without authentication during onboarding
+      allow update: if true;  // Most permissive for onboarding
+      
+      // Allow all storage operations during onboarding
+      match /StudioLogos/{logoId} {
+        allow read, write: if true;  // Most permissive for onboarding
+      }
+
+      // Users subcollection - for directors
+      match /Users/{userId} {
+        allow read: if true;
+        allow create, write: if request.auth != null && (
+          // Allow during onboarding
+          !exists(/databases/$(database)/documents/Studios/$(studioId)/Users/$(userId)) ||
+          // Or if user is authenticated and matches the userId
+          request.auth.uid == userId
+        );
+      }
+
+      // Instructors subcollection
+      match /Instructors/{instructorId} {
+        allow read: if true;
+        allow create, write, update, delete: if request.auth != null && (
+          // Allow during onboarding
+          !get(/databases/$(database)/documents/Studios/$(studioId)).data.OrganizationSetupCompleted ||
+          // Or if user is director
+          isDirector(studioId)
+        );
+      }
+
+      // Studio Rooms subcollection
+      match /StudioRooms/{roomId} {
+        allow read, write: if true;  // Most permissive for onboarding
+      }
+
+      // Dance Seasons subcollection
+      match /DanceSeasons/{seasonId} {
+        allow read: if true;
+        allow create, write, update, delete: if request.auth != null && (
+          // Allow during onboarding
+          !get(/databases/$(database)/documents/Studios/$(studioId)).data.OrganizationSetupCompleted ||
+          // Or if user is director
+          isDirector(studioId)
+        );
+      }
+
+      // Allow batch writes during onboarding
+      allow write: if request.auth != null && (
+        // During onboarding
+        !exists(/databases/$(database)/documents/Studios/$(studioId)) ||
+        !get(/databases/$(database)/documents/Studios/$(studioId)).data.OrganizationSetupCompleted
+      );
+
+      // Simplify create/update rules during onboarding
+      allow create, update: if request.auth != null;  // Most permissive during onboarding
+      
+      // Make subcollection rules more permissive
+      match /Policies/{policyId} {
+        // Always allow reading
+        allow read: if true;
+        
+        // Allow all write operations during onboarding
+        allow write, create, update, delete: if 
+          // During onboarding - no auth required
+          !exists(/databases/$(database)/documents/Studios/$(studioId)) || 
+          !get(/databases/$(database)/documents/Studios/$(studioId)).data.OrganizationSetupCompleted ||
+          // After onboarding - require auth and director status
+          (request.auth != null && isDirector(studioId));
+      }
+      
+      match /Instructors/{instructorId} {
+        allow read, write, create, update, delete: if request.auth != null;
+      }
+      
+      match /StudioLocations/{locationId} {
+        allow read, write, create, update, delete: if request.auth != null;
+      }
+      
+      match /DanceSeasons/{seasonId} {
+        allow read, write, create, update, delete: if request.auth != null;
+      }
+      
+      match /PaymentProcessing/{docId} {
+        allow read, write, create, update, delete: if request.auth != null;
+      }
+
+      // General subcollection rule to catch any other collections needed during onboarding
+      match /{subcollection}/{docId} {
+        allow read, write, create, update, delete: if request.auth != null;
+      }
+
+      // Allow reading policies without authentication
+      match /Policies/{policyId} {
+        allow read: if true;  // This allows reading policy title and content without auth
+      }
+
+      // Allow listing and reading all studios without authentication
+      allow list, get, read: if true;
+      
+      // Allow creation of new studios for authenticated users
+      allow create: if request.auth != null;
+      
+      // Allow updates during all onboarding steps
+      allow update: if request.auth != null && (
+        // Step 2: Studio Details
+        request.resource.data.diff(resource.data).affectedKeys().hasAny([
+          'StudioName', 'StudioAddress1', 'StudioAddress2', 'StudioCity', 
+          'StudioState', 'StudioZip', 'PrimaryColor', 'SecondaryColor'
+        ]) ||
+        // Step 5: Final updates
+        request.resource.data.diff(resource.data).affectedKeys().hasAny([
+          'setupComplete', 'completedAt'
+        ]) ||
+        // Add new condition for onboarding
+        !resource.data.OrganizationSetupCompleted ||
+        // Add additional fields that can be updated
+        request.resource.data.diff(resource.data).affectedKeys().hasAny([
+          'Policies',
+          'Instructors',
+          'StudioLocations',
+          'DanceSeasons',
+          'PaymentProcessing',
+          'DocumentsSetupCompleted',
+          'UpdatedAt'
+        ])
+      );
+
+      // Allow creation of initial subcollections during registration
+      match /{subcollection}/{docId} {
+        allow create: if request.auth != null && 
+          subcollection in [
+            'ClassTypes',
+            'Classes',
+            'Families',
+            'Instructors',
+            'Charges-Payments',
+            'Communication',
+            'Reports',
+            'Costumes',
+            'Settings',
+            'Seasons',
+            'Skills',
+            'Students',
+            'Policies',
+            'StudioLocations',
+            'TimeEntries',
+            'Users'
+          ];
+        
+        // Keep existing read/write rules for after registration
+        allow read: if request.auth != null;
+        allow write: if request.auth != null && (
+          isDirector(studioId) || 
+          request.auth.uid == docId
+        );
+      }
+
+      // Users subcollection - Modified to allow reading before authentication
+      match /Users/{userId} {
+        // Allow reading basic user info without authentication
+        allow read: if true;  // This allows reading Users collection before auth
+        
+        // Keep existing rules for write operations
+        allow create, write: if request.auth != null;
+      }
+      
+      // Policies subcollection - Enhanced for onboarding
+      match /Policies/{policyId} {
+        allow read: if true;
+        allow write: if request.auth != null;  // Simplified for onboarding
+      }
+      
+      // Modified Instructors subcollection
+      match /Instructors/{instructorId} {
+        allow read: if true;
+        allow write: if request.auth != null;  // Simplified for onboarding
+      }
+
+      // Keep all existing subcollection rules
+      match /Skills/{skillId} {
+        allow read: if request.auth != null;
+        allow create, update, delete: if request.auth != null && 
+          (isDirector(studioId) || isInstructor(studioId));
+      }
+      
+      // StudioLocations subcollection - Enhanced for Step 4
+      match /StudioLocations/{locationId} {
+        allow read, write: if request.auth != null;  // Simplified for onboarding
+      }
+
+      // PaymentProcessing subcollection - Enhanced for Step 5
+      match /PaymentProcessing/{docId} {
+        allow read, write: if request.auth != null;  // Simplified for onboarding
+      }
+
+      // Update TimeEntries collection rules
+      match /TimeEntries/{instructorId} {
+        allow read, write: if request.auth != null && (
+          request.auth.uid == instructorId || 
+          hasAdminRole(studioId)
+        );
+        
+        // Add rules for the dates subcollection
+        match /dates/{dateId} {
+          allow read, write: if request.auth != null && (
+            request.auth.uid == instructorId || 
+            hasAdminRole(studioId)
+          );
+        }
+      }
+
+      match /Reports/{reportId} {
+        allow read, write: if request.auth != null && isDirector(studioId);
+      }
+
+      match /DirectorData/{docId} {
+        allow read, write: if request.auth != null && isDirector(studioId);
+      }
+
+      // Modified Seasons subcollection
+      match /Seasons/{seasonId} {
+        allow read, write, create, update, delete: if true;
+      }
+
+      // DanceSeasons subcollection - Enhanced for onboarding
+      match /DanceSeasons/{seasonId} {
+        allow read, write: if request.auth != null;  // Simplified for onboarding
+      }
+
+      // Add more permissive update rule for onboarding
+      allow update: if request.auth != null && (
+        // Original conditions
+        request.resource.data.diff(resource.data).affectedKeys().hasAny([
+          'StudioName', 'StudioAddress1', 'StudioAddress2', 'StudioCity', 
+          'StudioState', 'StudioZip', 'PrimaryColor', 'SecondaryColor'
+        ]) ||
+        request.resource.data.diff(resource.data).affectedKeys().hasAny([
+          'setupComplete', 'completedAt'
+        ]) ||
+        // Add new condition for onboarding
+        !resource.data.OrganizationSetupCompleted ||
+        // Add additional fields that can be updated
+        request.resource.data.diff(resource.data).affectedKeys().hasAny([
+          'Policies',
+          'Instructors',
+          'StudioLocations',
+          'DanceSeasons',
+          'PaymentProcessing',
+          'DocumentsSetupCompleted',
+          'UpdatedAt'
+        ])
+      );
+
+      // Add more permissive rules for subcollections during onboarding
+      match /Policies/{policyId} {
+        // Keep existing rules and add
+        allow create, update, delete: if request.auth != null;
+      }
+
+      match /Instructors/{instructorId} {
+        // Keep existing rules and add
+        allow create, update, delete: if request.auth != null;
+      }
+
+      match /StudioLocations/{locationId} {
+        // Keep existing rules and add
+        allow create, update, delete: if request.auth != null;
+      }
+
+      match /PaymentProcessing/{docId} {
+        // Keep existing rules and add
+        allow create, update, delete: if request.auth != null;
+      }
+
+      match /DanceSeasons/{seasonId} {
+        // Keep existing rules and add
+        allow create, update, delete: if request.auth != null;
+      }
+
+      // Add catch-all rule for onboarding subcollections while keeping existing rules
+      match /{subcollection}/{docId} {
+        allow create, update, delete: if request.auth != null && (
+          !get(/databases/$(database)/documents/Studios/$(studioId)).data.OrganizationSetupCompleted ||
+          subcollection in [
+            'ClassTypes',
+            'Classes',
+            'Families',
+            'Instructors',
+            'PaymentRates',
+            'Seasons',
+            'Skills',
+            'Students',
+            'StudioLocations',
+            'TimeEntries',
+            'Users',
+            'Policies',
+            'PaymentProcessing',
+            'DanceSeasons'
+          ]
+        );
+      }
+
+      // Enhanced Policies subcollection rules for onboarding
+      match /Policies/{policyId} {
+        // Keep existing rules
+        allow read: if true;
+        
+        // Add more permissive rules for onboarding
+        allow create, write, update: if request.auth != null && (
+          // Allow during onboarding
+          !get(/databases/$(database)/documents/Studios/$(studioId)).data.OrganizationSetupCompleted ||
+          // Allow specific fields
+          request.resource.data.keys().hasAll(['Title', 'Content', 'Type', 'CreatedAt', 'UpdatedAt', 'IsActive']) ||
+          // Or if user is director (keep existing permission)
+          isDirector(studioId)
+        );
+      }
+
+      // Single consolidated rule for Policies during onboarding
+      match /Policies/{policyId} {
+        // Allow reading
+        allow read: if true;
+        
+        // Allow all write operations during onboarding without requiring auth
+        allow write, create, update, delete: if true || (
+          // After onboarding, require auth and director status
+          request.auth != null && isDirector(studioId)
+        );
+      }
+
+      // Communication collection rules - Fixed path structure
+      match /Communication/{chatId} {
+        // Allow all operations for authenticated users
+        allow create, read, update, delete: if request.auth != null;
+        
+        // Add explicit permission for document creation with set()
+        allow write: if request.auth != null;
+        
+        // More specific Messages subcollection rules
+        match /Messages/{messageId} {
+          allow create, read, update, delete: if request.auth != null;
+        }
+      }
+
+      // Users subcollection - Allow reading during login
+      match /Users/{userId} {
+        // Allow reading Users collection for login verification
+        allow read: if request.auth != null;
+        
+        // Keep existing write rules
+        allow create, write: if request.auth != null && (
+          !exists(/databases/$(database)/documents/Studios/$(studioId)/Users/$(userId)) ||
+          request.auth.uid == userId
+        );
+      }
+
+      // Add Families collection rules
+      match /Families/{familyId} {
+        allow read: if request.auth != null && (
+          isDirector(studioId) || 
+          isInstructor(studioId) ||
+          familyId == request.auth.token.familyId
+        );
+      }
+
+      // Users subcollection - Allow reading without auth for login
+      match /Users/{userId} {
+        // Allow reading Users collection without auth for login verification
+        allow read: if true;
+      }
+
+      // Families subcollection - Allow reading without auth for login
+      match /Families/{familyId} {
+        // Allow reading Families collection without auth for login verification
+        allow read: if true;
+      }
+
+      // Allow reading Families subcollection without auth
+      match /Families/{familyId} {
+        allow read, get, list: if true;
+      }
+
+      // Allow reading Users subcollection without auth
+      match /Users/{userId} {
+        allow read, get, list: if true;
+      }
+
+      // Allow reading studio document
+      allow read: if true;
+
+      // Users subcollection - Allow reading without auth for login
+      match /Users/{userId} {
+        allow read: if true;
+        // Allow authenticated users to update their own data
+        allow update: if request.auth != null && 
+          (resource.data.FirebaseUid == request.auth.uid ||
+           request.resource.data.FirebaseUid == request.auth.uid);
+      }
+
+      // Families subcollection - Allow reading without auth for login
+      match /Families/{familyId} {
+        allow read: if true;
+        // Allow authenticated users to update their own data
+        allow update: if request.auth != null && 
+          (resource.data.FirebaseUid == request.auth.uid ||
+           request.resource.data.FirebaseUid == request.auth.uid);
+      }
+
+      // Allow families to access their students' data
+      match /Classes/{classId} {
+        allow read: if request.auth != null && (
+          isDirector(studioId) || 
+          isInstructor(studioId) ||
+          exists(/databases/$(database)/documents/Studios/$(studioId)/Families).where("FirebaseUid", "==", request.auth.uid).limit(1) &&
+          resource.data.Students.hasAny(
+            getFamilyByFirebaseUid(studioId, request.auth.uid).Students
+          )
+        );
+        
+        match /Attendance/{attendanceId} {
+          allow read: if request.auth != null && (
+            isDirector(studioId) || 
+            isInstructor(studioId) ||
+            exists(/databases/$(database)/documents/Studios/$(studioId)/Families).where("FirebaseUid", "==", request.auth.uid).limit(1) &&
+            get(/databases/$(database)/documents/Studios/$(studioId)/Classes/$(classId)).data.Students.hasAny(
+              getFamilyByFirebaseUid(studioId, request.auth.uid).Students
+            )
+          );
+        }
+      }
+
+      // Add these rules for the Demos collection
+      match /Demos/{demoId} {
+        // Allow reading by authenticated admin users only
+        allow read: if request.auth != null && request.auth.token.admin == true;
+        
+        // Allow anyone to create documents (no authentication required)
+        allow create: if true;
+        
+        // Updates and deletes should only be allowed for admins
+        allow update, delete: if request.auth != null && request.auth.token.admin == true;
+      }
+    }
+
+    // Allow users collection access
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // First level - Studio access
+    allow read: if true;
+
+    // Students collection and its subcollections
+    match /Students/{studentId} {
+      allow read: if request.auth != null && (
+        isDirector(studioId) || 
+        isInstructor(studioId) ||
+        exists(/databases/$(database)/documents/Studios/$(studioId)/Families)
+          .where("FirebaseUid", "==", request.auth.uid)
+          .where("Students", "array-contains", studentId)
+      );
+
+      // SkillProgress subcollection
+      match /SkillProgress/{skillId} {
+        allow read: if request.auth != null && (
+          isDirector(studioId) || 
+          isInstructor(studioId) ||
+          exists(/databases/$(database)/documents/Studios/$(studioId)/Families)
+            .where("FirebaseUid", "==", request.auth.uid)
+            .where("Students", "array-contains", studentId)
+        );
+      }
+    }
+
+    // Classes collection and its subcollections
+    match /Classes/{classId} {
+      allow read: if request.auth != null && (
+        isDirector(studioId) || 
+        isInstructor(studioId) ||
+        exists(/databases/$(database)/documents/Studios/$(studioId)/Families)
+          .where("FirebaseUid", "==", request.auth.uid)
+          .where("Students", "array-contains-any", resource.data.Students)
+      );
+
+      // Attendance subcollection
+      match /Attendance/{attendanceId} {
+        allow read: if request.auth != null && (
+          isDirector(studioId) || 
+          isInstructor(studioId) ||
+          exists(/databases/$(database)/documents/Studios/$(studioId)/Families)
+            .where("FirebaseUid", "==", request.auth.uid)
+            .where("Students", "array-contains-any", 
+              get(/databases/$(database)/documents/Studios/$(studioId)/Classes/$(classId)).data.Students)
+        );
+      }
+    }
+
+    // Families collection
+    match /Families/{familyId} {
+      allow read: if request.auth != null && (
+        isDirector(studioId) || 
+        isInstructor(studioId) ||
+        request.auth.uid == resource.data.FirebaseUid
+      );
+    }
+  }
+}
+service firebase.storage {
+  match /b/{bucket}/o {
+    function isDirector(studioId) {
+      let instructorQuery = get(/databases/$(database)/documents/Studios/$(studioId)/Instructors/$(request.auth.uid));
+      return instructorQuery != null && instructorQuery.data.Role == "Director";
+    }
+
+    function isInstructor(studioId) {
+      return request.auth != null && 
+        exists(/databases/$(database)/documents/Studios/$(studioId)/Instructors/$(request.auth.uid));
+    }
+
+    match /StudioLogos/{studioId}/{allPaths=**} {
+      allow read: if true;
+      allow write: if request.auth != null && (isDirector(studioId) || isInstructor(studioId));
+    }
+  }
+}
+ 

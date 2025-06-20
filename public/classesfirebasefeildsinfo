@@ -1,0 +1,10 @@
+id: string,              // Document ID
+  Name: string,           // Class name
+  Day: string,            // Day of the week
+  Time: string,           // Class time
+  Level: string,          // Class level
+  Location: string,       // Class location
+  InstructorIDs: array,   // Array of instructor IDs
+  Students: array,        // Array of student IDs
+  studioId: string        // ID of the studio this class belongs to
+}   

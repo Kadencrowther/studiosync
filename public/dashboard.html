@@ -1,0 +1,2015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Dashboard - Studio Sync</title>
+    <!-- Favicon -->
+    <link rel="icon" href="assets/ssdancer.svg" type="image/svg+xml">
+
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="css/styles.css" rel="stylesheet" />
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-...+..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Custom CSS for Modern Styling -->
+    <style>
+        :root {
+            --primary-color: #3DCED7;
+            --primary-hover: #36B8C0;
+            --secondary-color: #3A506B;
+            --primary-color-rgb: 61, 206, 215;  /* Default fallback */
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        #sidebar-wrapper {
+            background-color: var(--primary-color);
+            min-height: 100vh;
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-heading {
+            color: white;
+            background-color: var(--primary-color);
+            padding: 1.5rem 1rem;
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .list-group-item {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, padding 0.3s ease, transform 0.3s ease;
+            padding: 1rem 1.5rem;
+        }
+
+        .list-group-item:hover,
+        .list-group-item-action:focus {
+            background-color: var(--primary-hover);
+            color: white;
+            transform: translateX(5px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar {
+            background-color: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1rem 1.5rem;
+        }
+
+        .navbar .navbar-nav .nav-link {
+            color: #333;
+            transition: color 0.3s ease;
+        }
+
+        .navbar .navbar-nav .nav-link:hover {
+            color: var(--primary-color);
+        }
+
+        .container-fluid {
+            background-color: #fff;
+            color: #525f7f;
+            padding: 2rem;
+        }
+
+        /* Modernized Dashboard Content */
+        .dashboard-insights {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .dashboard-insights .insight-box {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .insight-box h3 {
+            font-size: 1.2rem;
+            color: #525f7f;
+            margin-bottom: 0.5rem;
+        }
+
+        .insight-box p:not(.loading-value) {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin: 0;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .progress-ring {
+            margin-top: 20px;
+        }
+
+        /* Schedule Table */
+        .schedule-table {
+            margin-top: 2rem;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .schedule-table th,
+        .schedule-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .schedule-table th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .schedule-table td {
+            background-color: #f9f9f9;
+        }
+
+        /* New styles for the pie chart and layout */
+        .dashboard-container {
+            display: flex;
+            gap: 1.5rem; /* Match the gap of dashboard-insights */
+        }
+
+        .pie-chart-container {
+            flex: 0.7;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: calc(100% - 3rem);
+            min-height: 400px;
+            transition: box-shadow 0.3s ease;
+            min-width: 250px;
+        }
+
+        .pie-chart-container:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .chart-wrapper {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            max-height: 350px;
+            min-height: 200px;
+            width: 100%;
+            aspect-ratio: 1;
+        }
+
+        .kpi-container {
+            flex: 2;
+        }
+
+        .dashboard-insights {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            height: 100%;
+        }
+
+        .insight-box {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* Payment form styles */
+        #payment-form {
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        #card-element {
+            margin-bottom: 20px;
+        }
+
+        #submit-payment {
+            background-color: #3DCED7;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #submit-payment:hover {
+            background-color: #36B8C0;
+        }
+
+        #submit-payment:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        /* Subscription form styles */
+        .subscription-form {
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .subscription-form input, .subscription-form select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .subscription-form button {
+            background-color: #3DCED7;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .subscription-form button:hover {
+            background-color: #36B8C0;
+        }
+
+        .navbar-nav .dropdown-menu {
+            min-width: 250px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            padding: 0;
+        }
+
+        .navbar-nav .dropdown-item {
+            padding: 12px 20px;
+            color: #333;
+            transition: background-color 0.3s ease;
+        }
+
+        .navbar-nav .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .navbar-nav .dropdown-divider {
+            margin: 0;
+            border-top-color: #e9ecef;
+        }
+
+        .navbar-nav .dropdown-header {
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #6c757d;
+            background-color: #f8f9fa;
+        }
+
+        .navbar-nav .dropdown-item-text {
+            padding: 12px 20px;
+            color: #6c757d;
+        }
+
+        .fa-user-circle {
+            font-size: 1.8em; /* Slightly smaller profile icon */
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            padding: 0.5rem 0.5rem;
+        }
+
+        .fa-bell {
+            font-size: 1.2em;
+            position: relative;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            font-size: 0.6em;
+            background-color: #dc3545;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 5px;
+            font-weight: bold;
+            min-width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+        }
+
+        .notification-icon {
+            margin-right: 15px;
+            font-size: 1.2em;
+            color: #3DCED7;
+        }
+
+        .notification-content {
+            flex-grow: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .notification-subtitle {
+            font-size: 0.85em;
+            color: #6c757d;
+        }
+
+        .navbar-nav .dropdown-toggle::after {
+            display: none;
+        }
+
+        @media (max-width: 991.98px) {
+            .navbar-brand-center {
+                position: static;
+                transform: none;
+            }
+
+            .navbar-nav {
+                flex-direction: row;
+            }
+
+            .nav-item.dropdown {
+                position: static;
+            }
+
+            .dropdown-menu {
+                left: 0;
+                right: 0;
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 575.98px) {
+            .navbar-brand-center {
+                max-width: 200px;
+                margin: 0 auto;
+            }
+
+            #studio-logo, #studio-name {
+                max-width: 100%;
+            }
+
+            .navbar-nav {
+                justify-content: center;
+            }
+        }
+
+        /* Add styles for the page content wrapper */
+        #page-content-wrapper {
+            flex: 1;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        /* Update the wrapper styles */
+        #wrapper {
+            display: flex;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* Sidebar overlay styles */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1045;
+            transition: opacity 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            #sidebar-wrapper {
+                margin-left: -250px;
+                transition: margin 0.3s ease-out;
+                position: fixed;
+                z-index: 1050;
+                height: 100vh;
+            }
+
+            .sidebar-overlay.show {
+                display: block;
+            }
+
+            #wrapper.toggled #sidebar-wrapper {
+                margin-left: 0;
+            }
+        }
+
+        /* Wrapper transitions */
+        #wrapper.toggled #sidebar-wrapper {
+            margin-left: -250px;
+        }
+
+        #wrapper.toggled #page-content-wrapper {
+            margin-left: 0;
+        }
+
+        /* Update the toggle button styles */
+        #sidebarToggle {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        #sidebarToggle:hover {
+            background-color: var(--primary-hover);
+            border-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Update other elements that use the primary color */
+        .navbar .navbar-nav .nav-link:hover {
+            color: var(--primary-color);
+        }
+
+        .insight-box p {
+            color: var(--primary-color);
+        }
+
+        .schedule-table th {
+            background-color: var(--primary-color);
+        }
+
+        /* Loading Overlay Styles */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .loading-content {
+            text-align: center;
+        }
+
+        .loading-text {
+            margin-top: 20px;
+        }
+
+        .loading-text h2 {
+            color: #ffffff;
+            margin-bottom: 10px;
+            transition: color 0.5s ease;
+        }
+
+        .loading-text p {
+            color: #ffffff;
+            font-size: 1.1em;
+            transition: color 0.5s ease;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #ffffff;
+            border-radius: 50%;
+            margin: 0 auto;
+            animation: spin 1s linear infinite;
+            transition: border-top-color 0.5s ease;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-overlay.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* User Avatar Styles */
+        .user-avatar {
+            width: 38px;
+            height: 38px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .initials {
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Profile Dropdown Styles */
+        .dropdown-menu .dropdown-item-text#studioNameDisplay {
+            padding: 0.3rem 1.5rem;
+            margin: 0;
+            color: #333333;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .dropdown-menu .dropdown-item-text#userRole {
+            padding: 0.2rem 1.5rem;
+            margin: 0;
+            color: #666;
+            font-size: 0.85rem;
+            font-weight: 400;
+        }
+
+        /* User Profile Styles */
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 0.75rem);
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+            min-width: 280px;
+            display: none;
+            z-index: 1000;
+            border: 1px solid rgba(0,0,0,0.08);
+            position: fixed;
+            margin-right: 1rem;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 1200px) {
+            .pie-chart-container {
+                flex: 0.5;
+            }
+            .chart-wrapper {
+                max-height: 250px;
+            }
+        }
+
+        @media (max-width: 991.98px) {
+            .dashboard-container {
+                flex-direction: column;
+            }
+            .pie-chart-container {
+                width: 100%;
+                flex: none;
+            }
+            .chart-wrapper {
+                max-height: 300px;
+                margin: 0 auto;
+                width: 80%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .chart-wrapper {
+                width: 100%;
+                max-height: 250px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .chart-wrapper {
+                max-height: 200px;
+            }
+        }
+
+        /* Ensure content doesn't overflow on very small devices */
+        @media (max-width: 360px) {
+            .container-fluid {
+                padding: 0.75rem;
+            }
+
+            .insight-box {
+                padding: 0.75rem;
+            }
+
+            .insight-box h3 {
+                font-size: 0.9rem;
+            }
+
+            .insight-box p {
+                font-size: 1.75rem;
+            }
+
+            .navbar-brand-center {
+                max-width: 120px;
+            }
+
+            #studio-name {
+                font-size: 1rem;
+            }
+        }
+
+        /* Replace the shimmer animation styles with spinner styles */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-value {
+            position: relative;
+            color: transparent !important;
+            font-size: 2.5rem;
+            margin: 0;
+        }
+
+        .loading-value::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 24px;
+            height: 24px;
+            margin: -12px 0 0 -12px;
+            border: 3px solid #a0a0a0;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .schedule-table tr {
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .schedule-table tr:hover {
+            background-color: rgba(var(--primary-color-rgb), 0.12) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Schedule Table Responsive Styles */
+        .schedule-table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 2rem;
+            -webkit-overflow-scrolling: touch;
+            position: relative;
+            background: linear-gradient(to right, white 30%, rgba(255, 255, 255, 0)),
+                        linear-gradient(to left, white 30%, rgba(255, 255, 255, 0)) 100% 0;
+            background-size: 50px 100%, 50px 100%;
+            background-repeat: no-repeat;
+            background-attachment: local, local;
+        }
+
+        .schedule-table {
+            min-width: 900px; /* Minimum width to ensure all columns are visible */
+            margin: 0;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .schedule-table th,
+        .schedule-table td {
+            white-space: nowrap;
+            padding: 12px 15px;
+            font-size: 14px;
+        }
+
+        .schedule-table th {
+            position: sticky;
+            top: 0;
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            z-index: 1;
+        }
+
+        .schedule-table td {
+            background-color: #f9f9f9;
+            border-bottom: 1px solid #eee;
+        }
+
+        /* Mobile-specific styles */
+        @media (max-width: 768px) {
+            .schedule-table th,
+            .schedule-table td {
+                padding: 8px 12px;
+                font-size: 13px;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .schedule-table-wrapper {
+                margin-top: 1rem;
+                border: 1px solid #eee;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            }
+
+            /* Add subtle scroll indication */
+            .schedule-table-wrapper::after {
+                content: '→';
+                position: absolute;
+                right: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--primary-color);
+                font-size: 20px;
+                animation: scrollIndication 1.5s infinite;
+                pointer-events: none;
+            }
+        }
+
+        /* Scroll indication animation */
+        @keyframes scrollIndication {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        /* Priority-based column display for very small screens */
+        @media (max-width: 480px) {
+            .schedule-table th,
+            .schedule-table td {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+        }
+
+        /* Weekend Schedule Table Styles */
+        .weekend-schedule-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 2rem;
+            -webkit-overflow-scrolling: touch;
+            position: relative;
+            background: linear-gradient(to right, white 30%, rgba(255, 255, 255, 0)),
+                        linear-gradient(to left, white 30%, rgba(255, 255, 255, 0)) 100% 0;
+            background-size: 50px 100%, 50px 100%;
+            background-repeat: no-repeat;
+            background-attachment: local, local;
+        }
+
+        #weekendClassesTable {
+            width: 100%;
+            min-width: 900px;
+            margin: 0;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        #weekendClassesTable th,
+        #weekendClassesTable td {
+            white-space: nowrap;
+            padding: 12px 15px;
+            font-size: 14px;
+            border-bottom: 1px solid #eee;
+        }
+
+        #weekendClassesTable th {
+            position: sticky;
+            top: 0;
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            z-index: 1;
+        }
+
+        #weekendClassesTable td {
+            background-color: #f9f9f9;
+        }
+
+        /* Mobile-specific styles for weekend table */
+        @media (max-width: 768px) {
+            .weekend-schedule-wrapper {
+                margin-top: 1rem;
+                border: 1px solid #eee;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            }
+
+            #weekendClassesTable th,
+            #weekendClassesTable td {
+                padding: 8px 12px;
+                font-size: 13px;
+            }
+
+            /* Add subtle scroll indication */
+            .weekend-schedule-wrapper::after {
+                content: '→';
+                position: absolute;
+                right: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--primary-color);
+                font-size: 20px;
+                animation: scrollIndication 1.5s infinite;
+                pointer-events: none;
+                opacity: 0.7;
+            }
+
+            /* Optimize column headers for mobile */
+            #weekendClassesTable th {
+                font-size: 12px;
+                padding: 8px 10px;
+            }
+        }
+
+        /* Very small screens */
+        @media (max-width: 480px) {
+            #weekendClassesTable th,
+            #weekendClassesTable td {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+        }
+    </style>
+    <!-- Stripe JS -->
+    <script src="https://js.stripe.com/v3/"></script>
+    <!-- Payarc JS -->
+    <script>
+        function loadPayarcScript(src) {
+            var script = document.createElement('script');
+            script.src = src;
+            script.onerror = function() {
+                if (src === 'https://js.payarc.com/v1/payarc.js') {
+                    console.warn('CDN failed, falling back to local copy');
+                    loadPayarcScript('/path/to/local/payarc.js');
+                } else {
+                    console.error('Failed to load Payarc library');
+                }
+            };
+            document.head.appendChild(script);
+        }
+        loadPayarcScript('https://js.payarc.com/v1/payarc.js');
+    </script>
+</head>
+<body>
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <div class="loading-text">
+                <h2>Loading</h2>
+                <p id="loadingStatus">Loading studio branding...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex" id="wrapper">
+        <!-- Sidebar-->
+        <div class="border-end" id="sidebar-wrapper">
+            <div class="sidebar-heading">
+                <img src="assets/StudioSyncTransparent.svg" alt="Studio Sync Logo" style="width: 150px; height: auto;">
+            </div>
+            <div class="list-group list-group-flush">
+                <a class="list-group-item list-group-item-action p-3" href="dashboard.html">
+                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="class-calendar.html">
+                    <i class="fas fa-calendar-alt me-2"></i>Class Calendar
+                </a>
+                <a class="list-group-item list-group-item-action p-3 d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#classesDropdown" role="button" aria-expanded="false" aria-controls="classesDropdown">
+                    <span><i class="fas fa-chalkboard-teacher me-2"></i>Classes</span>
+                    <i class="fas fa-chevron-down"></i>
+                </a>
+                <div class="collapse" id="classesDropdown">
+                    <a class="list-group-item list-group-item-action ps-5" href="allclasses.html">
+                        <i class="fas fa-list me-2"></i>All Classes
+                    </a>
+                    <a class="list-group-item list-group-item-action ps-5" href="recreational.html">
+                        <i class="fas fa-dumbbell me-2"></i>Recreational
+                    </a>
+                    <a class="list-group-item list-group-item-action ps-5" href="team.html">
+                        <i class="fas fa-users me-2"></i>Team
+                    </a>
+                    <a class="list-group-item list-group-item-action ps-5" href="soloduettrio.html">
+                        <i class="fas fa-user-friends me-2"></i>Solo/Duet/Trio
+                    </a>
+                </div>
+                <a class="list-group-item list-group-item-action p-3" href="families.html">
+                    <i class="fas fa-home me-2"></i>Families
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="students.html">
+                    <i class="fas fa-user-graduate me-2"></i>Students
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="instructors.html">
+                    <i class="fas fa-chalkboard-teacher me-2"></i>Instructors
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="costumes.html">
+                    <i class="fas fa-tshirt me-2"></i>Costumes
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="communication.html">
+                    <i class="fas fa-comments me-2"></i>Communication
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="charges-payments.html">
+                    <i class="fas fa-dollar-sign me-2"></i>Charges/Payments
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="reports.html">
+                    <i class="fas fa-chart-bar me-2"></i>Reports
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="settings.html">
+                    <i class="fas fa-cog me-2"></i>Settings
+                </a>
+            </div>
+            <div class="mt-auto" style="margin-top: auto; padding: 1rem;">
+                <button id="debugButton" class="btn btn-sm btn-outline-light w-100 d-none">
+                    <i class="fas fa-bug me-2"></i>Debug Tools
+                </button>
+            </div>
+        </div>
+
+        <!-- Page content wrapper-->
+        <div id="page-content-wrapper">
+            <!-- Top navigation-->
+            <nav class="navbar navbar-expand-lg navbar-light border-bottom">
+                <div class="container-fluid">
+                    <button class="btn btn-primary" id="sidebarToggle" style="width: 100px;" data-bs-toggle="tooltip" data-bs-placement="right" title="Toggle Menu" data-bs-trigger="hover focus">
+                        <i class="fas fa-bars"></i>
+                    </button>
+
+                    <!-- Centered Logo -->
+                    <div class="navbar-brand-center">
+                        <img id="studio-logo" src="" alt="Studio Logo" style="max-height: 120px; max-width: 240px; display: none;">
+                        <span id="studio-name" style="font-size: 1.5rem; font-weight: bold; color: #3DCED7;"></span>
+                    </div>
+
+                    <!-- Notifications and Profile Icons -->
+                    <div class="navbar-nav ms-auto d-flex align-items-center">
+                        <!-- Profile Icon Dropdown -->
+                        <div class="nav-item dropdown">
+                            <a class="nav-link" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <div class="user-avatar">
+                                    <span class="initials"></span>
+                                </div>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                                <li><h6 class="dropdown-header" id="userName" style="font-size: 1.2rem; font-weight: 700; color: #333333;">User Name</h6></li>
+                                <li><p class="dropdown-item-text" id="userEmail" style="font-size: 0.95rem; font-weight: 400; color: #333333;">user@example.com</p></li>
+                                <li><p class="dropdown-item-text" id="studioNameDisplay" style="font-size: 1.1rem; font-weight: 600; color: #333333;">Studio Name</p></li>
+                                <li><p class="dropdown-item-text" id="userRole" style="font-size: 0.85rem; font-weight: 400; color: #333333;">Role</p></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="settings.html"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                                <li><a class="dropdown-item" href="account.html"><i class="fas fa-user-cog me-2"></i>Account</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#" id="logoutButton"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Page content-->
+            <div class="container-fluid">
+                <h2 class="mb-4">Business Insights</h2>
+                <div class="dashboard-container">
+                    <div class="pie-chart-container">
+                        <h3>Class Enrollment</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="enrollmentChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="kpi-container">
+                        <div class="dashboard-insights">
+                            <div class="insight-box">
+                                <h3>Students Enrolled</h3>
+                                <p class="loading-value">-</p>
+                            </div>
+                            <div class="insight-box">
+                                <h3>New Students This Week</h3>
+                                <p class="loading-value">-</p>
+                            </div>
+                            <div class="insight-box">
+                                <h3>Classes with Waitlists</h3>
+                                <p class="loading-value">-</p>
+                            </div>
+                            <div class="insight-box">
+                                <h3>Instructors Teaching</h3>
+                                <p class="loading-value">-</p>
+                            </div>
+                            <div class="insight-box">
+                                <h3>Families Enrolled</h3>
+                                <p class="loading-value">-</p>
+                            </div>
+                            <div class="insight-box">
+                                <h3>Unpaid Shopping Carts</h3>
+                                <p class="loading-value">-</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Today's Schedule Section -->
+                <h2 class="mt-5 mb-3">Today's Schedule</h2>
+                <div class="schedule-table-wrapper">
+                    <table class="schedule-table">
+                        <thead>
+                            <tr>
+                                <th>Start Time</th>
+                                <th>Length</th>
+                                <th>Class Name</th>
+                                <th>Type</th>
+                                <th>Style</th>
+                                <th>Location</th>
+                                <th>Instructor</th>
+                                <th>Max Size</th>
+                                <th>Expected</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Table content will be dynamically populated -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap core JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Core theme JS-->
+    <script src="js/scripts.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const wrapper = document.getElementById('wrapper');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const overlay = document.querySelector('.sidebar-overlay');
+
+            function toggleSidebar(e) {
+                if (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                
+                wrapper.classList.toggle('toggled');
+                
+                if (window.innerWidth <= 768) {
+                    if (wrapper.classList.contains('toggled')) {
+                        overlay.classList.add('show');
+                    } else {
+                        overlay.classList.remove('show');
+                    }
+                }
+            }
+
+            // Toggle button click handler
+            sidebarToggle.addEventListener('click', toggleSidebar);
+
+            // Overlay click handler
+            overlay.addEventListener('click', toggleSidebar);
+
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 768) {
+                    overlay.classList.remove('show');
+                }
+            });
+        });
+    </script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Enrollment chart
+        const ctx = document.getElementById('enrollmentChart').getContext('2d');
+        let enrollmentChart;
+
+        function getColor(percentage) {
+            // Ensure the percentage is between 0 and 100
+            percentage = Math.max(0, Math.min(100, percentage));
+            
+            if (percentage <= 50) {
+                // Vibrant Red (220,55,55) to Muted Yellow (220,200,110)
+                const g = Math.round(55 + (145 * (percentage / 50)));
+                const b = Math.round(55 + (55 * (percentage / 50)));
+                return `rgb(220, ${g}, ${b})`;
+            } else {
+                // Muted Yellow (220,200,110) to Muted Green (110,200,110)
+                const r = Math.round(220 - (110 * ((percentage - 50) / 50)));
+                return `rgb(${r}, 200, 110)`;
+            }
+        }
+
+        function updateChart(enrolled, capacity) {
+            if (enrollmentChart) {
+                enrollmentChart.destroy();
+            }
+
+            // Ensure we have valid numbers, defaulting to 0 if not
+            enrolled = enrolled || 0;
+            capacity = capacity || 0;
+            
+            // Calculate percentage, defaulting to 0 if capacity is 0
+            const percentageFilled = capacity > 0 ? Math.round((enrolled / capacity) * 100) : 0;
+            const filledColor = getColor(percentageFilled);
+
+            enrollmentChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Enrolled', 'Available'],
+                    datasets: [{
+                        data: capacity > 0 ? [enrolled, Math.max(0, capacity - enrolled)] : [0, 1],
+                        backgroundColor: [filledColor, '#E0E0E0']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    cutout: '75%',
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            position: 'nearest',
+                            yAlign: 'bottom',
+                            callbacks: {
+                                label: function(context) {
+                                    if (capacity === 0) return 'No capacity set';
+                                    const label = context.label;
+                                    const value = context.raw;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${value} (${percentage}%)`;
+                                }
+                            },
+                            external: function(context) {
+                                // Offset the tooltip above the cursor
+                                const tooltipModel = context.tooltip;
+                                if (tooltipModel.opacity === 0) {
+                                    return;
+                                }
+                                
+                                // Move the tooltip 20 pixels up from the cursor
+                                tooltipModel.y = tooltipModel.y - 20;
+                            }
+                        }
+                    }
+                },
+                plugins: [{
+                    id: 'centerText',
+                    afterDraw: (chart) => {
+                        const width = chart.width;
+                        const height = chart.height;
+                        const ctx = chart.ctx;
+
+                        ctx.restore();
+                        
+                        // Make text size responsive
+                        const fontSize = Math.min(width, height) * 0.15;
+                        const smallFontSize = fontSize * 0.5;
+
+                        ctx.font = `bold ${fontSize}px Arial`;
+                        ctx.textBaseline = 'middle';
+                        ctx.textAlign = 'center';
+                        ctx.fillStyle = filledColor;
+
+                        // Always show percentage as a valid number (0% if no data)
+                        const text = `${percentageFilled}%`;
+                        const textX = width / 2;
+                        const textY = height / 2;
+
+                        ctx.fillText(text, textX, textY);
+
+                        ctx.font = `${smallFontSize}px Arial`;
+                        ctx.fillStyle = '#525f7f';
+                        ctx.fillText('Capacity', textX, textY + fontSize * 0.6);
+
+                        ctx.save();
+                    }
+                }]
+            });
+        }
+
+        // Update the function that sets KPI values to include timeout
+        function updateKPIValue(selector, value) {
+            const element = document.querySelector(selector);
+            if (element) {
+                // Clear any existing timeouts for this element
+                if (element.timeoutId) {
+                    clearTimeout(element.timeoutId);
+                }
+
+                // If we have a value, set it immediately
+                if (value !== undefined && value !== null) {
+                    element.textContent = value;
+                    element.classList.remove('loading-value');
+                }
+            }
+        }
+
+        // Add function to initialize timeouts for all KPIs
+        function initializeKPITimeouts() {
+            const kpiSelectors = [
+                '.insight-box:nth-child(1) p',  // Students Enrolled
+                '.insight-box:nth-child(2) p',  // New Students This Week
+                '.insight-box:nth-child(3) p',  // Classes with Waitlists
+                '.insight-box:nth-child(4) p',  // Instructors Teaching
+                '.insight-box:nth-child(5) p',  // Families Enrolled
+                '.insight-box:nth-child(6) p'   // Unpaid Shopping Carts
+            ];
+
+            kpiSelectors.forEach(selector => {
+                const element = document.querySelector(selector);
+                if (element) {
+                    // Clear any existing timeout
+                    if (element.timeoutId) {
+                        clearTimeout(element.timeoutId);
+                    }
+                    
+                    // Set new timeout
+                    element.timeoutId = setTimeout(() => {
+                        if (element.classList.contains('loading-value')) {
+                            element.textContent = '0';
+                            element.classList.remove('loading-value');
+                        }
+                    }, 7000);  // Changed from 3000 to 7000 milliseconds
+                }
+            });
+        }
+
+        // Update the calculateEnrollmentAndCapacity function
+        async function calculateEnrollmentAndCapacity(studioId) {
+            try {
+                const classesSnapshot = await firebase.firestore()
+                    .collection('Studios')
+                    .doc(studioId)
+                    .collection('Classes')
+                    .get();
+
+                let totalCapacity = 0;
+                const uniqueStudents = new Set();
+
+                classesSnapshot.forEach(doc => {
+                    const classData = doc.data();
+                    totalCapacity += classData.MaxSize || 0;
+                    
+                    if (classData.Students && Array.isArray(classData.Students)) {
+                        classData.Students.forEach(studentId => uniqueStudents.add(studentId));
+                    }
+                });
+                
+                const totalEnrolled = uniqueStudents.size;
+
+                console.log('Studio Enrollment Stats:', {
+                    totalCapacity,
+                    totalEnrolled,
+                    uniqueStudentIds: Array.from(uniqueStudents),
+                    percentageFilled: totalCapacity > 0 ? ((totalEnrolled / totalCapacity) * 100).toFixed(1) + '%' : '0%'
+                });
+
+                // Update the Students Enrolled KPI card
+                updateKPIValue('.insight-box:first-child p', totalEnrolled);
+
+                return { totalCapacity, totalEnrolled };
+            } catch (error) {
+                console.error('Error calculating enrollment and capacity:', error);
+                return { totalCapacity: 0, totalEnrolled: 0 };
+            }
+        }
+
+        // Update the updateFamiliesCount function
+        async function updateFamiliesCount(studioId) {
+            try {
+                // Get all families
+                const familiesSnapshot = await firebase.firestore()
+                    .collection('Studios')
+                    .doc(studioId)
+                    .collection('Families')
+                    .get();
+
+                // Create a Set to track unique family IDs that have enrolled students
+                const enrolledFamilyIds = new Set();
+
+                // For each family
+                for (const familyDoc of familiesSnapshot.docs) {
+                    const familyData = familyDoc.data();
+                    const studentIds = familyData.Students || [];
+
+                    // Skip if family has no students
+                    if (studentIds.length === 0) continue;
+
+                    // Check if any of the family's students are enrolled in any classes
+                    const classesWithStudent = await firebase.firestore()
+                        .collection('Studios')
+                        .doc(studioId)
+                        .collection('Classes')
+                        .where('Students', 'array-contains-any', studentIds)
+                        .limit(1)  // We only need to know if there's at least one class
+                        .get();
+
+                    // If we found at least one class with a student from this family
+                    if (!classesWithStudent.empty) {
+                        enrolledFamilyIds.add(familyDoc.id);
+                    }
+                }
+
+                const familiesWithEnrolledStudents = enrolledFamilyIds.size;
+                console.log('Families with enrolled students:', familiesWithEnrolledStudents);
+
+                // Update the Families Enrolled KPI card
+                updateKPIValue('.insight-box:nth-child(5) p', familiesWithEnrolledStudents);
+
+                return familiesWithEnrolledStudents;
+            } catch (error) {
+                console.error('Error calculating families count:', error);
+                return 0;
+            }
+        }
+
+        // Update the updateNewStudentsThisWeek function
+        async function updateNewStudentsThisWeek(studioId) {
+            try {
+                const now = new Date();
+                const sevenDaysAgo = new Date(now);
+                sevenDaysAgo.setDate(now.getDate() - 7);
+
+                // Query students directly from the Students collection
+                const studentsSnapshot = await firebase.firestore()
+                    .collection('Studios')
+                    .doc(studioId)
+                    .collection('Students')
+                    .where('CreatedAt', '>=', sevenDaysAgo)
+                    .get();
+
+                const newStudentsCount = studentsSnapshot.size;
+                console.log('New students this week:', newStudentsCount);
+
+                // Update the New Students This Week KPI card
+                updateKPIValue('.insight-box:nth-child(2) p', newStudentsCount);
+
+                return newStudentsCount;
+            } catch (error) {
+                console.error('Error calculating new students this week:', error);
+                return 0;
+            }
+        }
+
+        // Update the updateInstructorsCount function
+        async function updateInstructorsCount(studioId) {
+            try {
+                const instructorsSnapshot = await firebase.firestore()
+                    .collection('Studios')
+                    .doc(studioId)
+                    .collection('Instructors')
+                    .get();
+
+                const instructorsCount = instructorsSnapshot.size;
+                console.log('Total instructors:', instructorsCount);
+
+                // Update the Instructors Teaching KPI card
+                updateKPIValue('.insight-box:nth-child(4) p', instructorsCount);
+
+                return instructorsCount;
+            } catch (error) {
+                console.error('Error calculating instructors count:', error);
+                return 0;
+            }
+        }
+
+        // Update the updateTodaySchedule function
+        async function updateTodaySchedule(studioId) {
+            try {
+                // Update loading message
+                document.getElementById('loadingStatus').textContent = "Loading today's classes...";
+                
+                const now = new Date();
+                const dayNames = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+                const today = dayNames[now.getDay()];
+                
+                console.log(`Fetching classes for ${today}`);
+
+                // Get all active classes for today
+                const classesSnapshot = await firebase.firestore()
+                    .collection('Studios')
+                    .doc(studioId)
+                    .collection('Classes')
+                  
+                    .where('Days', 'array-contains', today)
+                    .get();
+
+                const scheduleTableBody = document.querySelector('.schedule-table tbody');
+                
+                // Clear existing rows
+                scheduleTableBody.innerHTML = '';
+
+                if (classesSnapshot.empty) {
+                    // If no classes, show "No classes scheduled" message
+                    const noClassesRow = document.createElement('tr');
+                    noClassesRow.innerHTML = `
+                        <td colspan="9" style="text-align: center; padding: 20px;">
+                            <i class="fas fa-calendar-times" style="font-size: 24px; color: #ccc; margin-bottom: 10px;"></i>
+                            <p>No classes scheduled for today (${today.toUpperCase()})</p>
+                        </td>
+                    `;
+                    scheduleTableBody.appendChild(noClassesRow);
+                    console.log('No classes found for today');
+                    return;
+                }
+
+                console.log(`Found ${classesSnapshot.size} classes for today`);
+
+                // Get all studio rooms first
+                const roomsSnapshot = await firebase.firestore()
+                    .collection('Studios')
+                    .doc(studioId)
+                    .collection('StudioRooms')
+                    .get();
+
+                // Create a map of room IDs to room names
+                const roomNames = {};
+                roomsSnapshot.forEach(doc => {
+                    roomNames[doc.id] = doc.data().Name;
+                });
+
+                // Get all class styles and create a map
+                const classStylesSnapshot = await firebase.firestore()
+                    .collection('Studios')
+                    .doc(studioId)
+                    .collection('ClassStyles')
+                    .get();
+
+                const classStyles = {};
+                classStylesSnapshot.forEach(doc => {
+                    classStyles[doc.id] = doc.data().StyleName;
+                });
+
+                // Fetch all instructors at once for efficiency
+                const instructorsSnapshot = await firebase.firestore()
+                    .collection('Studios')
+                    .doc(studioId)
+                    .collection('Instructors')
+                    .get();
+                    
+                const instructors = {};
+                instructorsSnapshot.forEach(doc => {
+                    const data = doc.data();
+                    instructors[doc.id] = `${data.FirstName} ${data.LastName}`;
+                });
+
+                // Sort classes by start time
+                const classes = [];
+                classesSnapshot.forEach(doc => {
+                    classes.push({ id: doc.id, ...doc.data() });
+                });
+                classes.sort((a, b) => a.StartTime.localeCompare(b.StartTime));
+
+                // Add each class to the table
+                for (const classData of classes) {
+                    const row = document.createElement('tr');
+                    
+                    // Add cursor pointer and hover effect
+                    row.style.cursor = 'pointer';
+                    row.classList.add('class-row');
+
+                    // Format start time from 24hr to 12hr
+                    const [hours, minutes] = classData.StartTime.split(':');
+                    const startTime = new Date();
+                    startTime.setHours(parseInt(hours), parseInt(minutes));
+                    const formattedTime = startTime.toLocaleTimeString('en-US', {
+                        hour: 'numeric',
+                        minute: '2-digit',
+                        hour12: true
+                    });
+
+                    // Get instructor name from the map we created earlier
+                    const instructorName = classData.InstructorId 
+                        ? (instructors[classData.InstructorId] || 'TBD') 
+                        : 'TBD';
+
+                    // Get room name from the map, or show 'TBD' if not found
+                    const roomName = classData.RoomId 
+                        ? (roomNames[classData.RoomId] || 'TBD') 
+                        : 'TBD';
+
+                    // Get class style from the map, or show 'Not Specified' if not found
+                    const classStyle = classData.ClassStyleId 
+                        ? (classStyles[classData.ClassStyleId] || 'Not Specified') 
+                        : 'Not Specified';
+
+                    row.innerHTML = `
+                        <td>${formattedTime}</td>
+                        <td>${classData.Duration || 60} min</td>
+                        <td>${classData.ClassName || 'Unnamed Class'}</td>
+                        <td>${classData.ClassType || 'N/A'}</td>
+                        <td>${classStyle}</td>
+                        <td>${roomName}</td>
+                        <td>${instructorName}</td>
+                        <td>${classData.MaxSize || 'N/A'}</td>
+                        <td>${(classData.Students || []).length}</td>
+                    `;
+
+                    // Add click event listener to navigate to class details
+                    row.addEventListener('click', () => {
+                        // Store the class ID for reference on the details page
+                        localStorage.setItem('selectedClassId', classData.id);
+                        
+                        // Get studio name parameter for the URL
+                        const studioName = getStudioNameForUrl(document.getElementById('studioNameDisplay').textContent);
+                        
+                        // Navigate to class details
+                        window.location.href = `allclasses.html?studio=${studioName}&classId=${classData.id}`;
+                    });
+
+                    scheduleTableBody.appendChild(row);
+                }
+                
+                console.log(`Rendered ${classes.length} classes for today`);
+            } catch (error) {
+                console.error('Error updating schedule:', error);
+                // Show error message in the table
+                const scheduleTableBody = document.querySelector('.schedule-table tbody');
+                if (scheduleTableBody) {
+                    scheduleTableBody.innerHTML = `
+                        <tr>
+                            <td colspan="9" style="text-align: center; color: #d9534f;">
+                                <i class="fas fa-exclamation-triangle mr-2"></i>
+                                Error loading today's schedule. Please refresh the page.
+                            </td>
+                        </tr>
+                    `;
+                }
+            }
+        }
+
+        // Add this CSS for the hover effect
+        const style = document.createElement('style');
+        style.textContent = `
+            .class-row:hover {
+                background-color: rgba(61, 206, 215, 0.1) !important;
+                transition: background-color 0.3s ease;
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Update the DOMContentLoaded event listener
+        document.addEventListener('DOMContentLoaded', async function() {
+            const studioId = localStorage.getItem('currentStudioId');
+            
+            if (!studioId) {
+                console.error('No studio ID found in localStorage');
+                document.getElementById('loadingStatus').textContent = "Error: No studio selected. Please log in again.";
+                return;
+            }
+            
+            try {
+                // Initialize timeouts for all KPIs
+                initializeKPITimeouts();
+
+                // First, calculate and display enrollment chart
+                const { totalCapacity, totalEnrolled } = await calculateEnrollmentAndCapacity(studioId);
+                
+                // Initialize chart immediately
+                updateChart(totalEnrolled, totalCapacity);
+                
+                // Add capacity text
+                const pieChartContainer = document.querySelector('.pie-chart-container');
+                const capacityText = document.createElement('div');
+                capacityText.style.cssText = `
+                    text-align: right;
+                    font-size: 0.9rem;
+                    color: #525f7f;
+                    margin-top: 0.5rem;
+                `;
+                capacityText.textContent = `Studio Capacity: ${totalCapacity}`;
+                pieChartContainer.appendChild(capacityText);
+
+                // Load today's schedule first for better UX
+                await updateTodaySchedule(studioId);
+
+                // Then load other metrics
+                await Promise.all([
+                    updateFamiliesCount(studioId),
+                    updateNewStudentsThisWeek(studioId),
+                    updateInstructorsCount(studioId)
+                ]);
+
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+                document.getElementById('loadingStatus').textContent = "Error loading dashboard data. Please refresh.";
+            }
+        });
+    </script>
+
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+
+    <script>
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDRSW3u6gJSs98Z2Mkp5DYSC__ibDXXHAE",
+            authDomain: "studiosync-af73d.firebaseapp.com",
+            projectId: "studiosync-af73d",
+            storageBucket: "studiosync-af73d.appspot.com",
+            messagingSenderId: "172555302276",
+            appId: "1:172555302276:web:55b661f9849441e2de59d1",
+            measurementId: "G-EK7EFQGMSG"
+        };
+        firebase.initializeApp(firebaseConfig);
+
+        // Function to apply studio branding colors
+        function applyStudioBranding(studioData) {
+            console.log('🎨 Applying studio branding colors:', {
+                PrimaryColor: studioData.PrimaryColor,
+                SecondaryColor: studioData.SecondaryColor
+            });
+
+            const primaryColor = studioData.PrimaryColor || '#3DCED7';
+            const secondaryColor = studioData.SecondaryColor || '#3A506B';
+
+            // Update CSS variables for the sidebar and related elements
+            document.documentElement.style.setProperty('--primary-color', primaryColor);
+            document.documentElement.style.setProperty('--primary-hover', adjustColor(primaryColor, -10));
+            document.documentElement.style.setProperty('--secondary-color', secondaryColor);
+
+            // Update loading overlay elements with branded colors
+            const loadingTitle = document.querySelector('.loading-text h2');
+            const loadingText = document.querySelector('.loading-text p');
+            const spinner = document.querySelector('.spinner');
+
+            if (loadingTitle) loadingTitle.style.color = primaryColor;
+            if (loadingText) loadingText.style.color = secondaryColor;
+            if (spinner) spinner.style.borderTopColor = primaryColor;
+
+            // Add RGB values for hover effects
+            document.documentElement.style.setProperty('--primary-color-rgb', hexToRgb(primaryColor));
+        }
+
+        // Helper function to adjust color brightness
+        function adjustColor(color, percent) {
+            const num = parseInt(color.replace('#', ''), 16);
+            const amt = Math.round(2.55 * percent);
+            const R = (num >> 16) + amt;
+            const G = (num >> 8 & 0x00FF) + amt;
+            const B = (num & 0x0000FF) + amt;
+            return '#' + (
+                0x1000000 +
+                (R < 255 ? (R < 1 ? 0 : R) : 255) * 0x10000 +
+                (G < 255 ? (G < 1 ? 0 : G) : 255) * 0x100 +
+                (B < 255 ? (B < 1 ? 0 : B) : 255)
+            ).toString(16).slice(1);
+        }
+
+        // Function to get current user data
+        async function getCurrentUserData() {
+            const loadingStatus = document.getElementById('loadingStatus');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+
+            try {
+                const user = await new Promise((resolve) => {
+                    firebase.auth().onAuthStateChanged((user) => {
+                        if (user) {
+                            loadingStatus.textContent = "Authenticating user...";
+                            resolve(user);
+                        } else {
+                            console.log('No user signed in');
+                            window.location.href = '/studiologin.html';
+                        }
+                    });
+                });
+
+                const studioId = localStorage.getItem('currentStudioId');
+                const studioData = JSON.parse(localStorage.getItem('currentStudioData'));
+                const userDocId = localStorage.getItem('userDocId');
+
+                loadingStatus.textContent = "Loading studio branding...";
+                
+                if (studioData) {
+                    applyStudioBranding(studioData);
+                }
+
+                loadingStatus.textContent = "Fetching user data...";
+
+                try {
+                    const userDoc = await firebase.firestore()
+                        .collection('Studios')
+                        .doc(studioId)
+                        .collection('Users')
+                        .doc(userDocId)
+                        .get();
+
+                    const instructorDoc = !userDoc.exists ? await firebase.firestore()
+                        .collection('Studios')
+                        .doc(studioId)
+                        .collection('Instructors')
+                        .doc(user.uid)
+                        .get() : null;
+
+                    let userData;
+                    let collectionType;
+
+                    if (userDoc.exists) {
+                        userData = userDoc.data();
+                        collectionType = 'Users';
+                    } else if (instructorDoc?.exists) {
+                        userData = instructorDoc.data();
+                        collectionType = 'Instructors';
+                    }
+
+                    if (userData) {
+                        loadingStatus.textContent = "Loading...";
+                        
+                        const fullName = `${userData.FirstName} ${userData.LastName}`;
+                        document.getElementById('userName').textContent = fullName;
+                        document.getElementById('userEmail').textContent = userData.Email;
+                        
+                        // Set studio name in profile dropdown
+                        const studioNameElement = document.getElementById('studioNameDisplay');
+                        if (studioNameElement && studioData) {
+                            studioNameElement.textContent = studioData.StudioName || 'Studio Name';
+                        }
+                        
+                        // Set user initials in avatar
+                        const initials = `${userData.FirstName[0]}${userData.LastName[0]}`;
+                        const initialsElement = document.querySelector('.initials');
+                        if (initialsElement) {
+                            initialsElement.textContent = initials;
+                        }
+
+                        const roleElement = document.getElementById('userRole');
+                        if (userData.Role) {
+                            roleElement.textContent = userData.Role;
+                            roleElement.style.color = '#333333';
+                            roleElement.style.fontWeight = '700';
+                        } else {
+                            roleElement.textContent = 'No Role Assigned';
+                            roleElement.style.color = '#666';
+                        }
+
+                        if (studioData?.LogoUrl) {
+                            await loadStudioLogo(studioData.LogoUrl, studioData.StudioName);
+                        } else {
+                            await loadStudioLogo(null, studioData?.StudioName);
+                        }
+
+                        // Hide loading overlay with fade effect
+                        loadingOverlay.classList.add('fade-out');
+                        setTimeout(() => {
+                            loadingOverlay.style.display = 'none';
+                        }, 500);
+                    }
+                } catch (error) {
+                    console.error('Error getting user document:', error);
+                    loadingStatus.textContent = "Error loading dashboard. Please refresh...";
+                }
+                
+                if (studioData) {
+                    applyStudioBranding(studioData);
+                    updateSidebarLinks(studioData);
+                    updatePageUrl(studioData.StudioName);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                loadingStatus.textContent = "Error loading dashboard. Please refresh...";
+            }
+        }
+
+        // Function to load and display the studio logo
+        function loadStudioLogo(logoUrl, studioName) {
+            return new Promise((resolve) => {
+                const logoElement = document.getElementById('studio-logo');
+                const nameElement = document.getElementById('studio-name');
+                
+                if (logoUrl) {
+                    logoElement.onload = () => resolve();
+                    logoElement.src = logoUrl;
+                    logoElement.alt = studioName || 'Studio Logo';
+                    logoElement.style.display = 'block';
+                    nameElement.style.display = 'none';
+                } else {
+                    logoElement.style.display = 'none';
+                    nameElement.textContent = studioName || 'Studio Sync';
+                    nameElement.style.display = 'block';
+                    resolve();
+                }
+            });
+        }
+
+        // Call the function when the page loads
+        getCurrentUserData();
+
+        // Logout functionality
+        document.getElementById('logoutButton').addEventListener('click', function() {
+            firebase.auth().signOut().then(() => {
+                // Clear studio context from localStorage
+                localStorage.removeItem('currentStudioId');
+                localStorage.removeItem('currentStudioData');
+                // Redirect to studio login
+                window.location.href = '/studiologin.html';
+            }).catch((error) => {
+                console.error('Logout Error:', error);
+            });
+        });
+
+        // Add this function after the firebase initialization
+        function getStudioNameForUrl(studioName) {
+            // Remove spaces and special characters, keep alphanumeric only
+            return studioName.replace(/[^a-zA-Z0-9]/g, '');
+        }
+
+        function updateSidebarLinks(studioData) {
+            if (studioData?.StudioName) {
+                const studioNameParam = getStudioNameForUrl(studioData.StudioName);
+                
+                const sidebarLinks = document.querySelectorAll('#sidebar-wrapper .list-group-item');
+                sidebarLinks.forEach(link => {
+                    const currentHref = link.getAttribute('href');
+                    if (currentHref && currentHref.endsWith('.html')) {
+                        const newHref = currentHref.replace('.html', `?studio=${studioNameParam}`);
+                        link.setAttribute('href', newHref);
+                    }
+                });
+            }
+        }
+
+        function updatePageUrl(studioName) {
+            if (studioName) {
+                const studioNameParam = getStudioNameForUrl(studioName);
+                const currentUrl = new URL(window.location.href);
+                
+                // Only update if we're on a .html page and don't already have the studio parameter
+                if (currentUrl.pathname.endsWith('.html') && !currentUrl.searchParams.has('studio')) {
+                    const newUrl = `${currentUrl.pathname.replace('.html', '')}?studio=${studioNameParam}`;
+                    window.history.replaceState({}, '', newUrl);
+                }
+            }
+        }
+
+        // Add this after the applyStudioBranding function
+        function hexToRgb(hex) {
+            // Remove the # if present
+            hex = hex.replace('#', '');
+            
+            // Parse the hex values
+            const r = parseInt(hex.substring(0, 2), 16);
+            const g = parseInt(hex.substring(2, 4), 16);
+            const b = parseInt(hex.substring(4, 6), 16);
+            
+            return `${r}, ${g}, ${b}`;
+        }
+
+        // Update the renderWeekendClasses function
+        async function renderWeekendClasses(date) {
+            try {
+                isWeekendClassesRendering = true;
+                console.log('Rendering weekend classes...');
+                
+                const classes = await fetchClasses();
+                
+                // Get and clear the table body
+                const tableContainer = document.querySelector('.weekend-schedule-wrapper');
+                if (!tableContainer) {
+                    // Create the wrapper and table if they don't exist
+                    const container = document.createElement('div');
+                    container.className = 'weekend-schedule-wrapper';
+                    container.innerHTML = `
+                        <table id="weekendClassesTable">
+                            <thead>
+                                <tr>
+                                    <th>Day</th>
+                                    <th>Time</th>
+                                    <th>Class</th>
+                                    <th>Room</th>
+                                    <th>Instructor</th>
+                                    <th>Type</th>
+                                    <th>Style</th>
+                                    <th>Max</th>
+                                    <th>Current</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    `;
+                    // Insert the container after the "Today's Schedule" section
+                    const todaySchedule = document.querySelector('.schedule-table-wrapper');
+                    todaySchedule.parentNode.insertBefore(container, todaySchedule.nextSibling);
+                }
+
+                const tableBody = document.querySelector('#weekendClassesTable tbody');
+                if (!tableBody) {
+                    console.error('Weekend classes table body not found');
+                    return;
+                }
+
+                // Clear existing rows
+                tableBody.innerHTML = '';
+
+                // Rest of your existing renderWeekendClasses code...
+                
+                if (weekendClasses.length === 0) {
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="9" class="text-center py-3">
+                                <i class="fas fa-calendar-times text-muted"></i>
+                                <p class="mb-0 mt-2">No weekend classes scheduled</p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                // Your existing code for rendering weekend classes...
+            } finally {
+                isWeekendClassesRendering = false;
+            }
+        }
+
+        document.getElementById('debugButton').addEventListener('click', function() {
+            // Make debug tools visible only in development
+            if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+                const studioId = localStorage.getItem('currentStudioId');
+                if (!studioId) {
+                    alert('No studio ID found');
+                    return;
+                }
+                
+                const dayNames = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+                const testDay = prompt('Enter day to test (sun, mon, tue, wed, thu, fri, sat):', dayNames[new Date().getDay()]);
+                
+                if (testDay && dayNames.includes(testDay.toLowerCase())) {
+                    // Override the day in the updateTodaySchedule function
+                    const originalDate = Date;
+                    Date = class extends originalDate {
+                        getDay() {
+                            return dayNames.indexOf(testDay.toLowerCase());
+                        }
+                    };
+                    
+                    updateTodaySchedule(studioId).then(() => {
+                        // Restore the original Date
+                        Date = originalDate;
+                        alert(`Loaded schedule for ${testDay}`);
+                    });
+                }
+            }
+        });
+
+        // Show debug button in development environments
+        if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+            document.getElementById('debugButton').classList.remove('d-none');
+        }
+    </script>
+</body>
+</html>

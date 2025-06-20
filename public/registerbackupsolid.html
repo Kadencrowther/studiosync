@@ -1,0 +1,2209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio Sync - Register</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" type="image/svg+xml" href="assets/ssdancerfav.svg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3DCED7;
+            --secondary-color: #3A506B;
+            --background-color: #F5F5F5;
+            --text-color: #333333;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: var(--background-color);
+            font-family: 'Arial', sans-serif;
+            padding-top: 80px; /* Increased to match new header height */
+        }
+        .container {
+            max-width: 1000px;
+            width: 95%;
+            padding: 40px 20px; /* Reduced padding */
+            margin: 20px auto; /* Added auto margins */
+            background-color: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            margin-top: 50px;
+        }
+        .step {
+            display: none;
+            min-height: auto; /* Remove fixed height */
+            padding: 15px;
+            box-sizing: border-box;
+            position: relative;
+        }
+        .step-number {
+            display: none; /* Hide the old step numbers */
+        }
+        .step.active {
+            display: block;
+        }
+        .step input, .step select {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            background-color: #ffffff;
+            color: var(--text-color);
+            box-sizing: border-box;
+            font-size: 16px; /* Larger font size for mobile */
+        }
+        .step button {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: none;
+            background-color: var(--primary-color);
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 18px; /* Larger font size for mobile */
+        }
+        .step button:hover {
+            background-color: #36B8C0;
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+        .logo-container img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+            content: url('assets/ssdancerblue.svg');
+        }
+        .logo-text {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        .plans {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .plan {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 380px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 10px;
+            flex: 1;
+            min-width: 250px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 2px solid var(--primary-color); /* Add this line for the turquoise blue outline */
+        }
+        .plan-content {
+            flex-grow: 1;
+        }
+        .plan:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        .plan h2 {
+            margin-top: 0;
+            color: var(--primary-color);
+            font-size: 1.6rem;
+        }
+        .plan-price {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--secondary-color);
+            margin: 0.5rem 0;
+        }
+        .plan-features {
+            list-style-type: none;
+            padding: 0;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+        .plan-features li {
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+        .select-plan {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: auto;
+            font-size: 14px;
+        }
+        .select-plan:hover {
+            background-color: #36B8C0;
+        }
+        .split-container {
+            display: grid;
+            grid-template-columns: 1fr 400px; /* Left side for forms, right side for summary */
+            gap: 30px;
+            margin-top: 20px;
+        }
+        .forms-column {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        .summary-column {
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        .form-section {
+            height: 600px; /* Fixed height */
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            padding: 25px;
+        }
+        .registration-form {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            height: 100%; /* Fill parent height */
+        }
+        #selected-plan-info {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 600px; /* Increased from 520px to 600px to match form section */
+        }
+        #selected-plan-info .features-list {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 0;
+            min-height: 300px; /* Increased minimum height */
+        }
+        #selected-plan-info .billing-details {
+            padding: 20px 0;
+            border-top: 1px solid #e0e0e0;
+            border-bottom: 1px solid #e0e0e0;
+            margin: 20px 0;
+        }
+        .billing-frequency {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .billing-frequency select {
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 25px;
+            border: 2px solid var(--primary-color);
+            background-color: white;
+            color: var(--primary-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg fill="%233DCED7" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 10px top 50%;
+        }
+        .billing-frequency select:hover, .billing-frequency select:focus {
+            border-color: #36B8C0;
+            outline: none;
+        }
+        .original-price {
+            text-decoration: line-through;
+            font-size: 0.8em;
+            color: #888;
+        }
+        .registration-form input {
+            font-size: 14px;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            transition: border-color 0.3s ease;
+        }
+        .registration-form input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 1px var(--primary-color);
+        }
+        .full-width {
+            grid-column: span 2;
+        }
+        .back-arrow {
+            position: absolute;
+            top: 20px;
+            left: 20px; /* Moved further left */
+            font-size: 24px;
+            color: var(--primary-color);
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 900;
+            line-height: 1;
+            transition: color 0.3s ease;
+            z-index: 10;
+        }
+        .back-arrow:hover {
+            color: #36B8C0;
+        }
+        .step-indicators {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            top: 15px;
+            left: 0;
+            right: 0;
+            width: 70%;
+            margin: 0 auto;
+            margin-bottom: 20px;
+        }
+        .step-indicator {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            color: #888; /* Grey color for inactive steps */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 10px;
+            font-weight: bold;
+            position: relative;
+            z-index: 2;
+        }
+        .step-label {
+            font-size: 10px;
+            margin-top: 5px;
+            color: #888; /* Grey color for inactive step labels */
+        }
+        .step-indicator.active {
+            background-color: var(--primary-color);
+            color: white; /* White color for active step number */
+        }
+        .step-indicator.active .step-label {
+            color: var(--primary-color); /* Turquoise color for active step label */
+        }
+        .step-line {
+            flex-grow: 1;
+            height: 2px;
+            background-color: #e0e0e0;
+            position: relative;
+            z-index: 1;
+        }
+        .step-line.active {
+            background-color: var(--primary-color);
+        }
+        /* Adjust the content to fit within the card */
+        .step-content {
+            height: 100%;
+            overflow-y: auto;
+            padding-top: 35px;
+        }
+        .page-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 30px; /* Reduced top/bottom padding */
+            background-color: #ffffff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 1000;
+            height: 80px;
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+        .logo-container img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+            content: url('assets/ssdancerblue.svg');
+        }
+        .logo-text {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        .header-buttons {
+            display: flex;
+            align-items: center;
+            /* Remove height: 100% to prevent stretching */
+        }
+        .demo-button, .phone-button {
+            padding: 8px 15px;
+            margin-left: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 14px; /* Slightly reduced size */
+        }
+        .demo-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+        }
+        .demo-button:hover, .phone-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .phone-button {
+            background-color: transparent;
+            color: #333;
+            border: 2px solid var(--primary-color);
+        }
+        .phone-button:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .success-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .success-container {
+            max-width: 600px;
+            width: 90%;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: relative;
+            z-index: 2001;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+        }
+
+        .account-details {
+            text-align: left;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .detail-row {
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+
+        .start-onboarding-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: 2px solid var(--primary-color);
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            position: relative;
+            z-index: 2002;
+        }
+
+        .start-onboarding-btn:hover {
+            background-color: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(61, 206, 215, 0.2);
+        }
+
+        /* Updated Step 3 Styles */
+        .split-container {
+            display: grid;
+            grid-template-columns: 2fr 1.2fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .registration-form {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            min-width: 500px;
+        }
+
+        .registration-form input {
+            font-size: 14px;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            transition: border-color 0.3s ease;
+        }
+
+        .registration-form input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 1px var(--primary-color);
+        }
+
+        #selected-plan-info {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        #selected-plan-info h3 {
+            color: var(--secondary-color);
+            margin: 0 0 15px 0;
+            font-size: 1.4rem;
+        }
+
+        #selected-plan-info .plan-price {
+            font-size: 1.8rem;
+            color: var(--secondary-color);
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        #selected-plan-info .billing-details {
+            padding: 15px 0;
+            border-top: 1px solid #f0f0f0;
+            border-bottom: 1px solid #f0f0f0;
+            margin: 15px 0;
+        }
+
+        #selected-plan-info .features-list {
+            margin: 15px 0;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding: 20px 0;
+        }
+
+        #selected-plan-info .features-list li {
+            margin: 10px 0;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #selected-plan-info .features-list li::before {
+            content: "✓";
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        #complete-registration {
+            background: var(--primary-color);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        #complete-registration:hover {
+            background: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(61, 206, 215, 0.2);
+        }
+
+        .form-section {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-section-title {
+            font-size: 0.9rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 15px;
+        }
+
+        /* Card input specific styles */
+        .card-input-group {
+            grid-column: span 2;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 15px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+            padding-top: 25px;
+        }
+
+        .section-header svg {
+            margin-right: 8px;
+            width: 20px;
+            height: 20px;
+        }
+
+        .todays-total {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            margin-top: 20px;
+        }
+
+        .todays-total h4 {
+            color: var(--secondary-color);
+            margin: 0 0 15px 0;
+            font-size: 1.2rem;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .total-row:last-child {
+            border-bottom: none;
+        }
+
+        .total-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .total-amount {
+            font-weight: bold;
+            color: var(--secondary-color);
+            font-size: 1.1rem;
+        }
+
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-container {
+            max-width: 400px;
+            width: 90%;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-container h2 {
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+        }
+
+        .loading-container p {
+            color: #666;
+            margin: 0;
+        }
+
+        /* Password input container */
+        .password-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .password-container input {
+            width: 100%;
+            padding-right: 40px; /* Space for the eye icon */
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #666;
+            transition: color 0.3s ease;
+        }
+
+        .password-toggle:hover {
+            color: var(--primary-color);
+        }
+
+        /* Password match indicator */
+        .password-match {
+            font-size: 12px;
+            margin-top: 4px;
+            color: #ff4444;
+            transition: color 0.3s ease;
+        }
+
+        .password-match.matched {
+            color: #4CAF50;
+        }
+
+        /* Responsive adjustments for smaller screens */
+        @media screen and (max-width: 768px) {
+            body {
+                padding-top: 60px; /* Reduced padding for mobile */
+            }
+
+            .container {
+                width: 100%;
+                margin: 10px auto;
+                padding: 30px 15px;
+                border-radius: 10px;
+            }
+
+            .step input, 
+            .step select {
+                padding: 12px;
+                font-size: 16px; /* Larger font size for mobile */
+                margin: 8px 0;
+            }
+
+            .step button {
+                padding: 15px;
+                font-size: 18px; /* Larger font size for mobile */
+            }
+
+            /* Adjust header for mobile */
+            .page-header {
+                padding: 8px 15px;
+                height: 60px;
+            }
+
+            .logo-container img {
+                width: 30px;
+                height: 30px;
+            }
+
+            .logo-text {
+                font-size: 1.5rem;
+            }
+
+            .header-buttons {
+                gap: 8px;
+            }
+
+            .demo-button, 
+            .phone-button {
+                padding: 6px 12px;
+                font-size: 13px;
+            }
+
+            /* Adjust step indicators for mobile */
+            .step-indicators {
+                width: 90%;
+                top: 10px;
+            }
+
+            .step-indicator {
+                width: 25px;
+                height: 25px;
+                font-size: 12px;
+                margin: 0 5px;
+            }
+
+            .step-label {
+                font-size: 8px;
+            }
+
+            /* Password match indicator adjustment */
+            .password-match {
+                font-size: 11px;
+                margin-top: 2px;
+            }
+
+            .step-content {
+                padding-top: 30px;
+            }
+        }
+
+        /* Additional adjustments for very small screens */
+        @media screen and (max-width: 480px) {
+            .container {
+                margin: 5px auto;
+                padding: 25px 12px;
+            }
+
+            .header-buttons .demo-button {
+                display: none; /* Hide demo button on very small screens */
+            }
+
+            .phone-button {
+                padding: 5px 10px;
+                font-size: 12px;
+            }
+
+            .logo-text {
+                font-size: 1.2rem;
+            }
+
+            /* Adjust step indicators further */
+            .step-indicators {
+                width: 95%;
+            }
+
+            .step-indicator {
+                width: 22px;
+                height: 22px;
+                margin: 0 3px;
+            }
+
+            .step-content {
+                padding-top: 25px;
+            }
+        }
+
+        /* Add these new styles for Step 3 sections */
+        .form-section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .section-header {
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .registration-form {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .form-group {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        /* Update existing registration form styles */
+        .registration-form input {
+            width: 100%;
+            font-size: 14px;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            transition: border-color 0.3s ease;
+            margin: 0; /* Remove default margins */
+        }
+
+        /* Responsive adjustments */
+        @media screen and (max-width: 768px) {
+            .form-group {
+                grid-template-columns: 1fr;
+            }
+
+            .section-header {
+                font-size: 1.1rem;
+            }
+
+            .form-section {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .form-section {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+
+            .section-header {
+                font-size: 1rem;
+                margin-bottom: 15px;
+            }
+        }
+
+        /* Responsive adjustments */
+        @media screen and (max-width: 1024px) {
+            .split-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .summary-column {
+                position: relative;
+                top: 0;
+            }
+        }
+
+        /* Add this new style for password requirements */
+        .password-requirements {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .requirement {
+            margin: 5px 0;
+            color: #666;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .requirement i {
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .requirement i.fa-times-circle {
+            color: #ff4444;
+        }
+
+        .requirement i.fa-check-circle {
+            color: #4CAF50;
+        }
+
+        .requirement.met {
+            color: #4CAF50;
+        }
+
+        .password-container input {
+            width: 100%;
+            padding-right: 40px;
+            transition: all 0.3s ease;
+        }
+
+        .password-container input.valid {
+            border: 2px solid #4CAF50;
+        }
+
+        .password-requirements {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <header class="page-header">
+        <div class="logo-container">
+            <img src="assets/ssdancerblue.svg" alt="Studio Sync logo">
+            <span class="logo-text">Studio Sync</span>
+        </div>
+        <div class="header-buttons">
+            <a href="index.html#demo" class="demo-button">Request a Demo</a>
+            <a href="tel:8016166985" class="phone-button">801-616-6985</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <a href="#" class="back-arrow" id="backToPrevious">&#8592;</a>
+        <div class="step-indicators">
+            <div class="step-indicator active" data-step="1">
+                1
+                <span class="step-label">Studio Info</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step-indicator" data-step="2">
+                2
+                <span class="step-label">Select Plan</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step-indicator" data-step="3">
+                3
+                <span class="step-label">Checkout</span>
+            </div>
+        </div>
+
+        <!-- Step 1: Basic Info -->
+        <div class="step active" id="step1">
+            <div class="step-content">
+                <h2>Studio Information</h2>
+                <form id="basicInfoForm" onsubmit="return false;">
+                    <input type="text" id="first-name" placeholder="First Name" required>
+                    <input type="text" id="last-name" placeholder="Last Name" required>
+                    <input type="email" id="email" placeholder="Email" required>
+                    <input type="tel" id="phone" placeholder="Phone Number" required>
+                    <div class="password-container">
+                        <input type="password" id="password" placeholder="Password" required>
+                        <i class="fas fa-eye password-toggle" onclick="togglePassword('password')"></i>
+                    </div>
+                    <div class="password-container">
+                        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required>
+                        <i class="fas fa-eye password-toggle" onclick="togglePassword('confirmPassword')"></i>
+                    </div>
+                    <div class="password-requirements" style="display: none;">
+                        <div class="requirement" id="length-req">
+                            <i class="fas fa-times-circle"></i>
+                            At least 8 characters
+                        </div>
+                        <div class="requirement" id="uppercase-req">
+                            <i class="fas fa-times-circle"></i>
+                            At least one uppercase letter
+                        </div>
+                        <div class="requirement" id="lowercase-req">
+                            <i class="fas fa-times-circle"></i>
+                            At least one lowercase letter
+                        </div>
+                        <div class="requirement" id="number-req">
+                            <i class="fas fa-times-circle"></i>
+                            At least one number
+                        </div>
+                        <div class="requirement" id="special-req">
+                            <i class="fas fa-times-circle"></i>
+                            At least one special character
+                        </div>
+                        <div class="requirement" id="match-req">
+                            <i class="fas fa-times-circle"></i>
+                            Passwords match
+                        </div>
+                    </div>
+                    <input type="text" id="studio-name" placeholder="Studio Name" required>
+                    <select id="industry" required>
+                        <option value="">Select Industry</option>
+                        <option value="Dance">Dance</option>
+                        <option value="Tumbling">Tumbling</option>
+                        <option value="Gymnastics">Gymnastics</option>
+                        <option value="Martial Arts">Martial Arts</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <button type="button" id="nextToStep2">Next</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Step 2: Select a Plan -->
+        <div class="step" id="step2">
+            <div class="step-content">
+                <h2>Select a Plan</h2>
+                <div class="billing-frequency">
+                    <select id="billing-frequency">
+                        <option value="monthly">Monthly</option>
+                        <option value="quarterly">Quarterly (5% discount)</option>
+                        <option value="semi-annually">Semi-Annually (10% discount)</option>
+                        <option value="annually">Annually (15% discount)</option>
+                    </select>
+                </div>
+                <div class="plans">
+                    <div class="plan">
+                        <div class="plan-content">
+                            <h2>Studio Pro</h2>
+                            <p class="plan-price">$39<span style="font-size: 1rem;">/month</span></p>
+                            <p class="original-price"></p>
+                            <ul class="plan-features">
+                                <li>Up to 150 students</li>
+                                <li>Pro features</li>
+                                <li>Priority support</li>
+                                <li>Class Management</li>
+                                <li>Payment Processing</li>
+                                <li>Mobile App</li>
+                            </ul>
+                        </div>
+                        <button class="select-plan" data-plan="0000">Select Studio Pro</button>
+                    </div>
+                    <div class="plan">
+                        <div class="plan-content">
+                            <h2>Studio Elite</h2>
+                            <p class="plan-price">$69<span style="font-size: 1rem;">/month</span></p>
+                            <p class="original-price"></p>
+                            <ul class="plan-features">
+                                <li>Up to 300 students</li>
+                                <li>Elite features</li>
+                                <li>Priority support</li>
+                                <li>Class Management</li>
+                                <li>Payment Processing</li>
+                                <li>Mobile App</li>
+                            </ul>
+                        </div>
+                        <button class="select-plan" data-plan="0000">Select Studio Elite</button>
+                    </div>
+                    <div class="plan">
+                        <div class="plan-content">
+                            <h2>Studio Enterprise</h2>
+                            <p class="plan-price">$99<span style="font-size: 1rem;">/month</span></p>
+                            <p class="original-price"></p>
+                            <ul class="plan-features">
+                                <li>301+ Students</li>
+                                <li>Enterprise features</li>
+                                <li>Priority support</li>
+                                <li>Class Management</li>
+                                <li>Payment Processing</li>
+                                <li>Mobile App</li>
+                            </ul>
+                        </div>
+                        <button class="select-plan" data-plan="0000">Select Studio Enterprise</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 3: Complete Registration -->
+        <div class="step" id="step3">
+            <div class="step-content">
+                <h2>Complete Registration</h2>
+                <div class="split-container">
+                    <div class="forms-column">
+                        <div class="form-section">
+                            <div class="section-header">Account Information</div>
+                            <div class="form-group">
+                                <input type="text" id="full-name" placeholder="Full Name" required>
+                                <input type="email" id="email-confirm" placeholder="Email" required>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <div class="section-header">Payment Information</div>
+                            <div class="form-group">
+                                <input type="text" id="card-number" placeholder="Card Number" required autocomplete="cc-number">
+                                <div class="form-group">
+                                    <input type="text" id="exp-date" placeholder="MM / YY" required autocomplete="cc-exp">
+                                    <input type="text" id="cvv" placeholder="CVV" required autocomplete="cc-csc">
+                                </div>
+                                <input type="text" id="card-holder-name" placeholder="Cardholder Name" required autocomplete="cc-name" class="full-width">
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <div class="section-header">Billing Address</div>
+                            <div class="form-group">
+                                <input type="text" id="address-line1" placeholder="Address Line 1" required autocomplete="street-address">
+                                <input type="text" id="city" placeholder="City" required autocomplete="address-level2">
+                                <input type="text" id="state" placeholder="State" required autocomplete="address-level1">
+                                <input type="text" id="zip" placeholder="ZIP Code" required autocomplete="postal-code">
+                                <input type="text" id="country" placeholder="Country" required autocomplete="country" class="full-width">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="summary-column">
+                        <div class="section-header">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7-.25c.41 0 .75.34.75.75s-.34.75-.75.75-.75-.34-.75-.75.34-.75.75-.75zM19 19H5V5h14v14z"/>
+                                <path d="M12 17l-5-5 1.41-1.41L12 14.17l4.59-4.58L18 11z"/>
+                            </svg>
+                            Checkout
+                        </div>
+                        <div id="selected-plan-info">
+                            <h3>Order Summary</h3>
+                            <div class="plan-price"></div>
+                            <div class="billing-details">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                    <span>Billing frequency</span>
+                                    <span class="billing-frequency-display"></span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Next billing date</span>
+                                    <span class="next-billing-date"></span>
+                                </div>
+                            </div>
+                            <div class="features-list">
+                                <!-- Features will be populated by JavaScript -->
+                            </div>
+                        </div>
+                        <div class="todays-total">
+                            <h4>Today's Total</h4>
+                            <div class="total-row">
+                                <span class="total-label">Free Trial Period</span>
+                                <span class="total-amount">$0.00</span>
+                            </div>
+                            <div class="total-row">
+                                <span class="total-label">First Billing Date</span>
+                                <span class="total-amount" id="first-billing-date"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button id="complete-registration">Complete Registration</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-functions-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- Define BASE_URL as the first script -->
+    <script>
+        console.log("🔍 Setting BASE_URL...");
+        
+        // Set BASE_URL immediately
+        const API_URL = "https://api-22djwxzgmq-uc.a.run.app";
+        
+        
+        // Make it non-writable and available globally
+        window.BASE_URL = API_URL;
+        Object.freeze(window.BASE_URL);
+        
+        // Also store in localStorage as backup
+        localStorage.setItem('BASE_URL', API_URL);
+
+        console.log("🌐 Initial BASE_URL definition:", window.BASE_URL);
+    </script>
+
+    <script>
+        const BASE_URL = "https://api-22djwxzgmq-uc.a.run.app";
+        window.BASE_URL = BASE_URL;
+        
+        // Verify BASE_URL at start of main script
+        console.log("🌐 BASE_URL check in main script:", window.BASE_URL);
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDRSW3u6gJSs98Z2Mkp5DYSC__ibDXXHAE",
+            authDomain: "studiosync-af73d.firebaseapp.com",
+            projectId: "studiosync-af73d",
+            storageBucket: "studiosync-af73d.appspot.com",
+            messagingSenderId: "172555302276",
+            appId: "1:172555302276:web:55b661f9849441e2de59d1",
+            measurementId: "G-EK7EFQGMSG"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        // Get Firebase Functions instance (renamed to avoid conflict)
+        const firebaseFunctions = firebase.functions();
+
+        function updateStepIndicators(currentStep) {
+            document.querySelectorAll('.step-indicator').forEach((indicator, index) => {
+                if (index < currentStep) {
+                    indicator.classList.add('active');
+                } else {
+                    indicator.classList.remove('active');
+                }
+            });
+            document.querySelectorAll('.step-line').forEach((line, index) => {
+                if (index < currentStep - 1) {
+                    line.classList.add('active');
+                } else {
+                    line.classList.remove('active');
+                }
+            });
+        }
+
+        function updateBackArrow(currentStep) {
+            const backArrow = document.getElementById('backToPrevious');
+            if (currentStep === 1) {
+                backArrow.style.display = 'none';
+            } else {
+                backArrow.style.display = 'block';
+            }
+        }
+
+        document.getElementById('nextToStep2').addEventListener('click', function() {
+            const firstName = document.getElementById('first-name').value;
+            const lastName = document.getElementById('last-name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const password = document.getElementById('password').value;
+            const studioName = document.getElementById('studio-name').value;
+            const industry = document.getElementById('industry').value;
+
+            if (firstName && lastName && email && phone && password && studioName && industry) {
+                localStorage.setItem('userFirstName', firstName);
+                localStorage.setItem('userLastName', lastName);
+                localStorage.setItem('userEmail', email);
+                localStorage.setItem('userPhone', phone);
+                localStorage.setItem('userStudioName', studioName);
+                localStorage.setItem('userIndustry', industry);
+                localStorage.setItem('password', password);
+
+                document.getElementById('step1').classList.remove('active');
+                document.getElementById('step2').classList.add('active');
+                updateStepIndicators(2);
+                updateBackArrow(2);
+            } else {
+                alert('Please fill in all fields');
+            }
+        });
+
+        function updatePrices() {
+            const frequency = document.getElementById('billing-frequency').value;
+            const discounts = {
+                'monthly': 1,
+                'quarterly': 0.95,
+                'semi-annually': 0.90,
+                'annually': 0.85
+            };
+            const discount = discounts[frequency];
+            const billingPeriod = {
+                'monthly': '/month',
+                'quarterly': '/quarter',
+                'semi-annually': '/6 months',
+                'annually': '/year'
+            };
+
+            const plans = [
+                { selector: '.plan:nth-child(1)', basePrice: 39 },
+                { selector: '.plan:nth-child(2)', basePrice: 69 },
+                { selector: '.plan:nth-child(3)', basePrice: 99 }
+            ];
+
+            plans.forEach(plan => {
+                const planElement = document.querySelector(plan.selector);
+                const priceElement = planElement.querySelector('.plan-price');
+                const originalPriceElement = planElement.querySelector('.original-price');
+                
+                const discountedPrice = plan.basePrice * discount;
+                const totalPrice = discountedPrice * (frequency === 'monthly' ? 1 : frequency === 'quarterly' ? 3 : frequency === 'semi-annually' ? 6 : 12);
+                
+                priceElement.innerHTML = `$${totalPrice.toFixed(2)}<span style="font-size: 1rem;">${billingPeriod[frequency]}</span>`;
+                
+                if (discount < 1) {
+                    const originalTotal = plan.basePrice * (frequency === 'monthly' ? 1 : frequency === 'quarterly' ? 3 : frequency === 'semi-annually' ? 6 : 12);
+                    originalPriceElement.textContent = `Original: $${originalTotal.toFixed(2)}${billingPeriod[frequency]}`;
+                } else {
+                    originalPriceElement.textContent = '';
+                }
+            });
+        }
+
+        document.getElementById('billing-frequency').addEventListener('change', updatePrices);
+
+        // Call updatePrices initially to set the default prices
+        updatePrices();
+
+        // Add this object at the top of your script section to map plans and intervals to IDs
+        const PLAN_IDS = {
+            "Studio Pro": {
+                monthly: "0000",
+                quarterly: "0000",
+                "semi-annually": "0000",
+                annually: "0000"
+            },
+            "Studio Elite": {
+                monthly: "0000",
+                quarterly: "0000",
+                "semi-annually": "0000",
+                annually: "0000"
+            },
+            "Studio Enterprise": {
+                monthly: "0000",
+                quarterly: "0000",
+                "semi-annually": "0000",
+                annually: "0000"
+            }
+        };
+
+        // Add helper function to get billing cycle number
+        function getBillingCycle(frequency) {
+            const cycles = {
+                monthly: 1,
+                quarterly: 3,
+                "semi-annually": 6,
+                annually: 12
+            };
+            return cycles[frequency] || 1;
+        }
+
+        // Update the plan selection button click handler
+        document.querySelectorAll('.select-plan').forEach(button => {
+            button.addEventListener('click', function() {
+                const planCard = this.closest('.plan');
+                const planName = planCard.querySelector('h2').textContent;
+                const planPrice = planCard.querySelector('.plan-price').textContent;
+                const planFeatures = planCard.querySelector('.plan-features').innerHTML;
+                const billingFrequency = document.getElementById('billing-frequency').value;
+                
+                // Get the plan ID based on plan name and billing frequency
+                const planId = PLAN_IDS[planName][billingFrequency];
+                
+                console.log(`Selected ${planName} with ${billingFrequency} billing (Plan ID: ${planId})`);
+                
+                // Store plan data
+                localStorage.setItem('selectedPlan', planId);
+                localStorage.setItem('planName', planName);
+                localStorage.setItem('planPrice', planPrice);
+                localStorage.setItem('planFeatures', planFeatures);
+                localStorage.setItem('billingFrequency', billingFrequency);
+                
+                // Move to next step
+                document.getElementById('step2').classList.remove('active');
+                document.getElementById('step3').classList.add('active');
+
+                // Update the plan info display in step 3
+                const planInfo = document.getElementById('selected-plan-info');
+                planInfo.innerHTML = `
+                    <h3>${planName}</h3>
+                    <p class="plan-price">${planPrice}</p>
+                    <div class="billing-details">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span>Billing frequency</span>
+                            <span class="billing-frequency-display">${billingFrequency}</span>
+                        </div>
+                    </div>
+                    <div class="features-list">
+                        ${planFeatures}
+                    </div>
+                `;
+
+                // Calculate and display first billing date (30 days from today)
+                const firstBillingDate = new Date();
+                firstBillingDate.setDate(firstBillingDate.getDate() + 30);
+                const formattedDate = firstBillingDate.toLocaleDateString('en-US', {
+                    month: '2-digit',
+                    day: '2-digit',
+                    year: 'numeric'
+                });
+                document.getElementById('first-billing-date').textContent = formattedDate;
+
+                // Update step indicators and back button
+                updateStepIndicators(3);
+                updateBackArrow(3);
+            });
+        });
+
+        // Add this function to validate password strength
+        function validatePassword(password) {
+            const minLength = 8;
+            const hasUpperCase = /[A-Z]/.test(password);
+            const hasLowerCase = /[a-z]/.test(password);
+            const hasNumbers = /\d/.test(password);
+            const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+            const requirements = {
+                length: password.length >= minLength,
+                upperCase: hasUpperCase,
+                lowerCase: hasLowerCase,
+                number: hasNumbers,
+                special: hasSpecialChar
+            };
+
+            return {
+                isValid: Object.values(requirements).every(req => req),
+                requirements
+            };
+        }
+
+        // Update the password check in your event listener
+        document.getElementById('nextToStep2').addEventListener('click', function() {
+            const password = document.getElementById('password').value;
+            const validation = validatePassword(password);
+
+            if (!validation.isValid) {
+                let errorMessage = 'Password must contain:\n';
+                if (!validation.requirements.length) errorMessage += '- At least 8 characters\n';
+                if (!validation.requirements.upperCase) errorMessage += '- At least one uppercase letter\n';
+                if (!validation.requirements.lowerCase) errorMessage += '- At least one lowercase letter\n';
+                if (!validation.requirements.number) errorMessage += '- At least one number\n';
+                if (!validation.requirements.special) errorMessage += '- At least one special character\n';
+                
+                alert(errorMessage);
+                return;
+            }
+
+            // Rest of your existing code...
+        });
+
+        // Add this validation before creating the tokenData
+        const validateCardData = (userData) => {
+            console.log("Validating card data:", {
+                card_number: userData.card_number ? "****" + userData.card_number.slice(-4) : "missing",
+                exp_month: userData.exp_month || "missing",
+                exp_year: userData.exp_year || "missing",
+                name: userData.card_holder_name || "missing",
+                address: userData.address_line1 || "missing"
+            });
+
+            if (!userData.card_number || userData.card_number.length < 15) {
+                throw new Error("Invalid card number");
+            }
+            
+            if (!userData.exp_month || !userData.exp_year) {
+                throw new Error("Invalid expiration date");
+            }
+
+            const month = parseInt(userData.exp_month);
+            if (isNaN(month) || month < 1 || month > 12) {
+                throw new Error("Invalid expiration month");
+            }
+
+            const year = parseInt(userData.exp_year);
+            const currentYear = new Date().getFullYear();
+            if (isNaN(year) || year < currentYear) {
+                throw new Error("Invalid expiration year");
+            }
+
+            return true;
+        };
+
+        // Update the token creation part:
+        document.getElementById('complete-registration').addEventListener('click', async function() {
+            let userData;
+            try {
+                // Show loading modal before starting operations
+                document.getElementById('loadingOverlay').style.display = 'flex';
+                
+                // Get user data
+                userData = {
+                    firstName: localStorage.getItem('userFirstName'),
+                    lastName: localStorage.getItem('userLastName'),
+                    email: localStorage.getItem('userEmail'),
+                    password: localStorage.getItem('password'),
+                    phone: localStorage.getItem('userPhone'),
+                    studioName: localStorage.getItem('userStudioName'),
+                    industry: localStorage.getItem('userIndustry'),
+                    planId: localStorage.getItem('selectedPlan'),
+                    billingFrequency: localStorage.getItem('billingFrequency'),
+                    card_number: document.getElementById('card-number').value.replace(/\s+/g, ''),
+                    exp_month: document.getElementById('exp-date').value.split('/')[0].trim(),
+                    exp_year: '20' + document.getElementById('exp-date').value.split('/')[1].trim(),
+                    cvv: document.getElementById('cvv').value,
+                    card_holder_name: document.getElementById('card-holder-name').value,
+                    address_line1: document.getElementById('address-line1').value,
+                    city: document.getElementById('city').value,
+                    state: document.getElementById('state').value,
+                    zip: document.getElementById('zip').value,
+                    country: document.getElementById('country').value || "US"
+                };
+
+                console.log("🔍 Starting registration with data:", { 
+                    ...userData, 
+                    card_number: "****" + userData.card_number.slice(-4),
+                    cvv: "***"
+                });
+
+                // Validate card data and proceed with PayArc operations
+                validateCardData(userData);
+
+                const tokenData = {
+                    card_source: "INTERNET",
+                    card_number: userData.card_number.replace(/\s+/g, ""),
+                    exp_month: userData.exp_month.padStart(2, "0"),
+                    exp_year: userData.exp_year,
+                    cvv: userData.cvv,
+                    name: userData.card_holder_name,
+                    address_line1: userData.address_line1,
+                    city: userData.city,
+                    state_code: userData.state,
+                    zip: userData.zip,
+                    country_code: "US",
+                    test_mode: true,
+                    authorize_card: 1
+                };
+
+                console.log("Sending token request with data:", {
+                    ...tokenData,
+                    card_number: "****" + tokenData.card_number.slice(-4),
+                    cvv: "***"
+                });
+
+                const tokenResponse = await fetch(`${window.BASE_URL}/createToken`, {
+                    method: "POST",
+                    headers: { 
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+                    body: JSON.stringify(tokenData)
+                });
+
+                const tokenResult = await tokenResponse.json();
+                const tokenId = tokenResult.data?.data?.id;
+                
+                if (!tokenId) {
+                    throw new Error("Failed to create card token");
+                }
+
+                console.log("✅ Card token created:", tokenId);
+
+                // 2. Create Customer
+                const customerData = {
+                    email: userData.email,
+                    name: `${userData.firstName} ${userData.lastName}`,
+                    description: `${userData.studioName} - ${userData.industry}`,
+                    send_email_address: userData.email,
+                    phone: userData.phone.replace(/\D/g, ''),
+                    address_1: userData.address_line1,
+                    city: userData.city,
+                    state: userData.state,
+                    zip: userData.zip.toString(),
+                    country: "US",
+                    test_mode: true
+                };
+
+                // Remove empty fields
+                Object.keys(customerData).forEach(key => {
+                    if (!customerData[key] || customerData[key] === '') {
+                        delete customerData[key];
+                    }
+                });
+
+                console.log("📦 Creating customer with data:", {
+                    ...customerData,
+                    email: "****" + customerData.email.slice(-10) // Mask email in logs
+                });
+
+                const customerResponse = await fetch(`${window.BASE_URL}/createCustomer`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+                    body: JSON.stringify(customerData)
+                });
+
+                // Log the raw response for debugging
+                const customerResponseText = await customerResponse.text();
+                console.log("📦 Raw customer response:", customerResponseText);
+
+                let customerResult;
+                try {
+                    customerResult = JSON.parse(customerResponseText);
+                    console.log("📦 Parsed customer response:", customerResult);
+
+                    // The customer ID is in details.data.customer_id
+                    const customerId = (customerResult.details && 
+                                       customerResult.details.data && 
+                                       customerResult.details.data.customer_id) || 
+                                      customerResult.customer_id;
+
+                    if (!customerId) {
+                        console.error("Customer response structure:", customerResult);
+                        throw new Error("Could not find customer ID in response");
+                    }
+
+                    console.log("✅ Customer created with ID:", customerId);
+
+                    // 3. Attach Payment Source to Customer
+                    const attachSourceResponse = await fetch(`${window.BASE_URL}/attachPaymentSource`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Accept": "application/json"
+                        },
+                        body: JSON.stringify({
+                            customer_id: customerId,
+                            token_id: tokenId,
+                            test_mode: true
+                        })
+                    });
+
+                    const attachSourceResult = await attachSourceResponse.json();
+                    if (!attachSourceResult.success && attachSourceResponse.status !== 409) {
+                        throw new Error(attachSourceResult.error || "Failed to attach payment source");
+                    }
+                    console.log("✅ Payment source attached:", attachSourceResult);
+
+                    // 4. Create Subscription
+                    const subscriptionData = {
+                        customer_id: customerId,
+                        plan_id: PLAN_IDS[localStorage.getItem('planName')][localStorage.getItem('billingFrequency')],
+                        billing_cycle: getBillingCycle(localStorage.getItem('billingFrequency')),
+                        test_mode: true
+                    };
+
+                    console.log("📦 Creating subscription:", {
+                        ...subscriptionData,
+                        planName: localStorage.getItem('planName'),
+                        billingFrequency: localStorage.getItem('billingFrequency')
+                    });
+
+                    const subscriptionResponse = await fetch(`${window.BASE_URL}/createSubscription`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Accept": "application/json"
+                        },
+                        body: JSON.stringify(subscriptionData)
+                    });
+
+                    const subscriptionResult = await subscriptionResponse.json();
+                    if (!subscriptionResult.success) {
+                        throw new Error(subscriptionResult.error || "Failed to create subscription");
+                    }
+                    console.log("✅ Subscription created:", subscriptionResult);
+
+                    // Store PayArc IDs first
+                    localStorage.setItem("customerId", customerId);
+                    localStorage.setItem("subscriptionId", 
+                        subscriptionResult.data && 
+                        subscriptionResult.data.data && 
+                        subscriptionResult.data.data.subscription_id
+                    );
+
+                    // Now create Firebase user and studio document
+                    try {
+                        // Create Firebase user
+                        const userCredential = await firebase.auth().createUserWithEmailAndPassword(
+                            userData.email,
+                            userData.password
+                        );
+                        console.log("🌐 Firebase user created:", userCredential.user.uid);
+                        
+                        // Create studio document in Firestore
+                        const studioData = {
+                            AccountIsActive: true,
+                            CreatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            Industry: userData.industry,
+                            OwnerEmail: userData.email,
+                            OwnerFirstName: userData.firstName,
+                            OwnerLastName: userData.lastName,
+                            OwnerPhoneNumber: userData.phone,
+                            PayarcCustomerId: customerId,
+                            StudioName: userData.studioName,
+                            SubscriptionPlan: localStorage.getItem('planName'),
+                            // Add this new field:
+                            BillingPeriod: localStorage.getItem('billingFrequency')
+                        };
+
+                        // Add the studio document to Firestore
+                        const studioRef = await firebase.firestore().collection('Studios').add(studioData);
+                        const studioId = studioRef.id;
+
+                        console.log('🎯 Generated new Studio ID:', studioId);
+
+                        // Store in ALL possible places immediately after creation
+                        try {
+                            // 1. Store in localStorage
+                            localStorage.setItem('studioId', studioId);
+                            
+                            // 2. Store in sessionStorage
+                            sessionStorage.setItem('studioId', studioId);
+                            
+                            // 3. Store in registrationData
+                            const registrationData = {
+                                StudioId: studioId,
+                                OwnerName: `${userData.firstName} ${userData.lastName}`,
+                                OwnerEmail: userData.email,
+                                OwnerPhone: userData.phone,
+                                StudioName: userData.studioName
+                            };
+                            
+                            console.log('📦 Storing registration data:', registrationData);
+                            localStorage.setItem('registrationData', JSON.stringify(registrationData));
+                            
+                            console.log('✅ Successfully stored Studio ID in all locations:', {
+                                localStorage: localStorage.getItem('studioId'),
+                                sessionStorage: sessionStorage.getItem('studioId'),
+                                registrationData: JSON.parse(localStorage.getItem('registrationData'))?.StudioId
+                            });
+
+                        } catch (error) {
+                            console.error('❌ Error storing studioId:', error);
+                        }
+
+                        // Create all required subcollections without initial documents
+                        const subcollections = [
+                            'ClassTypes',
+                            'Balance',
+                            'Attendance',
+                            'Classes', 
+                            'Families',
+                            'Instructors',
+                            'Charges-Payments',
+                            'Communication',
+                            'Reports',
+                            'Costumes',
+                            'Settings',
+                            'Seasons',
+                            'Skills',
+                            'Students',
+                            'Policies',
+                            'PaymentProcessing',
+                            'StudioLocations',
+                            'TimeEntries',
+                            'Users'
+                        ];
+
+                        // Just create the subcollection references without adding documents
+                        for (const collection of subcollections) {
+                            // This creates the subcollection without adding any documents
+                            studioRef.collection(collection);
+                            console.log(`✅ Created ${collection} subcollection`);
+                        }
+
+                        // Create owner document in the Users subcollection of the studio
+                        const ownerData = {
+                            FirstName: userData.firstName,
+                            LastName: userData.lastName,
+                            Email: userData.email,
+                            Phone: userData.phone,
+                            Role: ['Owner', 'Director', 'Instructor'],
+                            Uid: userCredential.user.uid,
+                            CreatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        };
+
+                        // Add the owner document to the Users subcollection
+                        const ownerDoc = await studioRef.collection('Users').add(ownerData);
+                        console.log("✅ Owner document created in studio's Users subcollection");
+
+                        // Create instructor document in the Instructors subcollection
+                        const instructorData = {
+                            FirstName: userData.firstName,
+                            LastName: userData.lastName,
+                            Email: userData.email,
+                            Phone: userData.phone,
+                            FirebaseUserId: userCredential.user.uid,
+                            UserId: ownerDoc.id,  // Reference to the User document
+                            IsActive: true,
+                            PayRate: 0,  // Default pay rate of 0 for owner/director
+                            Classes: [],  // Empty array for future class assignments
+                            CreatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            UpdatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        };
+
+                        // Add the instructor document to the Instructors subcollection
+                        await studioRef.collection('Instructors').add(instructorData);
+                        console.log("✅ Owner added as instructor in studio's Instructors subcollection");
+
+                        // Hide loading overlay
+                        document.getElementById('loadingOverlay').style.display = 'none';
+
+                        // Update success overlay with details
+                        document.getElementById("successStudioName").textContent = userData.studioName;
+                        document.getElementById("successOwnerName").textContent = 
+                            `${userData.firstName} ${userData.lastName}`;
+                        document.getElementById("successOwnerEmail").textContent = userData.email;
+
+                        // Add subscription details to success overlay
+                        const successDetails = document.createElement("div");
+                        successDetails.innerHTML = `
+                            <div class="detail-row">
+                                <span class="detail-label">Studio ID:</span>
+                                <span>${studioId}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Plan:</span>
+                                <span>${localStorage.getItem("planName")}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Trial Period:</span>
+                                <span>30 Days</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">First Billing Date:</span>
+                                <span>${new Date(Date.now() + 30*24*60*60*1000).toLocaleDateString()}</span>
+                            </div>
+                        `;
+                        document.querySelector(".account-details").appendChild(successDetails);
+
+                        // Just show the success overlay
+                        document.getElementById("successOverlay").style.display = "flex";
+
+                        // Add click handler for the "Begin Onboarding" button
+                        document.querySelector(".start-onboarding-btn").addEventListener('click', function() {
+                            console.log('🔄 Begin Onboarding button clicked');
+                            console.log('📦 Current registrationData:', JSON.parse(localStorage.getItem('registrationData')));
+                            console.log('🔑 Current studioId in localStorage:', localStorage.getItem('studioId'));
+                            console.log('🔑 Current studioId in sessionStorage:', sessionStorage.getItem('studioId'));
+                            startOnboarding();
+                        });
+
+                    } catch (firebaseError) {
+                        console.error("❌ Firebase error:", firebaseError);
+                        // If Firebase operations fail, we should handle cleanup of PayArc resources
+                        alert(`Account creation failed: ${firebaseError.message}. Please contact support.`);
+                    }
+
+                } catch (error) {
+                    console.error("❌ Registration error:", error);
+                    alert(`Registration failed: ${error.message}`);
+                }
+
+            } catch (error) {
+                // Hide loading modal on error
+                document.getElementById('loadingOverlay').style.display = 'none';
+                console.error("❌ Registration error:", error);
+                alert(`Registration failed: ${error.message}`);
+            }
+        });
+
+        document.getElementById('backToPrevious').addEventListener('click', function(e) {
+            e.preventDefault();
+            const currentStep = document.querySelector('.step.active');
+            const currentStepNumber = parseInt(currentStep.id.replace('step', ''));
+            
+            if (currentStepNumber > 1) {
+                currentStep.classList.remove('active');
+                document.getElementById(`step${currentStepNumber - 1}`).classList.add('active');
+                updateStepIndicators(currentStepNumber - 1);
+                updateBackArrow(currentStepNumber - 1);
+            }
+        });
+
+        // Initialize the back arrow state
+        updateBackArrow(1);
+
+        function startOnboarding() {
+            // Get studioId from all possible sources
+            const registrationData = JSON.parse(localStorage.getItem('registrationData'));
+            const localStudioId = localStorage.getItem('studioId');
+            const sessionStudioId = sessionStorage.getItem('studioId');
+            
+            console.log('🔍 Checking all storage before redirect:');
+            console.log('- Registration Data:', registrationData);
+            console.log('- Local Storage studioId:', localStudioId);
+            console.log('- Session Storage studioId:', sessionStudioId);
+
+            // Use the first available studioId
+            const studioId = registrationData?.StudioId || localStudioId || sessionStudioId;
+            
+            if (!studioId) {
+                console.error('❌ No studio ID found in any storage');
+                alert('Error: Studio ID not found. Please contact support.');
+                return;
+            }
+
+            // Store in ALL possible places to be absolutely sure
+            try {
+                // 1. Store in localStorage
+                localStorage.setItem('studioId', studioId);
+                
+                // 2. Store in sessionStorage
+                sessionStorage.setItem('studioId', studioId);
+                
+                // 3. Ensure it's in registrationData
+                if (!registrationData?.StudioId) {
+                    const updatedRegData = { ...registrationData, StudioId: studioId };
+                    localStorage.setItem('registrationData', JSON.stringify(updatedRegData));
+                }
+
+                console.log('✅ Successfully stored Studio ID in all locations:', {
+                    localStorage: localStorage.getItem('studioId'),
+                    sessionStorage: sessionStorage.getItem('studioId'),
+                    registrationData: JSON.parse(localStorage.getItem('registrationData'))?.StudioId
+                });
+
+                // 4. Add to URL as a fallback
+                window.location.href = `onboarding.html?studioId=${studioId}`;
+                
+            } catch (error) {
+                console.error('❌ Error storing studioId:', error);
+                alert('Error storing studio ID. Please try again or contact support.');
+            }
+        }
+
+        function updateSelectedPlanInfo() {
+            const planName = localStorage.getItem('planName');
+            const planPrice = localStorage.getItem('planPrice');
+            const planFeatures = localStorage.getItem('planFeatures');
+            const billingFrequency = localStorage.getItem('billingFrequency');
+
+            const planInfo = document.getElementById('selected-plan-info');
+            const featuresList = planInfo.querySelector('.features-list');
+            const billingFrequencyDisplay = planInfo.querySelector('.billing-frequency-display');
+            const nextBillingDate = planInfo.querySelector('.next-billing-date');
+
+            // Set plan price
+            planInfo.querySelector('.plan-price').textContent = planPrice;
+
+            // Set billing frequency
+            billingFrequencyDisplay.textContent = billingFrequency.charAt(0).toUpperCase() + billingFrequency.slice(1);
+
+            // Set next billing date
+            const nextDate = new Date();
+            switch(billingFrequency) {
+                case 'monthly':
+                    nextDate.setMonth(nextDate.getMonth() + 1);
+                    break;
+                case 'quarterly':
+                    nextDate.setMonth(nextDate.getMonth() + 3);
+                    break;
+                case 'semi-annually':
+                    nextDate.setMonth(nextDate.getMonth() + 6);
+                    break;
+                case 'annually':
+                    nextDate.setFullYear(nextDate.getFullYear() + 1);
+                    break;
+            }
+            nextBillingDate.textContent = nextDate.toLocaleDateString();
+
+            // Parse and set features
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = planFeatures;
+            const features = Array.from(tempDiv.querySelectorAll('li')).map(li => li.textContent);
+            
+            featuresList.innerHTML = features.map(feature => `<li>${feature}</li>`).join('');
+
+            // Calculate and display the first billing date (30 days from today)
+            const firstBillingDate = new Date();
+            firstBillingDate.setDate(firstBillingDate.getDate() + 30);
+            
+            // Format the date as MM/DD/YYYY
+            const formattedDate = firstBillingDate.toLocaleDateString('en-US', {
+                month: '2-digit',
+                day: '2-digit',
+                year: 'numeric'
+            });
+            
+            document.getElementById('first-billing-date').textContent = formattedDate;
+        }
+
+        // Add new helper function if needed
+        function getBillingCycle(frequency) {
+            switch(frequency) {
+                case 'monthly': return 1;
+                case 'quarterly': return 3;
+                case 'semi-annually': return 6;
+                case 'annually': return 12;
+                default: return 1;
+            }
+        }
+
+        // Add these event listeners after your DOM is loaded
+        document.getElementById("card-number").addEventListener("input", function(e) {
+            // Remove any non-digits
+            let value = e.target.value.replace(/\D/g, "");
+            
+            // Add spaces every 4 digits
+            value = value.replace(/(\d{4})(?=\d)/g, "$1 ");
+            
+            // Limit to 19 characters (16 digits + 3 spaces)
+            value = value.substring(0, 19);
+            
+            e.target.value = value;
+        });
+
+        document.getElementById("exp-date").addEventListener("input", function(e) {
+            // Remove any non-digits
+            let value = e.target.value.replace(/\D/g, "");
+            
+            // Add slash after 2 digits
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + "/" + value.substring(2);
+            }
+            
+            // Limit to 5 characters (MM/YY)
+            value = value.substring(0, 5);
+            
+            e.target.value = value;
+        });
+
+        document.getElementById("cvv").addEventListener("input", function(e) {
+            // Remove any non-digits
+            let value = e.target.value.replace(/\D/g, "");
+            
+            // Limit to 4 digits
+            value = value.substring(0, 4);
+            
+            e.target.value = value;
+        });
+
+        // Password visibility toggle
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = input.nextElementSibling;
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        // Real-time password validation
+        function validatePasswordRequirements(password) {
+            return {
+                length: password.length >= 8,
+                upperCase: /[A-Z]/.test(password),
+                lowerCase: /[a-z]/.test(password),
+                number: /\d/.test(password),
+                special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+            };
+        }
+
+        function updateRequirementUI(elementId, isMet) {
+            const element = document.getElementById(elementId);
+            const icon = element.querySelector('i');
+            
+            if (isMet) {
+                element.classList.add('met');
+                icon.className = 'fas fa-check-circle';
+            } else {
+                element.classList.remove('met');
+                icon.className = 'fas fa-times-circle';
+            }
+        }
+
+        function checkPasswords() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const requirements = validatePasswordRequirements(password);
+            const passwordReqs = document.querySelector('.password-requirements');
+            
+            // Show requirements only when user starts typing password
+            if (password.length > 0) {
+                passwordReqs.style.display = 'block';
+            }
+
+            // Update each requirement UI
+            updateRequirementUI('length-req', requirements.length);
+            updateRequirementUI('uppercase-req', requirements.upperCase);
+            updateRequirementUI('lowercase-req', requirements.lowerCase);
+            updateRequirementUI('number-req', requirements.number);
+            updateRequirementUI('special-req', requirements.special);
+            
+            // Check if passwords match (only if both have values)
+            const doPasswordsMatch = password && confirmPassword && password === confirmPassword;
+            updateRequirementUI('match-req', doPasswordsMatch);
+            
+            // Check if all requirements are met
+            const allRequirementsMet = Object.values(requirements).every(req => req) && doPasswordsMatch;
+            
+            // Update input styling
+            const passwordInput = document.getElementById('password');
+            const confirmInput = document.getElementById('confirmPassword');
+            
+            if (allRequirementsMet) {
+                passwordInput.classList.add('valid');
+                confirmInput.classList.add('valid');
+                passwordReqs.style.display = 'none';
+            } else {
+                passwordInput.classList.remove('valid');
+                confirmInput.classList.remove('valid');
+            }
+        }
+
+        // Add event listeners for both password fields
+        document.getElementById('password').addEventListener('input', checkPasswords);
+        document.getElementById('confirmPassword').addEventListener('input', checkPasswords);
+    </script>
+
+    <div class="success-overlay" id="successOverlay">
+        <div class="success-container">
+            <img src="assets/ssdancerblue.svg" alt="Success" class="success-icon">
+            <h1>Registration Successful!</h1>
+            <p>Your Studio Sync account has been created successfully.</p>
+            
+            <div class="account-details">
+                <div class="detail-row">
+                    <span class="detail-label">Studio Name:</span>
+                    <span id="successStudioName"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Owner Name:</span>
+                    <span id="successOwnerName"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Email:</span>
+                    <span id="successOwnerEmail"></span>
+                </div>
+                <!-- Additional details will be added dynamically -->
+            </div>
+
+            <button onclick="startOnboarding()" class="start-onboarding-btn">Begin Onboarding</button>
+        </div>
+    </div>
+
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-container">
+            <div class="spinner"></div>
+            <h2>Processing Registration</h2>
+            <p>Please wait while we set up your account...</p>
+        </div>
+    </div>
+</body>
+</html>

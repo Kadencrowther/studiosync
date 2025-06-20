@@ -1,0 +1,116 @@
+
+        // Add this right after your Firebase initialization
+        firebase.auth().onAuthStateChanged(async function(user) {
+            if (user) {
+                try {
+                    // Get studio info from URL parameters
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const studioName = urlParams.get('studio');
+                    
+                    // Get studio ID from localStorage
+                    const studioId = localStorage.getItem('currentStudioId');
+                    if (!studioId) {
+                        throw new Error('No studio context found');
+                    }
+
+                    // Get studio data
+                    const studioDoc = await firebase.firestore()
+                        .collection('Studios')
+                        .doc(studioId)
+                        .get();
+
+                    if (!studioDoc.exists) {
+                        throw new Error('Studio not found');
+                    }
+
+                    const studioData = studioDoc.data();
+
+                    // Get user data
+                    const userDoc = await firebase.firestore()
+                        .collection('Studios')
+                        .doc(studioId)
+                        .collection('Users')
+                        .doc(user.uid)
+                        .get();
+
+                    let userData;
+                    if (userDoc.exists) {
+                        userData = userDoc.data();
+                    } else {
+                        // Check Instructors collection if not found in Users
+                        const instructorDoc = await firebase.firestore()
+                            .collection('Studios')
+                            .doc(studioId)
+                            .collection('Instructors')
+                            .doc(user.uid)
+                            .get();
+                        
+                        if (instructorDoc.exists) {
+                            userData = instructorDoc.data();
+                        } else {
+                            throw new Error('User data not found');
+                        }
+                    }
+
+                    // Update UI elements
+                    document.getElementById('userName').textContent = 
+                        `${userData.FirstName} ${userData.LastName}`;
+                    document.getElementById('userEmail').textContent = userData.Email;
+                    
+                    const roleElement = document.getElementById('userRole');
+                    if (userData.Role) {
+                        roleElement.textContent = userData.Role;
+                        roleElement.style.color = '#333333';
+                        roleElement.style.fontWeight = '700';
+                    } else {
+                        roleElement.textContent = 'No Role Assigned';
+                        roleElement.style.color = '#666666';
+                    }
+
+                    // Update studio branding
+                    const logoElement = document.getElementById('studio-logo');
+                    const nameElement = document.getElementById('studio-name');
+                    
+                    if (studioData.StudioLogo) {
+                        logoElement.src = studioData.StudioLogo;
+                        logoElement.style.display = 'block';
+                        nameElement.style.display = 'none';
+                    } else {
+                        logoElement.style.display = 'none';
+                        nameElement.textContent = studioData.StudioName;
+                        nameElement.style.display = 'block';
+                    }
+
+                    // Update page title
+                    document.title = `${studioData.StudioName} - Dashboard`;
+
+                    // Update studio colors
+                    if (studioData.PrimaryColor) {
+                        document.documentElement.style.setProperty('--primary-color', studioData.PrimaryColor);
+                    }
+                    if (studioData.SecondaryColor) {
+                        document.documentElement.style.setProperty('--secondary-color', studioData.SecondaryColor);
+                    }
+
+                } catch (error) {
+                    console.error('Error loading data:', error);
+                    window.location.href = '/studiologin.html';
+                }
+            } else {
+                // No user is signed in, redirect to login
+                window.location.href = '/studiologin.html';
+            }
+        });
+
+        // Add logout handler
+        document.getElementById('logoutButton').addEventListener('click', function() {
+            firebase.auth().signOut().then(() => {
+                // Clear studio context
+                localStorage.removeItem('currentStudioId');
+                localStorage.removeItem('currentStudioData');
+                // Redirect to login
+                window.location.href = '/studiologin.html';
+            }).catch((error) => {
+                console.error('Logout Error:', error);
+            });
+        });

@@ -1,0 +1,3494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>All Classes - Studio Sync</title>
+    <!-- Favicon -->
+    <link rel="icon" href="assets/ssdancer.svg" type="image/svg+xml">
+
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="css/styles.css" rel="stylesheet" />
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-...+..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Custom CSS for Modern Styling -->
+    <style>
+        :root {
+            --primary-color: #3DCED7;
+            --primary-hover: #36B8C0;
+            --secondary-color: #3A506B;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        #sidebar-wrapper {
+            background-color: var(--primary-color);
+            min-height: 100vh;
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-heading {
+            color: white;
+            background-color: var(--primary-color);
+            padding: 1.5rem 1rem;
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .list-group-item {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, padding 0.3s ease, transform 0.3s ease;
+            padding: 1rem 1.5rem;
+        }
+
+        .list-group-item:hover,
+        .list-group-item-action:focus {
+            background-color: var(--primary-hover);
+            color: white;
+            transform: translateX(5px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar {
+            background-color: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1rem 1.5rem;
+        }
+
+        .navbar .navbar-nav .nav-link {
+            color: #333;
+            transition: color 0.3s ease;
+        }
+
+        .navbar .navbar-nav .nav-link:hover {
+            color: var(--primary-color);
+        }
+
+        .container-fluid {
+            background-color: #fff;
+            color: #525f7f;
+            padding: 2rem;
+        }
+
+        /* Modernized Dashboard Content */
+        .dashboard-insights {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .dashboard-insights .insight-box {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .insight-box h3 {
+            font-size: 1.2rem;
+            color: #525f7f;
+            margin-bottom: 0.5rem;
+        }
+
+        .insight-box p {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .progress-ring {
+            margin-top: 20px;
+        }
+
+        /* Schedule Table */
+        .schedule-table {
+            margin-top: 2rem;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .schedule-table th,
+        .schedule-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .schedule-table th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .schedule-table td {
+            background-color: #f9f9f9;
+        }
+
+        /* New styles for the pie chart and layout */
+        .dashboard-container {
+            display: flex;
+            gap: 1.5rem; /* Match the gap of dashboard-insights */
+        }
+
+        .pie-chart-container {
+            flex: 0.8;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: calc(100% - 3rem); /* Subtract padding to match KPI cards exactly */
+            transition: box-shadow 0.3s ease;
+        }
+
+        .pie-chart-container:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .chart-wrapper {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .capacity-input-container {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            margin-top: 0.5rem;
+        }
+
+        .capacity-input-container label {
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
+            color: #525f7f;
+        }
+
+        #capacityInput {
+            width: 60px;
+            padding: 0.3rem 0.5rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: #525f7f;
+            transition: all 0.3s ease;
+            background-color: #f8f9fa;
+        }
+
+        #capacityInput:focus {
+            outline: none;
+            border-color: #3DCED7;
+            box-shadow: 0 0 0 2px rgba(61, 206, 215, 0.1);
+            background-color: #ffffff;
+        }
+
+        #capacityInput::-webkit-inner-spin-button,
+        #capacityInput::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        #capacityInput {
+            -moz-appearance: textfield;
+        }
+
+        .kpi-container {
+            flex: 2;
+        }
+
+        .dashboard-insights {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            height: 100%;
+        }
+
+        .insight-box {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* Payment form styles */
+        #payment-form {
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        #card-element {
+            margin-bottom: 20px;
+        }
+
+        #submit-payment {
+            background-color: #3DCED7;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #submit-payment:hover {
+            background-color: #36B8C0;
+        }
+
+        #submit-payment:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        /* Subscription form styles */
+        .subscription-form {
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .subscription-form input, .subscription-form select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .subscription-form button {
+            background-color: #3DCED7;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .subscription-form button:hover {
+            background-color: #36B8C0;
+        }
+
+        .navbar-nav .dropdown-menu {
+            min-width: 250px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            padding: 0;
+        }
+
+        .navbar-nav .dropdown-item {
+            padding: 12px 20px;
+            color: #333;
+            transition: background-color 0.3s ease;
+        }
+
+        .navbar-nav .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .navbar-nav .dropdown-divider {
+            margin: 0;
+            border-top-color: #e9ecef;
+        }
+
+        .navbar-nav .dropdown-header {
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #6c757d;
+            background-color: #f8f9fa;
+        }
+
+        .navbar-nav .dropdown-item-text {
+            padding: 12px 20px;
+            color: #6c757d;
+        }
+
+        .fa-user-circle {
+            font-size: 1.8em; /* Slightly smaller profile icon */
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            padding: 0.5rem 0.5rem;
+        }
+
+        .fa-bell {
+            font-size: 1.2em;
+            position: relative;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            font-size: 0.6em;
+            background-color: #dc3545;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 5px;
+            font-weight: bold;
+            min-width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+        }
+
+        .notification-icon {
+            margin-right: 15px;
+            font-size: 1.2em;
+            color: #3DCED7;
+        }
+
+        .notification-content {
+            flex-grow: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .notification-subtitle {
+            font-size: 0.85em;
+            color: #6c757d;
+        }
+
+        .navbar-nav .dropdown-toggle::after {
+            display: none;
+        }
+
+        @media (max-width: 991.98px) {
+            .navbar-brand-center {
+                position: static;
+                transform: none;
+            }
+
+            .navbar-nav {
+                flex-direction: row;
+            }
+
+            .nav-item.dropdown {
+                position: static;
+            }
+
+            .dropdown-menu {
+                left: 0;
+                right: 0;
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 575.98px) {
+            .navbar-brand-center {
+                max-width: 200px;
+                margin: 0 auto;
+            }
+
+            #studio-logo, #studio-name {
+                max-width: 100%;
+            }
+
+            .navbar-nav {
+                justify-content: center;
+            }
+        }
+
+        /* Add styles for the page content wrapper */
+        #page-content-wrapper {
+            flex: 1;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        /* Update the wrapper styles */
+        #wrapper {
+            display: flex;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* Sidebar overlay styles */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1045;
+            transition: opacity 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            #sidebar-wrapper {
+                margin-left: -250px;
+                transition: margin 0.3s ease-out;
+                position: fixed;
+                z-index: 1050;
+                height: 100vh;
+            }
+
+            .sidebar-overlay.show {
+                display: block;
+            }
+
+            #wrapper.toggled #sidebar-wrapper {
+                margin-left: 0;
+            }
+        }
+
+        /* Wrapper transitions */
+        #wrapper.toggled #sidebar-wrapper {
+            margin-left: -250px;
+        }
+
+        #wrapper.toggled #page-content-wrapper {
+            margin-left: 0;
+        }
+
+        /* Update the toggle button styles */
+        #sidebarToggle {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        #sidebarToggle:hover {
+            background-color: var(--primary-hover);
+            border-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Update other elements that use the primary color */
+        .navbar .navbar-nav .nav-link:hover {
+            color: var(--primary-color);
+        }
+
+        .insight-box p {
+            color: var(--primary-color);
+        }
+
+        .schedule-table th {
+            background-color: var(--primary-color);
+        }
+
+        /* Loading Overlay Styles */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .loading-content {
+            text-align: center;
+        }
+
+        .loading-text {
+            margin-top: 20px;
+        }
+
+        .loading-text h2 {
+            color: #ffffff;
+            margin-bottom: 10px;
+            transition: color 0.5s ease;
+        }
+
+        .loading-text p {
+            color: #ffffff;
+            font-size: 1.1em;
+            transition: color 0.5s ease;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #ffffff;
+            border-radius: 50%;
+            margin: 0 auto;
+            animation: spin 1s linear infinite;
+            transition: border-top-color 0.5s ease;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-overlay.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* User Avatar Styles */
+        .user-avatar {
+            width: 38px;
+            height: 38px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .initials {
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Profile Dropdown Styles */
+        .dropdown-menu .dropdown-item-text#studioNameDisplay {
+            padding: 0.3rem 1.5rem;
+            margin: 0;
+            color: #333333;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .dropdown-menu .dropdown-item-text#userRole {
+            padding: 0.2rem 1.5rem;
+            margin: 0;
+            color: #666;
+            font-size: 0.85rem;
+            font-weight: 400;
+        }
+
+        /* User Profile Styles */
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 0.75rem);
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+            min-width: 280px;
+            display: none;
+            z-index: 1000;
+            border: 1px solid rgba(0,0,0,0.08);
+            position: fixed;
+            margin-right: 1rem;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 991.98px) {
+            .dashboard-container {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .pie-chart-container {
+                width: 100%;
+                min-height: 300px;
+            }
+
+            .kpi-container {
+                width: 100%;
+            }
+
+            .dashboard-insights {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+
+            .insight-box {
+                padding: 1rem;
+            }
+
+            .insight-box h3 {
+                font-size: 1rem;
+            }
+
+            .insight-box p {
+                font-size: 2rem;
+            }
+
+            .schedule-table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .schedule-table th,
+            .schedule-table td {
+                padding: 8px;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 575.98px) {
+            .dashboard-insights {
+                grid-template-columns: 1fr;
+            }
+
+            .container-fluid {
+                padding: 1rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            .pie-chart-container {
+                min-height: 250px;
+            }
+
+            .insight-box {
+                margin-bottom: 0.5rem;
+            }
+
+            .schedule-table th,
+            .schedule-table td {
+                padding: 6px;
+                font-size: 0.85rem;
+            }
+
+            #wrapper {
+                min-height: 100vh;
+                overflow-x: hidden;
+                position: relative;
+            }
+
+            #sidebar-wrapper {
+                margin-left: -250px;
+                transition: margin 0.25s ease-out;
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                z-index: 1050;
+                width: 250px;
+            }
+
+            #wrapper.toggled #sidebar-wrapper {
+                margin-left: 0;
+            }
+
+            #page-content-wrapper {
+                min-width: 100vw;
+                margin-left: 0;
+                transition: margin 0.25s ease-out;
+            }
+
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 1045;
+            }
+
+            #wrapper.toggled .sidebar-overlay {
+                display: block;
+            }
+
+            /* Adjust navbar for mobile */
+            .navbar {
+                padding: 0.5rem;
+            }
+
+            .navbar-brand-center {
+                max-width: 150px;
+            }
+
+            #studio-logo {
+                max-height: 80px;
+            }
+
+            #studio-name {
+                font-size: 1.2rem;
+            }
+
+            #sidebarToggle {
+                padding: 0.375rem 0.75rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Ensure content doesn't overflow on very small devices */
+        @media (max-width: 360px) {
+            .container-fluid {
+                padding: 0.75rem;
+            }
+
+            .insight-box {
+                padding: 0.75rem;
+            }
+
+            .insight-box h3 {
+                font-size: 0.9rem;
+            }
+
+            .insight-box p {
+                font-size: 1.75rem;
+            }
+
+            .navbar-brand-center {
+                max-width: 120px;
+            }
+
+            #studio-name {
+                font-size: 1rem;
+            }
+        }
+
+        /* Add these new styles for the All Classes page */
+        .table-container {
+            margin-top: 20px;
+        }
+        .btn-create-class {
+            margin-bottom: 20px;
+        }
+
+        /* Reduced font size for tooltips */
+        .tooltip-inner.small {
+            font-size: 0.7rem;
+            padding: 0.15rem 0.3rem;
+        }
+
+        /* Reduced arrow size for tooltips */
+        .tooltip .arrow::before {
+            border-width: 0.3rem 0.3rem 0;
+        }
+
+        /* Add this to your existing styles or in a <style> tag in the head */
+        #classesTable tbody tr.selected {
+            background-color: #e6f2ff !important;
+        }
+        .btn-warning {
+            background-color: #ffe699;
+            border-color: #ffd966;
+            color: #000;
+        }
+        .btn-warning:hover {
+            background-color: #ffd966;
+            border-color: #ffc933;
+            color: #000;
+        }
+        .btn-warning.text-white {
+            color: white !important;
+        }
+        #editClassBtn, #deleteClassBtn {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            border-radius: 0.2rem;
+        }
+
+      
+        /* Add these new styles for responsiveness */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        #classesTable {
+            width: 100% !important;
+        }
+
+        @media (max-width: 992px) {
+            #classesTable {
+                font-size: 0.85rem;
+            }
+
+            #classesTable th,
+            #classesTable td {
+                padding: 0.5rem 0.3rem;
+            }
+
+            #classesTable th {
+                white-space: nowrap;
+            }
+        }
+
+        /* Form validation styles */
+        .is-invalid {
+            border-color: #dc3545;
+        }
+
+        .btn-group-sm.is-invalid {
+            outline: 2px solid #dc3545;
+            border-radius: 0.25rem;
+        }
+
+        /* Add these styles to your existing styles section */
+        .modal-lg {
+            max-width: 800px;
+        }
+
+        .btn-check:checked + .btn-outline-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-outline-primary {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--primary-hover);
+            border-color: var(--primary-hover);
+            color: white;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #525f7f;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(61, 206, 215, 0.25);
+        }
+
+        #addClassModal .modal-content {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        #addClassModal .modal-header {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 15px 15px 0 0;
+        }
+
+        #addClassModal .modal-footer {
+            border-top: 1px solid #eee;
+        }
+
+        #addClassModal .btn-close {
+            color: white;
+        }
+
+        #saveClassBtn {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        #saveClassBtn:hover {
+            background-color: var(--primary-hover);
+            border-color: var(--primary-hover);
+        }
+
+        .form-check-input:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .btn-group {
+                flex-wrap: wrap;
+            }
+            
+            .btn-group label {
+                flex: 1 0 14.285%;
+            }
+        }
+
+        /* Add these new styles for modern DataTable appearance after your existing styles */
+        .table-responsive {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+            display: none; /* Initially hidden until data loads */
+            width: 100%; /* Ensure full width */
+            margin: 0; /* Remove any margin */
+        }
+
+        #studentsTable {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100% !important; /* Force full width */
+            border: none;
+            table-layout: fixed; /* This helps with column width distribution */
+        }
+
+        /* Adjust column widths */
+        #studentsTable th:first-child,
+        #studentsTable td:first-child {
+            width: 50px; /* Checkbox column */
+        }
+
+        #studentsTable th,
+        #studentsTable td {
+            padding: 1rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Make the table scroll horizontally on small screens */
+        @media (max-width: 992px) {
+            .table-responsive {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            #studentsTable {
+                min-width: 800px; /* Minimum width to prevent squishing */
+            }
+        }
+
+        /* Update shimmer table to match */
+        .shimmer-table {
+            width: 100%;
+            margin: 0;
+        }
+
+        .shimmer-table table {
+            width: 100% !important;
+            table-layout: fixed;
+        }
+
+        #studentsTable thead th {
+            background-color: #f8f9fa;
+            border: none;
+            padding: 1rem;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        #studentsTable tbody td {
+            border: none;
+            padding: 1rem;
+            vertical-align: middle;
+        }
+
+        #studentsTable tbody tr {
+            transition: all 0.2s ease;
+            border-bottom: 1px solid #f1f1f1;
+        }
+
+        #studentsTable tbody tr:hover {
+            background-color: #f8f9fa;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Shimmer loading effect */
+        .shimmer-table {
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+            display: none;
+        }
+
+        .shimmer-row {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #f1f1f1;
+        }
+
+        .shimmer-cell {
+            height: 20px;
+            background: #f6f7f8;
+            border-radius: 4px;
+            margin-right: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .shimmer-cell::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.6) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        /* DataTables specific styling */
+        .dataTables_wrapper .dataTables_filter input {
+            border: 1px solid #e0e0e0;
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            margin-left: 0.5rem;
+        }
+
+        .dataTables_wrapper .dataTables_length select {
+            border: 1px solid #e0e0e0;
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            margin: 0 0.5rem;
+        }
+
+        /* Add these styles to your existing styles */
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.show.active {
+            display: block !important;
+        }
+
+        #studentClassesTable {
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        #studentClassesTable tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+        #studentClassesTable tbody tr:hover {
+            background-color: rgba(0,0,0,0.05);
+        }
+
+        /* Add this to your existing styles */
+        .btn-custom-success {
+            background-color: #10B981;
+            border-color: #10B981;
+            color: white;
+        }
+
+        .btn-custom-success:hover {
+            background-color: #059669;
+            border-color: #059669;
+            color: white;
+        }
+    </style>
+    <!-- Stripe JS -->
+    <script src="https://js.stripe.com/v3/"></script>
+    <!-- Payarc JS -->
+    <script>
+        function loadPayarcScript(src) {
+            var script = document.createElement('script');
+            script.src = src;
+            script.onerror = function() {
+                if (src === 'https://js.payarc.com/v1/payarc.js') {
+                    console.warn('CDN failed, falling back to local copy');
+                    loadPayarcScript('/path/to/local/payarc.js');
+                } else {
+                    console.error('Failed to load Payarc library');
+                }
+            };
+            document.head.appendChild(script);
+        }
+        loadPayarcScript('https://js.payarc.com/v1/payarc.js');
+    </script>
+    <!-- Add this in the head section if not already present -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <div class="loading-text">
+                <h2>Loading</h2>
+                <p id="loadingStatus">Loading studio branding...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex" id="wrapper">
+        <!-- Sidebar-->
+        <div class="border-end" id="sidebar-wrapper">
+            <div class="sidebar-heading">
+                <img src="assets/StudioSyncTransparent.svg" alt="Studio Sync Logo" style="width: 150px; height: auto;">
+            </div>
+            <div class="list-group list-group-flush">
+                <a class="list-group-item list-group-item-action p-3" href="dashboard.html">
+                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="class-calendar.html">
+                    <i class="fas fa-calendar-alt me-2"></i>Class Calendar
+                </a>
+                <a class="list-group-item list-group-item-action p-3 d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#classesDropdown" role="button" aria-expanded="false" aria-controls="classesDropdown">
+                    <span><i class="fas fa-chalkboard-teacher me-2"></i>Classes</span>
+                    <i class="fas fa-chevron-down"></i>
+                </a>
+                <div class="collapse" id="classesDropdown">
+                    <a class="list-group-item list-group-item-action ps-5" href="allclasses.html">
+                        <i class="fas fa-list me-2"></i>All Classes
+                    </a>
+                    <a class="list-group-item list-group-item-action ps-5" href="recreational.html">
+                        <i class="fas fa-dumbbell me-2"></i>Recreational
+                    </a>
+                    <a class="list-group-item list-group-item-action ps-5" href="team.html">
+                        <i class="fas fa-users me-2"></i>Team
+                    </a>
+                    <a class="list-group-item list-group-item-action ps-5" href="soloduettrio.html">
+                        <i class="fas fa-user-friends me-2"></i>Solo/Duet/Trio
+                    </a>
+                </div>
+                <a class="list-group-item list-group-item-action p-3" href="families.html">
+                    <i class="fas fa-home me-2"></i>Families
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="students.html">
+                    <i class="fas fa-user-graduate me-2"></i>Students
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="instructors.html">
+                    <i class="fas fa-chalkboard-teacher me-2"></i>Instructors
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="costumes.html">
+                    <i class="fas fa-tshirt me-2"></i>Costumes
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="communication.html">
+                    <i class="fas fa-comments me-2"></i>Communication
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="charges-payments.html">
+                    <i class="fas fa-dollar-sign me-2"></i>Charges/Payments
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="reports.html">
+                    <i class="fas fa-chart-bar me-2"></i>Reports
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="settings.html">
+                    <i class="fas fa-cog me-2"></i>Settings
+                </a>
+            </div>
+        </div>
+
+        <!-- Page content wrapper-->
+        <div id="page-content-wrapper">
+            <!-- Top navigation-->
+            <nav class="navbar navbar-expand-lg navbar-light border-bottom">
+                <div class="container-fluid">
+                    <button class="btn btn-primary" id="sidebarToggle" style="width: 100px;" data-bs-toggle="tooltip" data-bs-placement="right" title="Toggle Menu" data-bs-trigger="hover focus">
+                        <i class="fas fa-bars"></i>
+                    </button>
+
+                    <!-- Centered Logo -->
+                    <div class="navbar-brand-center">
+                        <img id="studio-logo" src="" alt="Studio Logo" style="max-height: 120px; max-width: 240px; display: none;">
+                        <span id="studio-name" style="font-size: 1.5rem; font-weight: bold; color: #3DCED7;"></span>
+                    </div>
+
+                    <!-- Notifications and Profile Icons -->
+                    <div class="navbar-nav ms-auto d-flex align-items-center">
+                        <!-- Profile Icon Dropdown -->
+                        <div class="nav-item dropdown">
+                            <a class="nav-link" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <div class="user-avatar">
+                                    <span class="initials"></span>
+                                </div>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                                <li><h6 class="dropdown-header" id="userName" style="font-size: 1.2rem; font-weight: 700; color: #333333;">User Name</h6></li>
+                                <li><p class="dropdown-item-text" id="userEmail" style="font-size: 0.95rem; font-weight: 400; color: #333333;">user@example.com</p></li>
+                                <li><p class="dropdown-item-text" id="studioNameDisplay" style="font-size: 1.1rem; font-weight: 600; color: #333333;">Studio Name</p></li>
+                                <li><p class="dropdown-item-text" id="userRole" style="font-size: 0.85rem; font-weight: 400; color: #333333;">Role</p></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="settings.html"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                                <li><a class="dropdown-item" href="account.html"><i class="fas fa-user-cog me-2"></i>Account</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#" id="logoutButton"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Page content-->
+            <div class="container-fluid">
+                <h1 class="mt-4">Students</h1>
+                <div class="mb-3 d-flex align-items-center justify-content-between">
+                    <div>
+                        <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#addStudentModal">
+                            <i class="fas fa-plus"></i> Add New Student
+                        </button>
+                        <button id="editStudentBtn" class="btn btn-sm btn-warning text-white me-2" disabled>
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button id="deleteStudentBtn" class="btn btn-sm btn-danger me-2" disabled>
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                    <div>
+                        <button id="studentRegistrationBtn" class="btn btn-custom-success">
+                            <i class="fas fa-user-plus"></i> Student Registration
+                        </button>
+                    </div>
+                </div>
+                <!-- Add this before your existing table-responsive div -->
+                <div id="tableShimmer" class="shimmer-table">
+                    <div class="dataTables_wrapper dt-bootstrap5">
+                        <!-- DataTable Controls -->
+                        <div class="row mb-3">
+                            <!-- Length Control -->
+                            <div class="col-sm-12 col-md-6">
+                                <div class="dataTables_length" id="studentsTable_length">
+                                    <label>Show</label>
+                                    <div class="shimmer-content" style="display: block; width: 75px; height: 38px; border: 1px solid #e0e0e0; border-radius: 0.5rem; margin-top: 0.5rem;"></div>
+                                    <label style="margin-top: 0.5rem;">entries</label>
+                                </div>
+                            </div>
+                            <!-- Search Control -->
+                            <div class="col-sm-12 col-md-6">
+                                <div class="dataTables_filter" id="studentsTable_filter">
+                                    <label style="display: block;">Search:</label>
+                                    <div class="shimmer-content" style="display: block; width: 198px; height: 38px; border: 1px solid #e0e0e0; border-radius: 0.5rem; margin-top: 0.5rem;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Table -->
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <table class="table table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 30px;"><div class="shimmer-checkbox"></div></th>
+                                            <th style="width: 20%;">First Name</th>
+                                            <th style="width: 20%;">Last Name</th>
+                                            <th style="width: 10%;">Age</th>
+                                            <th style="width: 25%;">Family Name</th>
+                                            <th style="width: 25%;">Classes</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- 5 shimmer rows -->
+                                        <tr>
+                                            <td><div class="shimmer-checkbox"></div></td>
+                                            <td><div class="shimmer-content" style="width: 90%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 90%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 50%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 85%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 80%;"></div></td>
+                                        </tr>
+                                        <!-- Repeat the above row 4 more times -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Pagination -->
+                        <div class="row">
+                            <div class="col-sm-12 col-md-5">
+                                <div class="dataTables_info">
+                                    <div class="shimmer-content" style="width: 200px;"></div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-7">
+                                <div class="dataTables_paginate paging_simple_numbers d-flex justify-content-md-end">
+                                    <div class="shimmer-content" style="width: 250px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table id="studentsTable" class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAll"></th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Age</th>
+                                <th>Family Name</th>
+                                <th>Classes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Table body will be populated by DataTables -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Add/Edit Student Modal -->
+                <div class="modal fade" id="addStudentModal" tabindex="-1" aria-labelledby="addStudentModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="addStudentModalLabel">New Student</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="addStudentForm">
+                                    <!-- Basic Information -->
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="firstName" class="form-label">Student's First Name *</label>
+                                            <input type="text" class="form-control" id="firstName" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="lastName" class="form-label">Student's Last Name *</label>
+                                            <input type="text" class="form-control" id="lastName" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="dateOfBirth" class="form-label">Birthday *</label>
+                                            <input type="date" class="form-control" id="dateOfBirth" required 
+                                                   placeholder="mm/dd/yyyy">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="gender" class="form-label">Gender *</label>
+                                            <select class="form-select" id="gender" required>
+                                                <option value="">Select Gender</option>
+                                                <option value="male">Male</option>
+                                                <option value="female">Female</option>
+                                                <option value="other">Other</option>
+                                                <option value="prefer-not">Prefer not to say</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="medicalInfo" class="form-label">Any medical information we should know</label>
+                                        <textarea class="form-control" id="medicalInfo" rows="3" 
+                                                placeholder="Enter any medical conditions, allergies, or other important health information"></textarea>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="skillLevel" class="form-label">Skill Level *</label>
+                                            <select class="form-select" id="skillLevel" required>
+                                                <option value="">Select Skill Level</option>
+                                                <option value="beginner">Beginner</option>
+                                                <option value="intermediate">Intermediate</option>
+                                                <option value="advanced">Advanced</option>
+                                                <option value="professional">Professional</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="studentPhoto" class="form-label">Student Photo</label>
+                                            <input type="file" class="form-control" id="studentPhoto" 
+                                                   accept="image/*">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-12">
+                                            <label for="familySearch" class="form-label">Search Family</label>
+                                            <input type="text" class="form-control mb-2" id="familySearch" placeholder="Search for a family...">
+                                            <label for="family" class="form-label">Family *</label>
+                                            <select class="form-select" id="family" required>
+                                                <option value="">Select Family</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="classSearch" class="form-label">Search Classes</label>
+                                        <input type="text" class="form-control mb-2" id="classSearch" placeholder="Search for classes...">
+                                        <label class="form-label">Classes</label>
+                                        <div id="classesCheckboxContainer" class="border rounded p-3" style="max-height: 200px; overflow-y: auto;">
+                                            <!-- Checkboxes will be populated here -->
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-primary" id="saveStudentBtn">Save Student</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Delete Confirmation Modal -->
+                <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deleteConfirmModalLabel">Confirm Delete</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Are you sure you want to delete the following students?</p>
+                                <ul id="deleteStudentList" class="list-unstyled">
+                                    <!-- Student names will be inserted here -->
+                                </ul>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap core JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Core theme JS-->
+    <script src="js/scripts.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const wrapper = document.getElementById('wrapper');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const overlay = document.querySelector('.sidebar-overlay');
+
+            function toggleSidebar(e) {
+                if (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                
+                wrapper.classList.toggle('toggled');
+                
+                if (window.innerWidth <= 768) {
+                    if (wrapper.classList.contains('toggled')) {
+                        overlay.classList.add('show');
+                    } else {
+                        overlay.classList.remove('show');
+                    }
+                }
+            }
+
+            // Toggle button click handler
+            sidebarToggle.addEventListener('click', toggleSidebar);
+
+            // Overlay click handler
+            overlay.addEventListener('click', toggleSidebar);
+
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 768) {
+                    overlay.classList.remove('show');
+                }
+            });
+        });
+    </script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Enrollment chart
+        const ctx = document.getElementById('enrollmentChart').getContext('2d');
+        let enrollmentChart;
+
+        function getColor(percentage) {
+            // Ensure the percentage is between 0 and 100
+            percentage = Math.max(0, Math.min(100, percentage));
+            
+            if (percentage <= 50) {
+                // Vibrant Red (220,55,55) to Muted Yellow (220,200,110)
+                const g = Math.round(55 + (145 * (percentage / 50)));
+                const b = Math.round(55 + (55 * (percentage / 50)));
+                return `rgb(220, ${g}, ${b})`;
+            } else {
+                // Muted Yellow (220,200,110) to Muted Green (110,200,110)
+                const r = Math.round(220 - (110 * ((percentage - 50) / 50)));
+                return `rgb(${r}, 200, 110)`;
+            }
+        }
+
+        function updateChart(enrolled, capacity) {
+            if (enrollmentChart) {
+                enrollmentChart.destroy();
+            }
+
+            const percentageFilled = Math.round((enrolled / capacity) * 100);
+            const filledColor = getColor(percentageFilled);
+
+            enrollmentChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Enrolled', 'Available'],
+                    datasets: [{
+                        data: [enrolled, Math.max(0, capacity - enrolled)],
+                        backgroundColor: [filledColor, '#E0E0E0']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '75%',
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label;
+                                    const value = context.raw;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${value} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                },
+                plugins: [{
+                    id: 'centerText',
+                    afterDraw: (chart) => {
+                        const width = chart.width;
+                        const height = chart.height;
+                        const ctx = chart.ctx;
+
+                        ctx.restore();
+                        ctx.font = 'bold 32px Arial';
+                        ctx.textBaseline = 'middle';
+                        ctx.textAlign = 'center';
+                        ctx.fillStyle = filledColor;
+
+                        const text = `${percentageFilled}%`;
+                        const textX = width / 2;
+                        const textY = height / 2;
+
+                        ctx.fillText(text, textX, textY);
+
+                        ctx.font = '16px Arial';
+                        ctx.fillStyle = '#525f7f';
+                        ctx.fillText('Capacity', textX, textY + 30);
+
+                        ctx.save();
+                    }
+                }]
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const enrolledStudents = 267; // Get this value from your KPI card
+            
+            // Delay chart initialization by 0.9 seconds
+            setTimeout(() => {
+                updateChart(enrolledStudents, 300);
+            }, 900);  // 900 milliseconds = 0.9 seconds
+
+            // Keep the existing capacity input listener
+            const capacityInput = document.getElementById('capacityInput');
+            capacityInput.addEventListener('input', function() {
+                const capacity = parseInt(this.value) || 1;
+                updateChart(enrolledStudents, capacity);
+            });
+        });
+    </script>
+
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+
+    <script>
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDRSW3u6gJSs98Z2Mkp5DYSC__ibDXXHAE",
+            authDomain: "studiosync-af73d.firebaseapp.com",
+            projectId: "studiosync-af73d",
+            storageBucket: "studiosync-af73d.appspot.com",
+            messagingSenderId: "172555302276",
+            appId: "1:172555302276:web:55b661f9849441e2de59d1",
+            measurementId: "G-EK7EFQGMSG"
+        };
+        firebase.initializeApp(firebaseConfig);
+
+        // Function to apply studio branding colors
+        function applyStudioBranding(studioData) {
+            console.log('🎨 Applying studio branding colors:', {
+                PrimaryColor: studioData.PrimaryColor,
+                SecondaryColor: studioData.SecondaryColor
+            });
+
+            const primaryColor = studioData.PrimaryColor || '#3DCED7';
+            const secondaryColor = studioData.SecondaryColor || '#3A506B';
+
+            // Update CSS variables for the sidebar and related elements
+            document.documentElement.style.setProperty('--primary-color', primaryColor);
+            document.documentElement.style.setProperty('--primary-hover', adjustColor(primaryColor, -10));
+            document.documentElement.style.setProperty('--secondary-color', secondaryColor);
+
+            // Update loading overlay elements with branded colors
+            const loadingTitle = document.querySelector('.loading-text h2');
+            const loadingText = document.querySelector('.loading-text p');
+            const spinner = document.querySelector('.spinner');
+
+            if (loadingTitle) loadingTitle.style.color = primaryColor;
+            if (loadingText) loadingText.style.color = secondaryColor;
+            if (spinner) spinner.style.borderTopColor = primaryColor;
+        }
+
+        // Helper function to adjust color brightness
+        function adjustColor(color, percent) {
+            const num = parseInt(color.replace('#', ''), 16);
+            const amt = Math.round(2.55 * percent);
+            const R = (num >> 16) + amt;
+            const G = (num >> 8 & 0x00FF) + amt;
+            const B = (num & 0x0000FF) + amt;
+            return '#' + (
+                0x1000000 +
+                (R < 255 ? (R < 1 ? 0 : R) : 255) * 0x10000 +
+                (G < 255 ? (G < 1 ? 0 : G) : 255) * 0x100 +
+                (B < 255 ? (B < 1 ? 0 : B) : 255)
+            ).toString(16).slice(1);
+        }
+
+        // Function to get current user data
+        async function getCurrentUserData() {
+            const loadingStatus = document.getElementById('loadingStatus');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+
+            try {
+                const user = await new Promise((resolve) => {
+                    firebase.auth().onAuthStateChanged((user) => {
+                        if (user) {
+                            loadingStatus.textContent = "Authenticating user...";
+                            resolve(user);
+                        } else {
+                            console.log('No user signed in');
+                            window.location.href = '/studiologin.html';
+                        }
+                    });
+                });
+
+                const studioId = localStorage.getItem('currentStudioId');
+                const studioData = JSON.parse(localStorage.getItem('currentStudioData'));
+                const userDocId = localStorage.getItem('userDocId');
+
+                loadingStatus.textContent = "Loading studio branding...";
+                
+                if (studioData) {
+                    applyStudioBranding(studioData);
+                }
+
+                loadingStatus.textContent = "Fetching user data...";
+
+                try {
+                    const userDoc = await firebase.firestore()
+                        .collection('Studios')
+                        .doc(studioId)
+                        .collection('Users')
+                        .doc(userDocId)
+                        .get();
+
+                    const instructorDoc = !userDoc.exists ? await firebase.firestore()
+                        .collection('Studios')
+                        .doc(studioId)
+                        .collection('Instructors')
+                        .doc(user.uid)
+                        .get() : null;
+
+                    let userData;
+                    let collectionType;
+
+                    if (userDoc.exists) {
+                        userData = userDoc.data();
+                        collectionType = 'Users';
+                    } else if (instructorDoc?.exists) {
+                        userData = instructorDoc.data();
+                        collectionType = 'Instructors';
+                    }
+
+                    if (userData) {
+                        loadingStatus.textContent = "Loading...";
+                        
+                        const fullName = `${userData.FirstName} ${userData.LastName}`;
+                        document.getElementById('userName').textContent = fullName;
+                        document.getElementById('userEmail').textContent = userData.Email;
+                        
+                        // Set studio name in profile dropdown
+                        const studioNameElement = document.getElementById('studioNameDisplay');
+                        if (studioNameElement && studioData) {
+                            studioNameElement.textContent = studioData.StudioName || 'Studio Name';
+                        }
+                        
+                        // Set user initials in avatar
+                        const initials = `${userData.FirstName[0]}${userData.LastName[0]}`;
+                        const initialsElement = document.querySelector('.initials');
+                        if (initialsElement) {
+                            initialsElement.textContent = initials;
+                        }
+
+                        const roleElement = document.getElementById('userRole');
+                        if (userData.Role) {
+                            roleElement.textContent = userData.Role;
+                            roleElement.style.color = '#333333';
+                            roleElement.style.fontWeight = '700';
+                        } else {
+                            roleElement.textContent = 'No Role Assigned';
+                            roleElement.style.color = '#666';
+                        }
+
+                        if (studioData?.LogoUrl) {
+                            await loadStudioLogo(studioData.LogoUrl, studioData.StudioName);
+                        } else {
+                            await loadStudioLogo(null, studioData?.StudioName);
+                        }
+
+                        // Hide loading overlay with fade effect
+                        loadingOverlay.classList.add('fade-out');
+                        setTimeout(() => {
+                            loadingOverlay.style.display = 'none';
+                        }, 500);
+                    }
+                } catch (error) {
+                    console.error('Error getting user document:', error);
+                    loadingStatus.textContent = "Error loading dashboard. Please refresh...";
+                }
+                
+                if (studioData) {
+                    applyStudioBranding(studioData);
+                    updateSidebarLinks(studioData);
+                    updatePageUrl(studioData.StudioName);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                loadingStatus.textContent = "Error loading dashboard. Please refresh...";
+            }
+        }
+
+        // Function to load and display the studio logo
+        function loadStudioLogo(logoUrl, studioName) {
+            return new Promise((resolve) => {
+                const logoElement = document.getElementById('studio-logo');
+                const nameElement = document.getElementById('studio-name');
+                
+                if (logoUrl) {
+                    logoElement.onload = () => resolve();
+                    logoElement.src = logoUrl;
+                    logoElement.alt = studioName || 'Studio Logo';
+                    logoElement.style.display = 'block';
+                    nameElement.style.display = 'none';
+                } else {
+                    logoElement.style.display = 'none';
+                    nameElement.textContent = studioName || 'Studio Sync';
+                    nameElement.style.display = 'block';
+                    resolve();
+                }
+            });
+        }
+
+        // Call the function when the page loads
+        getCurrentUserData();
+
+        // Logout functionality
+        document.getElementById('logoutButton').addEventListener('click', function() {
+            firebase.auth().signOut().then(() => {
+                // Clear studio context from localStorage
+                localStorage.removeItem('currentStudioId');
+                localStorage.removeItem('currentStudioData');
+                // Redirect to studio login
+                window.location.href = '/studiologin.html';
+            }).catch((error) => {
+                console.error('Logout Error:', error);
+            });
+        });
+
+        // Add this function after the firebase initialization
+        function getStudioNameForUrl(studioName) {
+            // Remove spaces and special characters, keep alphanumeric only
+            return studioName.replace(/[^a-zA-Z0-9]/g, '');
+        }
+
+        function updateSidebarLinks(studioData) {
+            if (studioData?.StudioName) {
+                const studioNameParam = getStudioNameForUrl(studioData.StudioName);
+                
+                const sidebarLinks = document.querySelectorAll('#sidebar-wrapper .list-group-item');
+                sidebarLinks.forEach(link => {
+                    const currentHref = link.getAttribute('href');
+                    if (currentHref && currentHref.endsWith('.html')) {
+                        const newHref = currentHref.replace('.html', `?studio=${studioNameParam}`);
+                        link.setAttribute('href', newHref);
+                    }
+                });
+            }
+        }
+
+        function updatePageUrl(studioName) {
+            if (studioName) {
+                const studioNameParam = getStudioNameForUrl(studioName);
+                const currentUrl = new URL(window.location.href);
+                
+                // Only update if we're on a .html page and don't already have the studio parameter
+                if (currentUrl.pathname.endsWith('.html') && !currentUrl.searchParams.has('studio')) {
+                    const newUrl = `${currentUrl.pathname.replace('.html', '')}?studio=${studioNameParam}`;
+                    window.history.replaceState({}, '', newUrl);
+                }
+            }
+        }
+    </script>
+
+    <!-- Add these additional script includes before the closing body tag -->
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap5.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap5.min.js"></script>
+
+    <script>
+        // Initialize DataTables
+        $(document).ready(function() {
+            // Initialize the students table
+            window.table = $('#studentsTable').DataTable({
+                responsive: true,
+                columns: [
+                    { 
+                        data: null,
+                        defaultContent: '',
+                        orderable: false,
+                        className: 'select-checkbox',
+                        render: function (data, type, row) {
+                            return '<input type="checkbox" class="row-select">';
+                        }
+                    },
+                    { data: 'FirstName', title: 'First Name' },
+                    { data: 'LastName', title: 'Last Name' },
+                    { 
+                        data: null,
+                        title: 'Age',
+                        render: function(data) {
+                            return calculateAge(data.DateOfBirth);
+                        }
+                    },
+                    { data: 'FamilyName', title: 'Family Name' },
+                    { 
+                        data: 'ClassNames',
+                        title: 'Classes',
+                        render: function(data) {
+                            return Array.isArray(data) ? data.join(', ') : '';
+                        }
+                    }
+                ],
+                order: [[1, 'asc']]
+            });
+
+            // Load initial data
+            loadStudents();
+
+            // Handle checkbox selection
+            $('#selectAll').on('change', function() {
+                const isChecked = $(this).prop('checked');
+                $('.row-select').prop('checked', isChecked);
+                updateButtonStates();
+            });
+
+            $('#studentsTable tbody').on('change', '.row-select', function() {
+                updateButtonStates();
+            });
+
+            // Update button states based on selection
+            function updateButtonStates() {
+                const selectedCount = $('.row-select:checked').length;
+                $('#editStudentBtn').prop('disabled', selectedCount !== 1);
+                $('#deleteStudentBtn').prop('disabled', selectedCount === 0);
+            }
+
+            // Load students data
+            async function loadStudents() {
+                // Show shimmer, hide table
+                $('#tableShimmer').show();
+                $('.table-responsive').hide();
+                
+                const studioId = localStorage.getItem('currentStudioId');
+                const db = firebase.firestore();
+                
+                try {
+                    const studentsSnapshot = await db.collection('Studios')
+                        .doc(studioId)
+                        .collection('Students')
+                        .get();
+
+                    const studentsPromises = studentsSnapshot.docs.map(async doc => {
+                        const studentData = doc.data();
+                        
+                        // Create parallel promises for family and classes
+                        const promises = [];
+                        
+                        // Get family name promise
+                        if (studentData.FamilyId) {
+                            promises.push(
+                                db.collection('Studios')
+                                    .doc(studioId)
+                                    .collection('Families')
+                                    .doc(studentData.FamilyId)
+                                    .get()
+                                    .then(familyDoc => {
+                                        if (familyDoc.exists) {
+                                            const familyData = familyDoc.data();
+                                            return `${familyData.FirstName} ${familyData.LastName}`;
+                                        }
+                                        return '';
+                                    })
+                                    .catch(() => '')
+                            );
+                        } else {
+                            promises.push(Promise.resolve(''));
+                        }
+
+                        // Get class names promise
+                        if (Array.isArray(studentData.Classes) && studentData.Classes.length > 0) {
+                            const classPromises = studentData.Classes.map(classId =>
+                                db.collection('Studios')
+                                    .doc(studioId)
+                                    .collection('Classes')
+                                    .doc(classId)
+                                    .get()
+                                    .then(classDoc => classDoc.exists ? classDoc.data().ClassName : '')
+                                    .catch(() => '')
+                            );
+                            promises.push(Promise.all(classPromises));
+                        } else {
+                            promises.push(Promise.resolve([]));
+                        }
+
+                        // Wait for both family and classes data
+                        const [familyName, classNames] = await Promise.all(promises);
+
+                        return {
+                            Id: doc.id,
+                            FirstName: studentData.FirstName || '',
+                            LastName: studentData.LastName || '',
+                            DateOfBirth: studentData.DateOfBirth || '',
+                            FamilyName: familyName,
+                            ClassNames: classNames.filter(name => name), // Remove empty strings
+                            FamilyId: studentData.FamilyId,
+                            Classes: studentData.Classes || []
+                        };
+                    });
+
+                    const students = await Promise.all(studentsPromises);
+                    
+                    // Update the table with all data at once
+                    window.table.clear().rows.add(students).draw();
+                    
+                    // Hide shimmer, show table
+                    $('#tableShimmer').hide();
+                    $('.table-responsive').show();
+                    
+                } catch (error) {
+                    console.error("Error loading students:", error);
+                    // Hide shimmer, show table even on error
+                    $('#tableShimmer').hide();
+                    $('.table-responsive').show();
+                }
+            }
+
+            // Calculate age helper function
+            function calculateAge(dateOfBirth) {
+                if (!dateOfBirth) return '';
+                const dob = new Date(dateOfBirth);
+                const today = new Date();
+                let age = today.getFullYear() - dob.getFullYear();
+                const monthDiff = today.getMonth() - dob.getMonth();
+                
+                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+                    age--;
+                }
+                
+                return age;
+            }
+
+            // Add this near the top of your script section
+            let currentEditIndex = -1; // To track which student is being edited
+
+            // Update the save button click handler
+            $('#saveStudentBtn').on('click', async function() {
+                if (!validateForm('#addStudentForm')) return;
+
+                try {
+                    const studioId = localStorage.getItem('currentStudioId');
+                    const db = firebase.firestore();
+                    const storage = firebase.storage();
+
+                    // Get the studentId and determine if we're editing
+                    const studentId = $('#addStudentModal').data('studentId');
+                    const isEdit = !!studentId;
+
+                    // Rest of your existing code for getting classes and calculating fees...
+                    const selectedClassIds = Array.from(document.querySelectorAll('.class-checkbox:checked')).map(cb => cb.value);
+                    const classesData = await Promise.all(selectedClassIds.map(async classId => {
+                        const classDoc = await db.collection('Studios')
+                            .doc(studioId)
+                            .collection('Classes')
+                            .doc(classId)
+                            .get();
+                        return { Id: classId, ...classDoc.data() };
+                    }));
+
+                    // Your existing fee calculation code...
+                    let totalTuition = 0;
+                    let totalOneTimeFees = 0;
+                    const charges = [];
+
+                    // ... (keep all the fee calculation code the same)
+
+                    // Calculate tuition from selected classes
+                    const hoursByRatePlan = {};
+                    const classesByRatePlan = {};
+
+                    // First, group classes by rate plan and sum up hours
+                    classesData.forEach(classData => {
+                        if (classData.RatePlanId && classData.Duration) {
+                            const hours = classData.Duration / 60; // Convert minutes to hours
+                            
+                            if (!hoursByRatePlan[classData.RatePlanId]) {
+                                hoursByRatePlan[classData.RatePlanId] = 0;
+                                classesByRatePlan[classData.RatePlanId] = [];
+                            }
+                            
+                            hoursByRatePlan[classData.RatePlanId] += hours;
+                            classesByRatePlan[classData.RatePlanId].push(classData);
+                            
+                            console.log(`Added ${hours} hours to rate plan ${classData.RatePlanId}`);
+                            console.log(`Class: ${classData.ClassName}, Duration: ${classData.Duration} minutes`);
+                        }
+                    });
+
+                    // Then calculate tuition for each rate plan based on total hours
+                    Object.entries(hoursByRatePlan).forEach(([ratePlanId, totalHours]) => {
+                        const ratePlan = ratePlans[ratePlanId];
+                        if (ratePlan) {
+                            console.log(`Calculating tuition for rate plan ${ratePlan.Name}`);
+                            console.log(`Total hours: ${totalHours}`);
+                            
+                            const cost = calculateRatePlanCost(ratePlan, totalHours);
+                            totalTuition += cost;
+                            
+                            // Add a tuition charge for this rate plan
+                            charges.push({
+                                Type: 'Tuition',
+                                Amount: cost,
+                                Description: `Monthly Tuition - ${ratePlan.Name}`,
+                                ChargeDate: new Date().toISOString(),
+                                Status: 'Pending',
+                                StudentName: `${$('#firstName').val()} ${$('#lastName').val()}`,
+                                RatePlanId: ratePlanId,
+                                TotalHours: totalHours,
+                                Classes: classesByRatePlan[ratePlanId].map(c => ({
+                                    Id: c.Id,
+                                    Name: c.ClassName,
+                                    Hours: c.Duration / 60
+                                }))
+                            });
+                            
+                            console.log(`Added tuition charge: $${cost} for ${totalHours} hours`);
+                        }
+                    });
+
+                    // Remove the old single tuition charge since we're now creating per-rate-plan charges
+                    // if (totalTuition > 0) {
+                    //     charges.unshift({
+                    //         Type: 'Tuition',
+                    //         Amount: totalTuition,
+                    //         Description: 'Monthly Tuition',
+                    //         ChargeDate: new Date().toISOString(),
+                    //         Status: 'Pending',
+                    //         StudentName: `${$('#firstName').val()} ${$('#lastName').val()}`
+                    //     });
+                    // }
+
+                    // Get and calculate class fees
+                    for (const classData of classesData) {
+                        if (classData.Fees && classData.Fees.length > 0) {
+                            const classFees = await Promise.all(classData.Fees.map(async feeId => {
+                                const feeDoc = await db.collection('Studios')
+                                    .doc(studioId)
+                                    .collection('Fees')
+                                    .doc(feeId)
+                                    .get();
+                                return { id: feeId, ...feeDoc.data() };
+                            }));
+
+                            // Add class fees to charges
+                            classFees.forEach(fee => {
+                                if (fee.IsActive !== false) { // Only include active fees
+                                    const feeAmount = parseFloat(fee.Amount) || 0;
+                                    totalOneTimeFees += feeAmount;
+                                    charges.push({
+                                        Type: 'ClassFee',
+                                        Amount: feeAmount,
+                                        Description: `${fee.Name} - ${classData.ClassName}`,
+                                        ChargeDate: new Date().toISOString(),
+                                        Status: 'Pending',
+                                        StudentName: `${$('#firstName').val()} ${$('#lastName').val()}`,
+                                        FeeId: fee.id,
+                                        ClassName: classData.ClassName,
+                                        ClassId: classData.Id
+                                    });
+                                }
+                            });
+                        }
+                    }
+
+                    // Get any applicable season fees
+                    const seasonIds = [...new Set(classesData.map(c => c.SeasonId))].filter(Boolean);
+                    for (const seasonId of seasonIds) {
+                        const seasonDoc = await db.collection('Studios')
+                            .doc(studioId)
+                            .collection('Seasons')
+                            .doc(seasonId)
+                            .get();
+
+                        if (seasonDoc.exists) {
+                            const seasonData = seasonDoc.data();
+                            if (seasonData.Fees && seasonData.Fees.length > 0) {
+                                const seasonFees = await Promise.all(seasonData.Fees.map(async feeId => {
+                                    const feeDoc = await db.collection('Studios')
+                                        .doc(studioId)
+                                        .collection('Fees')
+                                        .doc(feeId)
+                                        .get();
+                                    return { id: feeId, SeasonId: seasonId, ...feeDoc.data() };
+                                }));
+
+                                // Add season fees to charges
+                                seasonFees.forEach(fee => {
+                                    if (fee.IsActive !== false) { // Only include active fees
+                                        const feeAmount = parseFloat(fee.Amount) || 0;
+                                        totalOneTimeFees += feeAmount;
+                                        charges.push({
+                                            Type: 'SeasonFee',
+                                            Amount: feeAmount,
+                                            Description: `${fee.Name} - ${seasonData.Name}`,
+                                            ChargeDate: new Date().toISOString(),
+                                            Status: 'Pending',
+                                            StudentName: `${$('#firstName').val()} ${$('#lastName').val()}`,
+                                            FeeId: fee.id,
+                                            SeasonId: fee.SeasonId
+                                        });
+                                    }
+                                });
+                            }
+                        }
+                    }
+
+                    // Add main tuition charge
+                    if (totalTuition > 0) {
+                        charges.unshift({
+                            Type: 'Tuition',
+                            Amount: totalTuition,
+                            Description: 'Monthly Tuition',
+                            ChargeDate: new Date().toISOString(),
+                            Status: 'Pending',
+                            StudentName: `${$('#firstName').val()} ${$('#lastName').val()}`
+                        });
+                    }
+
+                    // Continue with creating/updating student document...
+                    const studentData = {
+                        FirstName: $('#firstName').val().trim(),
+                        LastName: $('#lastName').val().trim(),
+                        DateOfBirth: $('#dateOfBirth').val(),
+                        Gender: $('#gender').val(),
+                        MedicalInfo: $('#medicalInfo').val().trim(),
+                        SkillLevel: $('#skillLevel').val(),
+                        FamilyId: $('#family').val(),
+                        Classes: selectedClassIds,
+                        LastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                    };
+
+                    // Handle photo upload
+                    const photoFile = document.getElementById('studentPhoto').files[0];
+                    if (photoFile) {
+                        const photoRef = storage.ref(`studios/${studioId}/students/${Date.now()}_${photoFile.name}`);
+                        await photoRef.put(photoFile);
+                        studentData.PhotoURL = await photoRef.getDownloadURL();
+                    }
+
+                    // Save or update the student document
+                    let studentRef;
+                    if (isEdit) {
+                        studentRef = db.collection('Studios')
+                            .doc(studioId)
+                            .collection('Students')
+                            .doc(studentId);
+                        await studentRef.update(studentData);
+                    } else {
+                        studentData.CreatedAt = firebase.firestore.FieldValue.serverTimestamp();
+                        studentRef = await db.collection('Studios')
+                            .doc(studioId)
+                            .collection('Students')
+                            .add(studentData);
+                    }
+
+                    // Calculate total amount to add to family balance
+                    const totalChargeAmount = charges.reduce((total, charge) => {
+                        return total + (parseFloat(charge.Amount) || 0);
+                    }, 0);
+
+                    console.log('Total charges being added to family balance:', totalChargeAmount);
+                    console.log('Charges breakdown:', charges.map(c => ({
+                        Type: c.Type,
+                        Amount: c.Amount,
+                        Description: c.Description
+                    })));
+
+                    // Update family document with new balance and charges
+                    const familyRef = db.collection('Studios')
+                        .doc(studioId)
+                        .collection('Families')
+                        .doc(studentData.FamilyId);
+
+                    // First get current family data to log the balance change
+                    const familyDoc = await familyRef.get();
+                    const currentBalance = familyDoc.exists ? (familyDoc.data().Balance || 0) : 0;
+                    const newBalance = currentBalance + totalChargeAmount;
+
+                    console.log('Family balance update:', {
+                        currentBalance,
+                        chargesAdded: totalChargeAmount,
+                        newBalance
+                    });
+
+                    // Update the family document
+                    await familyRef.update({
+                        Students: firebase.firestore.FieldValue.arrayUnion(studentRef.id),
+                        Balance: firebase.firestore.FieldValue.increment(totalChargeAmount),
+                        LastUpdated: firebase.firestore.FieldValue.serverTimestamp(),
+                        Charges: firebase.firestore.FieldValue.arrayUnion(...charges)
+                    });
+
+                    // Update classes
+                    for (const classId of selectedClassIds) {
+                        await db.collection('Studios')
+                            .doc(studioId)
+                            .collection('Classes')
+                            .doc(classId)
+                            .update({
+                                Students: firebase.firestore.FieldValue.arrayUnion(studentRef.id)
+                            });
+                    }
+
+                    // Reset form and modal
+                    await loadStudents();
+                    $('#addStudentModal').modal('hide');
+                    $('#addStudentForm')[0].reset();
+                    $('#addStudentModal').removeData('studentId');
+                    currentEditIndex = -1; // Reset edit index
+
+                    // Update modal title and button text
+                    $('#addStudentModalLabel').text('New Student');
+                    $('#saveStudentBtn').text('Save Student');
+
+                    alert('Student saved successfully!');
+
+                } catch (error) {
+                    console.error('Error saving student:', error);
+                    alert('Error saving student. Please try again.');
+                }
+            });
+
+            // Update the edit button handler
+            $('#editStudentBtn').on('click', async function() {
+                try {
+                    const selectedRow = $('.row-select:checked').closest('tr');
+                    const rowData = window.table.row(selectedRow).data();
+                    const studioId = localStorage.getItem('currentStudioId');
+                    const db = firebase.firestore();
+
+                    // Show loading state
+                    $('#addStudentModal').addClass('loading');
+                    
+                    // Get full student data
+                    const studentDoc = await db.collection('Studios')
+                        .doc(studioId)
+                        .collection('Students')
+                        .doc(rowData.Id)
+                        .get();
+                        
+                    const studentData = studentDoc.data();
+
+                    // First show the modal (empty)
+                    $('#addStudentModal').modal('show');
+
+                    // Then load the form data (families and classes)
+                    await loadFormData();
+
+                    // Now populate the form with student data
+                    $('#firstName').val(studentData.FirstName);
+                    $('#lastName').val(studentData.LastName);
+                    $('#dateOfBirth').val(studentData.DateOfBirth);
+                    $('#gender').val(studentData.Gender || '');
+                    $('#medicalInfo').val(studentData.MedicalInfo || '');
+                    $('#skillLevel').val(studentData.SkillLevel || '');
+                    
+                    // Set the family dropdown value after a short delay to ensure it's loaded
+                    setTimeout(() => {
+                        $('#family').val(studentData.FamilyId);
+                    }, 100);
+
+                    // Clear all checkboxes first
+                    $('.class-checkbox').prop('checked', false);
+                    
+                    // Set checkboxes for enrolled classes after a short delay
+                    setTimeout(() => {
+                        if (studentData.Classes && Array.isArray(studentData.Classes)) {
+                            studentData.Classes.forEach(classId => {
+                                const checkbox = $(`#class-${classId}`);
+                                if (checkbox.length) {
+                                    checkbox.prop('checked', true);
+                                }
+                            });
+                        }
+                    }, 100);
+
+                    // Set modal state for editing
+                    $('#addStudentModal').data('studentId', rowData.Id);
+                    $('#addStudentModalLabel').text('Edit Student');
+                    $('#saveStudentBtn').text('Update Student');
+                    
+                    // Remove loading state
+                    $('#addStudentModal').removeClass('loading');
+
+                } catch (error) {
+                    console.error('Error loading student data for edit:', error);
+                    alert('Error loading student data. Please try again.');
+                    $('#addStudentModal').removeClass('loading');
+                }
+            });
+
+            // Delete button handler
+            $('#deleteStudentBtn').on('click', function() {
+                const selectedRows = $('.row-select:checked').closest('tr');
+                const studentsToDelete = [];
+                
+                selectedRows.each(function() {
+                    const rowData = window.table.row(this).data();
+                    studentsToDelete.push({
+                        id: rowData.Id,
+                        name: `${rowData.FirstName} ${rowData.LastName}`
+                    });
+                });
+
+                const deleteList = $('#deleteStudentList');
+                deleteList.empty();
+                studentsToDelete.forEach(student => {
+                    deleteList.append(`<li>${student.name}</li>`);
+                });
+
+                $('#deleteConfirmModal').modal('show');
+            });
+
+            // Confirm delete handler
+            $('#confirmDeleteBtn').on('click', async function() {
+                try {
+                    const selectedRows = $('.row-select:checked').closest('tr');
+                    const studioId = localStorage.getItem('currentStudioId');
+                    const db = firebase.firestore();
+                    
+                    const rowIndexes = [];
+                    const batch = db.batch();
+
+                    // Process each selected student
+                    for (let row of selectedRows) {
+                        const rowData = window.table.row(row).data();
+                        console.log('Processing deletion for student:', rowData.Id);
+
+                        // Get the student's data to find their classes and family
+                        const studentDoc = await db.collection('Studios')
+                            .doc(studioId)
+                            .collection('Students')
+                            .doc(rowData.Id)
+                            .get();
+
+                        const studentData = studentDoc.data();
+                        
+                        // Remove student ID from each class they're enrolled in
+                        if (studentData.Classes && studentData.Classes.length > 0) {
+                            console.log('Student is enrolled in classes:', studentData.Classes);
+                            
+                            for (const classId of studentData.Classes) {
+                                const classRef = db.collection('Studios')
+                                    .doc(studioId)
+                                    .collection('Classes')
+                                    .doc(classId);
+
+                                const classDoc = await classRef.get();
+                                if (classDoc.exists) {
+                                    const classData = classDoc.data();
+                                    const updatedStudents = (classData.Students || []).filter(id => id !== rowData.Id);
+                                    
+                                    console.log(`Removing student ${rowData.Id} from class ${classId}`);
+                                    console.log('Updated class students array:', updatedStudents);
+                                    
+                                    batch.update(classRef, {
+                                        Students: updatedStudents,
+                                        UpdatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                                    });
+                                }
+                            }
+                        }
+
+                        // Remove student ID from their family's Students array
+                        if (studentData.FamilyId) {
+                            console.log(`Removing student ${rowData.Id} from family ${studentData.FamilyId}`);
+                            
+                            const familyRef = db.collection('Studios')
+                                .doc(studioId)
+                                .collection('Families')
+                                .doc(studentData.FamilyId);
+
+                            const familyDoc = await familyRef.get();
+                            if (familyDoc.exists) {
+                                const familyData = familyDoc.data();
+                                const updatedFamilyStudents = (familyData.Students || []).filter(id => id !== rowData.Id);
+                                
+                                console.log('Updated family students array:', updatedFamilyStudents);
+                                
+                                batch.update(familyRef, {
+                                    Students: updatedFamilyStudents,
+                                    UpdatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                                });
+                            }
+                        }
+
+                        // Delete the student document
+                        const studentRef = db.collection('Studios')
+                            .doc(studioId)
+                            .collection('Students')
+                            .doc(rowData.Id);
+                        
+                        batch.delete(studentRef);
+                        rowIndexes.push(window.table.row(row).index());
+                    }
+
+                    // Commit all the changes in one batch
+                    console.log('Committing batch delete operation...');
+                    await batch.commit();
+                    console.log('Batch delete operation completed successfully');
+
+                    // Update the table
+                    rowIndexes.sort((a, b) => b - a).forEach(index => {
+                        window.table.row(index).remove();
+                    });
+                    
+                    window.table.draw();
+                    $('#selectAll').prop('checked', false);
+                    updateButtonStates();
+                    $('#deleteConfirmModal').modal('hide');
+                    
+                    alert('Students deleted successfully');
+
+                } catch (error) {
+                    console.error('Error in delete operation:', error);
+                    alert('Error deleting students. Please try again.');
+                }
+            });
+
+            // Load form data when adding new student
+            $('[data-bs-target="#addStudentModal"]').on('click', function() {
+                loadFormData();
+            });
+
+            // Reset modal when closed
+            $('#addStudentModal').on('hidden.bs.modal', function() {
+                $('#addStudentForm')[0].reset();
+                $(this).removeData('studentId');
+                $('#addStudentModalLabel').text('New Student');
+                $('#saveStudentBtn').text('Save Student');
+            });
+
+            // First, let's update the click handler for the table rows
+            // Add this after the DataTable initialization
+            $('#studentsTable tbody').on('click', 'tr', function(e) {
+                // Ignore clicks on checkbox and its cell
+                if ($(e.target).is('input[type="checkbox"]') || $(e.target).is('td:first-child')) {
+                    return;
+                }
+
+                const rowData = window.table.row(this).data();
+                if (rowData) {
+                    loadStudentDetails(rowData.Id);
+                }
+            });
+
+            // Add the loadStudentDetails function
+            async function loadStudentDetails(studentId) {
+                try {
+                    const studioId = localStorage.getItem('currentStudioId');
+                    const db = firebase.firestore();
+                    
+                    // Store the studentId in the modal's data attribute when first opening
+                    $('#studentDetailsModal').data('studentId', studentId);
+                    
+                    // Get student data
+                    const studentDoc = await db.collection('Studios')
+                        .doc(studioId)
+                        .collection('Students')
+                        .doc(studentId)
+                        .get();
+
+                    if (!studentDoc.exists) {
+                        console.error('Student not found');
+                        return;
+                    }
+
+                    const studentData = studentDoc.data();
+
+                    // Populate basic details
+                    $('#detailFirstName').text(studentData.FirstName);
+                    $('#detailLastName').text(studentData.LastName);
+                    $('#detailDateOfBirth').text(new Date(studentData.DateOfBirth).toLocaleDateString());
+                    $('#detailAge').text(calculateAge(studentData.DateOfBirth));
+                    
+                    // Get and set family name
+                    const familyDoc = await db.collection('Studios')
+                        .doc(studioId)
+                        .collection('Families')
+                        .doc(studentData.FamilyId)
+                        .get();
+                    $('#detailFamily').text(familyDoc.exists ? 
+                        `${familyDoc.data().FirstName} ${familyDoc.data().LastName}` : 
+                        'N/A');
+                    
+                    // Set class count
+                    const classCount = studentData.Classes ? studentData.Classes.length : 0;
+                    $('#detailClassCount').text(classCount);
+
+                    // Load initial classes data
+                    await loadClassesData(studentId);
+
+                    // Show the modal
+                    const modal = new bootstrap.Modal(document.getElementById('studentDetailsModal'));
+                    modal.show();
+
+                } catch (error) {
+                    console.error('Error loading student details:', error);
+                    alert('Error loading student details. Please try again.');
+                }
+            }
+        });
+    </script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+       
+
+        // Handle form submission
+        document.getElementById('saveStudentBtn').addEventListener('click', function() {
+            const form = document.getElementById('addStudentForm');
+            
+            if (form.checkValidity()) {
+                const studentData = {
+                    firstName: document.getElementById('firstName').value,
+                    lastName: document.getElementById('lastName').value,
+                    dateOfBirth: document.getElementById('dateOfBirth').value,
+                    family: document.getElementById('family').value,
+                    classes: Array.from(document.querySelectorAll('.class-checkbox:checked')).map(cb => cb.value)
+                };
+
+                saveStudent(studentData);
+            } else {
+                form.reportValidity();
+            }
+        });
+
+        // Load families for the dropdowns
+        async function loadFormData() {
+            const studioId = localStorage.getItem('currentStudioId');
+            const db = firebase.firestore();
+            
+            try {
+                // Load Families
+                const familiesSnapshot = await db.collection('Studios')
+                    .doc(studioId)
+                    .collection('Families')
+                    .get();
+                
+                const familySelect = document.getElementById('family');
+                familySelect.innerHTML = '<option value="">Select Family</option>';
+                familiesSnapshot.forEach(doc => {
+                    const family = doc.data();
+                    console.log('Adding family to dropdown:', {id: doc.id, name: `${family.FirstName} ${family.LastName}`});
+                    const option = document.createElement('option');
+                    option.value = doc.id;
+                    option.textContent = `${family.FirstName} ${family.LastName}`; // Changed from family.Name
+                    familySelect.appendChild(option);
+                });
+
+                // Load Classes with checkboxes
+                const classesRef = db.collection('Studios').doc(studioId).collection('Classes');
+                const classesSnapshot = await classesRef.get();
+                const classesContainer = document.getElementById('classesCheckboxContainer');
+                
+                // Clear existing checkboxes
+                classesContainer.innerHTML = '';
+                
+                // Add all classes as checkboxes
+                classesSnapshot.forEach(doc => {
+                    const classData = doc.data();
+                    console.log('Adding class checkbox:', {id: doc.id, name: classData.ClassName});
+                    
+                    const checkboxDiv = document.createElement('div');
+                    checkboxDiv.className = 'form-check mb-2';
+                    
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.className = 'form-check-input class-checkbox';
+                    checkbox.id = `class-${doc.id}`;
+                    checkbox.value = doc.id;
+                    
+                    const label = document.createElement('label');
+                    label.className = 'form-check-label';
+                    label.htmlFor = `class-${doc.id}`;
+                    label.textContent = classData.ClassName;
+                    
+                    checkboxDiv.appendChild(checkbox);
+                    checkboxDiv.appendChild(label);
+                    classesContainer.appendChild(checkboxDiv);
+                });
+
+            } catch (error) {
+                console.error('Error loading form data:', error);
+                // Removed alert to avoid annoying popups
+            }
+        }
+
+        // Update the modal show event listener
+        $('#addStudentModal').on('show.bs.modal', function () {
+            loadFormData();
+        });
+    });
+    </script>
+
+    <!-- Add this function to check your data -->
+    <script>
+    async function debugCheckData() {
+        const studioId = localStorage.getItem('currentStudioId');
+        const db = firebase.firestore();
+        const studioRef = db.collection('Studios').doc(studioId);
+
+        console.log('Checking studio:', studioId);
+
+        try {
+            // Check Families
+            const families = await studioRef.collection('Families').get();
+            console.log('Families count:', families.size);
+            families.forEach(doc => console.log('Family:', {id: doc.id, data: doc.data()}));
+
+            // Check Classes
+            const classes = await studioRef.collection('Classes').get();
+            console.log('Classes count:', classes.size);
+            classes.forEach(doc => console.log('Class:', {id: doc.id, data: doc.data()}));
+
+        } catch (error) {
+            console.error('Debug check failed:', error);
+        }
+    }
+
+    // Update the second loadFormData function
+    async function loadFormData() {
+        const studioId = localStorage.getItem('currentStudioId');
+        console.log('Loading form data for studio:', studioId);
+        
+        if (!studioId) {
+            console.error('No studio ID found');
+            return;
+        }
+
+        const db = firebase.firestore();
+        
+        try {
+            // Load Families first
+            console.log('Loading families...');
+            const familiesRef = db.collection('Studios').doc(studioId).collection('Families');
+            const familiesSnapshot = await familiesRef.get();
+            const familySelect = document.getElementById('family');
+            
+            // Clear existing options
+            familySelect.innerHTML = '<option value="">Select Family</option>';
+            
+            // Add all families
+            familiesSnapshot.forEach(doc => {
+                const family = doc.data();
+                console.log('Adding family to dropdown:', {id: doc.id, name: `${family.FirstName} ${family.LastName}`});
+                const option = document.createElement('option');
+                option.value = doc.id;
+                option.textContent = `${family.FirstName} ${family.LastName}`; // Changed from family.Name
+                familySelect.appendChild(option);
+            });
+
+            // Load Classes with checkboxes
+            const classesRef = db.collection('Studios').doc(studioId).collection('Classes');
+            const classesSnapshot = await classesRef.get();
+            const classesContainer = document.getElementById('classesCheckboxContainer');
+            
+            // Clear existing checkboxes
+            classesContainer.innerHTML = '';
+            
+            // Add all classes as checkboxes
+            classesSnapshot.forEach(doc => {
+                const classData = doc.data();
+                console.log('Adding class checkbox:', {id: doc.id, name: classData.ClassName});
+                
+                const checkboxDiv = document.createElement('div');
+                checkboxDiv.className = 'form-check mb-2';
+                
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'form-check-input class-checkbox';
+                checkbox.id = `class-${doc.id}`;
+                checkbox.value = doc.id;
+                
+                const label = document.createElement('label');
+                label.className = 'form-check-label';
+                label.htmlFor = `class-${doc.id}`;
+                label.textContent = classData.ClassName;
+                
+                checkboxDiv.appendChild(checkbox);
+                checkboxDiv.appendChild(label);
+                classesContainer.appendChild(checkboxDiv);
+            });
+
+        } catch (error) {
+            console.error('Error loading form data:', error);
+            // Removed alert to avoid annoying popups
+        }
+    }
+
+    // Make sure to call both when document is ready
+    document.addEventListener('DOMContentLoaded', function() {
+        debugCheckData();
+        loadFormData();
+    });
+    </script>
+
+    <!-- Add this script right before the closing </body> tag -->
+    <script>
+    // Make sure we have jQuery loaded first
+    document.addEventListener('DOMContentLoaded', function() {
+        // Debug function to check if elements exist
+        function checkElements() {
+            console.log('Family select:', document.getElementById('family'));
+            console.log('Class select:', document.getElementById('classes'));
+        }
+
+        // Initialize the modal properly
+        const addStudentModal = new bootstrap.Modal(document.getElementById('addStudentModal'));
+
+        // Add click handler for the Add New Student button
+        document.querySelector('[data-bs-target="#addStudentModal"]').addEventListener('click', async function(e) {
+            e.preventDefault();
+            console.log('Add New Student button clicked');
+            
+            try {
+                const studioId = localStorage.getItem('currentStudioId');
+                console.log('Studio ID:', studioId);
+                
+                const db = firebase.firestore();
+                
+                // Load Families
+                const familiesSnapshot = await db.collection('Studios')
+                    .doc(studioId)
+                    .collection('Families')
+                    .get();
+                
+                const familySelect = document.getElementById('family');
+                familySelect.innerHTML = '<option value="">Select Family</option>';
+                familiesSnapshot.forEach(doc => {
+                    const family = doc.data();
+                    console.log('Adding family:', family);
+                    const option = new Option(`${family.FirstName} ${family.LastName}`, doc.id); // Changed from family.Name
+                    familySelect.appendChild(option);
+                });
+
+                // Load Classes
+                const classesSnapshot = await db.collection('Studios')
+                    .doc(studioId)
+                    .collection('Classes')
+                    .get();
+                
+                const classesContainer = document.getElementById('classesCheckboxContainer');
+                classesContainer.innerHTML = '';
+                classesSnapshot.forEach(doc => {
+                    const classData = doc.data();
+                    console.log('Adding class checkbox:', {id: doc.id, name: classData.ClassName});
+                    
+                    const checkboxDiv = document.createElement('div');
+                    checkboxDiv.className = 'form-check mb-2';
+                    
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.className = 'form-check-input class-checkbox';
+                    checkbox.id = `class-${doc.id}`;
+                    checkbox.value = doc.id;
+                    
+                    const label = document.createElement('label');
+                    label.className = 'form-check-label';
+                    label.htmlFor = `class-${doc.id}`;
+                    label.textContent = classData.ClassName;
+                    
+                    checkboxDiv.appendChild(checkbox);
+                    checkboxDiv.appendChild(label);
+                    classesContainer.appendChild(checkboxDiv);
+                });
+
+                // Show the modal after data is loaded
+                addStudentModal.show();
+                
+                // Check if options were added
+                console.log('Final family options:', familySelect.options.length);
+                console.log('Final class checkboxes:', classesContainer.querySelectorAll('.class-checkbox').length);
+
+            } catch (error) {
+                console.error('Error loading form data:', error);
+                alert('Error loading form data. Please try again.');
+            }
+        });
+
+        // Add change event listeners to verify the dropdowns are working
+        document.getElementById('family').addEventListener('change', function() {
+            console.log('Selected family:', this.value);
+        });
+
+        document.getElementById('classes').addEventListener('change', function() {
+            console.log('Selected classes:', this.value);
+        });
+
+        // Remove the old modal show event listener
+        $('#addStudentModal').off('show.bs.modal');
+
+        // Check elements on page load
+        checkElements();
+    });
+    </script>
+
+    <!-- Add this validation function -->
+    <script>
+    function validateForm(formId) {
+        const form = document.querySelector(formId);
+        if (!form) return false;
+
+        let isValid = true;
+
+        // Check all required fields except checkboxes
+        const requiredFields = form.querySelectorAll('input[required], select[required], textarea[required]');
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                field.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                field.classList.remove('is-invalid');
+            }
+        });
+
+        return isValid;
+    }
+    </script>
+
+    <!-- Student Details Modal -->
+    <div class="modal fade" id="studentDetailsModal" tabindex="-1" aria-labelledby="studentDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="studentDetailsModalLabel">Student Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Student Details Overview -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <p><strong>First Name:</strong> <span id="detailFirstName"></span></p>
+                            <p><strong>Last Name:</strong> <span id="detailLastName"></span></p>
+                            <p><strong>Date of Birth:</strong> <span id="detailDateOfBirth"></span></p>
+                            <p><strong>Age:</strong> <span id="detailAge"></span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Family:</strong> <span id="detailFamily"></span></p>
+                            <p><strong>Enrolled Classes:</strong> <span id="detailClassCount"></span></p>
+                        </div>
+                    </div>
+
+                    <!-- Tabs Navigation -->
+                    <ul class="nav nav-tabs" id="studentDetailsTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="classes-tab" data-bs-toggle="tab" data-bs-target="#classes" type="button" role="tab">
+                                Classes
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="attendance-tab" data-bs-toggle="tab" data-bs-target="#attendance" type="button" role="tab">
+                                Attendance
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="payments-tab" data-bs-toggle="tab" data-bs-target="#payments" type="button" role="tab">
+                                Payments
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="notes-tab" data-bs-toggle="tab" data-bs-target="#notes" type="button" role="tab">
+                                Notes
+                            </button>
+                        </li>
+                    </ul>
+
+                    <!-- Tabs Content -->
+                    <div class="tab-content pt-3" id="studentDetailsTabContent">
+                        <!-- Classes Tab -->
+                        <div class="tab-pane fade show active" id="classes" role="tabpanel" aria-labelledby="classes-tab">
+                            <div class="table-responsive">
+                                <table class="table table-striped" id="studentClassesTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Class Name</th>
+                                            <th>Days</th>
+                                            <th>Time</th>
+                                            <th>Instructor</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Classes will be populated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Attendance Tab -->
+                        <div class="tab-pane fade" id="attendance" role="tabpanel" aria-labelledby="attendance-tab">
+                            <div class="table-responsive">
+                                <table class="table table-striped" id="attendanceTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Class</th>
+                                            <th>Status</th>
+                                            <th>Notes</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Attendance records will be populated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Payments Tab -->
+                        <div class="tab-pane fade" id="payments" role="tabpanel" aria-labelledby="payments-tab">
+                            <div class="table-responsive">
+                                <table class="table table-striped" id="paymentsTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Description</th>
+                                            <th>Amount</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Payment records will be populated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Notes Tab -->
+                        <div class="tab-pane fade" id="notes" role="tabpanel" aria-labelledby="notes-tab">
+                            <div class="mb-3">
+                                <textarea class="form-control" id="studentNotes" rows="4" placeholder="Add a note..."></textarea>
+                                <button class="btn btn-primary mt-2" id="saveNoteBtn">Add Note</button>
+                            </div>
+                            <div id="notesList">
+                                <!-- Notes will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add this after your existing scripts -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle tab switching
+        $('#studentDetailsTabs button').on('click', function (e) {
+            e.preventDefault();
+            
+            const targetId = $(this).attr('data-bs-target');
+            const tabId = targetId.replace('#', '');
+            const studentId = $('#studentDetailsModal').data('studentId');
+            
+            console.log('Tab clicked:', tabId);
+            console.log('Student ID:', studentId);
+            
+            // Update active state of tab buttons
+            $('#studentDetailsTabs button').removeClass('active');
+            $(this).addClass('active');
+            
+            // Hide all tab panes and tables
+            $('.tab-pane').hide();
+            $('#studentClassesTable').closest('.table-responsive').hide();
+            $('#attendanceTable').closest('.table-responsive').hide();
+            $('#paymentsTable').closest('.table-responsive').hide();
+            
+            // Show the selected tab pane
+            $(`#${tabId}`).show();
+            
+            // Load the appropriate data and show the corresponding table
+            if (tabId === 'classes') {
+                console.log('Loading classes data for student:', studentId);
+                $('#studentClassesTable').closest('.table-responsive').show();
+                // Clear existing table content
+                $('#studentClassesTable tbody').empty();
+                loadClassesData(studentId);
+            } else if (tabId === 'attendance') {
+                $('#attendanceTable').closest('.table-responsive').show();
+                loadAttendanceData(studentId);
+            } else if (tabId === 'payments') {
+                $('#paymentsTable').closest('.table-responsive').show();
+                loadPaymentsData(studentId);
+            } else if (tabId === 'notes') {
+                loadNotesData(studentId);
+            }
+        });
+    });
+
+    // Add these functions to handle loading data for each tab
+    async function loadAttendanceData(studentId) {
+        try {
+            const studioId = localStorage.getItem('currentStudioId');
+            const db = firebase.firestore();
+            
+            const attendanceTableBody = $('#attendanceTable tbody');
+            attendanceTableBody.empty();
+            
+            // Load attendance data here
+            const attendanceSnapshot = await db.collection('Studios')
+                .doc(studioId)
+                .collection('Attendance')
+                .where('StudentId', '==', studentId)
+                .orderBy('Date', 'desc')
+                .limit(50)
+                .get();
+                
+            if (!attendanceSnapshot.empty) {
+                attendanceSnapshot.forEach(doc => {
+                    const data = doc.data();
+                    const row = `
+                        <tr>
+                            <td>${new Date(data.Date.toDate()).toLocaleDateString()}</td>
+                            <td>${data.ClassName || ''}</td>
+                            <td>${data.Status || ''}</td>
+                            <td>${data.Notes || ''}</td>
+                        </tr>
+                    `;
+                    attendanceTableBody.append(row);
+                });
+            } else {
+                attendanceTableBody.append('<tr><td colspan="4" class="text-center">No attendance records found</td></tr>');
+            }
+        } catch (error) {
+            console.error('Error loading attendance data:', error);
+            $('#attendanceTable tbody').html('<tr><td colspan="4" class="text-center text-danger">Error loading attendance data</td></tr>');
+        }
+    }
+
+    async function loadPaymentsData(studentId) {
+        try {
+            const studioId = localStorage.getItem('currentStudioId');
+            const db = firebase.firestore();
+            
+            const paymentsTableBody = $('#paymentsTable tbody');
+            paymentsTableBody.empty();
+            
+            // Load payments data here
+            const paymentsSnapshot = await db.collection('Studios')
+                .doc(studioId)
+                .collection('Payments')
+                .where('StudentId', '==', studentId)
+                .orderBy('Date', 'desc')
+                .limit(50)
+                .get();
+                
+            if (!paymentsSnapshot.empty) {
+                paymentsSnapshot.forEach(doc => {
+                    const data = doc.data();
+                    const row = `
+                        <tr>
+                            <td>${new Date(data.Date.toDate()).toLocaleDateString()}</td>
+                            <td>${data.Description || ''}</td>
+                            <td>$${data.Amount?.toFixed(2) || '0.00'}</td>
+                            <td>${data.Status || ''}</td>
+                        </tr>
+                    `;
+                    paymentsTableBody.append(row);
+                });
+            } else {
+                paymentsTableBody.append('<tr><td colspan="4" class="text-center">No payment records found</td></tr>');
+            }
+        } catch (error) {
+            console.error('Error loading payments data:', error);
+            $('#paymentsTable tbody').html('<tr><td colspan="4" class="text-center text-danger">Error loading payment data</td></tr>');
+        }
+    }
+
+    async function loadNotesData(studentId) {
+        try {
+            const studioId = localStorage.getItem('currentStudioId');
+            const db = firebase.firestore();
+            
+            const notesList = $('#notesList');
+            notesList.empty();
+            
+            // Load notes data here
+            const notesSnapshot = await db.collection('Studios')
+                .doc(studioId)
+                .collection('Students')
+                .doc(studentId)
+                .collection('Notes')
+                .orderBy('Date', 'desc')
+                .get();
+                
+            if (!notesSnapshot.empty) {
+                notesSnapshot.forEach(doc => {
+                    const note = doc.data();
+                    const noteElement = `
+                        <div class="note-item border-bottom py-2">
+                            <div class="d-flex justify-content-between">
+                                <strong>${new Date(note.Date.toDate()).toLocaleDateString()}</strong>
+                                <small class="text-muted">${note.Author || 'Unknown'}</small>
+                            </div>
+                            <p class="mb-0">${note.Text}</p>
+                        </div>
+                    `;
+                    notesList.append(noteElement);
+                });
+            } else {
+                notesList.append('<p class="text-center text-muted">No notes found</p>');
+            }
+        } catch (error) {
+            console.error('Error loading notes data:', error);
+            $('#notesList').html('<p class="text-center text-danger">Error loading notes</p>');
+        }
+    }
+
+    // Add function to load classes data
+    async function loadClassesData(studentId) {
+        console.log('Starting loadClassesData for student:', studentId);
+        try {
+            const studioId = localStorage.getItem('currentStudioId');
+            const db = firebase.firestore();
+            
+            const studentDoc = await db.collection('Studios')
+                .doc(studioId)
+                .collection('Students')
+                .doc(studentId)
+                .get();
+
+            if (!studentDoc.exists) {
+                console.error('Student document not found');
+                return;
+            }
+
+            const studentData = studentDoc.data();
+            console.log('Student data:', studentData);
+            
+            // Show the classes tab and table
+            $('#classes').show();
+            $('#studentClassesTable').show();
+            
+            const classesTableBody = $('#studentClassesTable tbody');
+            classesTableBody.empty();
+
+            if (studentData.Classes && studentData.Classes.length > 0) {
+                console.log('Found classes:', studentData.Classes);
+                for (const classId of studentData.Classes) {
+                    console.log('Fetching class data for:', classId);
+                    const classDoc = await db.collection('Studios')
+                        .doc(studioId)
+                        .collection('Classes')
+                        .doc(classId)
+                        .get();
+                    
+                    if (classDoc.exists) {
+                        const classData = classDoc.data();
+                        console.log('Class data:', classData);
+                        
+                        // Get instructor name
+                        let instructorName = 'Not Assigned';
+                        if (classData.InstructorId) {
+                            const instructorDoc = await db.collection('Studios')
+                                .doc(studioId)
+                                .collection('Instructors')
+                                .doc(classData.InstructorId)
+                                .get();
+                            
+                            if (instructorDoc.exists) {
+                                const instructor = instructorDoc.data();
+                                instructorName = `${instructor.FirstName} ${instructor.LastName}`;
+                            }
+                        }
+
+                        const row = `
+                            <tr>
+                                <td>${classData.ClassName}</td>
+                                <td>${classData.Days.join(', ')}</td>
+                                <td>${classData.StartTime} - ${classData.EndTime}</td>
+                                <td>${instructorName}</td>
+                            </tr>
+                        `;
+                        console.log('Adding row to table:', row);
+                        classesTableBody.append(row);
+                    }
+                }
+            } else {
+                console.log('No classes found for student');
+                classesTableBody.append('<tr><td colspan="4" class="text-center">No classes enrolled</td></tr>');
+            }
+        } catch (error) {
+            console.error('Error in loadClassesData:', error);
+            $('#studentClassesTable tbody').html('<tr><td colspan="4" class="text-center text-danger">Error loading classes data</td></tr>');
+        }
+    }
+
+    // Also update the initial student details loading to store the student ID
+    async function loadStudentDetails(studentId) {
+        try {
+            // Store the studentId in the modal's data attribute
+            $('#studentDetailsModal').data('studentId', studentId);
+            console.log('Stored student ID in modal:', studentId);
+            
+            // ... rest of the loadStudentDetails function ...
+            
+            // Load initial classes data
+            await loadClassesData(studentId);
+            
+        } catch (error) {
+            console.error('Error loading student details:', error);
+            alert('Error loading student details. Please try again.');
+        }
+    }
+    </script>
+
+    <!-- Add this after your existing scripts -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const registrationBtn = document.getElementById('studentRegistrationBtn');
+        
+        registrationBtn.addEventListener('click', function() {
+            const studioId = localStorage.getItem('currentStudioId');
+            const studioData = JSON.parse(localStorage.getItem('currentStudioData'));
+            
+            if (studioId && studioData?.StudioName) {
+                // Convert studio name to URL-friendly format (remove spaces and special characters)
+                const urlFriendlyStudioName = studioData.StudioName.toLowerCase()
+                    .replace(/[^a-z0-9]/g, '');
+                
+                // Construct the registration URL
+                const registrationUrl = `https://studiosyncdance.com/studentregister?studio=${urlFriendlyStudioName}=${studioId}`;
+                
+                // Open in a new tab
+                window.open(registrationUrl, '_blank');
+            } else {
+                console.error('Studio information not found');
+                alert('Unable to generate registration link. Please try again later.');
+            }
+        });
+    });
+    </script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Family search functionality
+        const familySearch = document.getElementById('familySearch');
+        const familySelect = document.getElementById('family');
+        
+        familySearch.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const options = familySelect.options;
+            
+            for (let i = 1; i < options.length; i++) { // Start from 1 to skip the placeholder
+                const familyName = options[i].text.toLowerCase();
+                options[i].style.display = familyName.includes(searchTerm) ? '' : 'none';
+            }
+        });
+
+        // Classes search functionality
+        const classSearch = document.getElementById('classSearch');
+        const classesContainer = document.getElementById('classesCheckboxContainer');
+        
+        classSearch.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const checkboxDivs = classesContainer.getElementsByClassName('form-check');
+            
+            Array.from(checkboxDivs).forEach(div => {
+                const label = div.querySelector('label');
+                const className = label.textContent.toLowerCase();
+                div.style.display = className.includes(searchTerm) ? '' : 'none';
+            });
+        });
+
+        // Clear searches when modal is hidden
+        $('#addStudentModal').on('hidden.bs.modal', function () {
+            familySearch.value = '';
+            classSearch.value = '';
+            const options = familySelect.options;
+            for (let i = 1; i < options.length; i++) {
+                options[i].style.display = '';
+            }
+            const checkboxDivs = classesContainer.getElementsByClassName('form-check');
+            Array.from(checkboxDivs).forEach(div => {
+                div.style.display = '';
+            });
+        });
+    });
+    </script>
+
+    <!-- Add this near the top of your script section, before any other code -->
+    <script>
+    // Add this near the top of your script section, before any other code
+    let ratePlans = {};
+
+    // Add this function to fetch rate plans
+    async function fetchRatePlans() {
+        try {
+            const studioId = localStorage.getItem('currentStudioId');
+            const db = firebase.firestore();
+            
+            const ratePlansSnapshot = await db.collection('Studios')
+                .doc(studioId)
+                .collection('RatePlans')
+                .get();
+
+            ratePlansSnapshot.forEach(doc => {
+                ratePlans[doc.id] = {
+                    id: doc.id,
+                    ...doc.data()
+                };
+            });
+            
+            console.log('Fetched rate plans:', ratePlans);
+        } catch (error) {
+            console.error('Error fetching rate plans:', error);
+        }
+    }
+
+    // Add the calculateRatePlanCost function
+    function calculateRatePlanCost(ratePlan, totalHours) {
+        if (!ratePlan?.HourRates?.length) {
+            console.warn('Invalid rate plan or missing HourRates');
+            return 0;
+        }
+
+        // Sort rates by hours in ascending order
+        const sortedRates = [...ratePlan.HourRates].sort((a, b) => a.Hours - b.Hours);
+        
+        // Find the appropriate rate for the total hours
+        let selectedRate = sortedRates[0]; // Default to first rate
+        
+        for (let i = 0; i < sortedRates.length; i++) {
+            if (totalHours >= sortedRates[i].Hours) {
+                selectedRate = sortedRates[i];
+            } else {
+                break;
+            }
+        }
+
+        return selectedRate.Rate;
+    }
+
+    // Update your DOMContentLoaded event listener to include fetchRatePlans
+    document.addEventListener('DOMContentLoaded', async function() {
+        try {
+            await fetchRatePlans(); // Add this line
+            await loadStudents();
+            makeFormControlsFocusable();
+            
+            // Your existing initialization code...
+            
+        } catch (error) {
+            console.error('Error during initialization:', error);
+        }
+    });
+
+    // Also update your loadFormData function to include rate plans
+    async function loadFormData() {
+        try {
+            const studioId = localStorage.getItem('currentStudioId');
+            const db = firebase.firestore();
+            
+            // Fetch rate plans if not already loaded
+            if (Object.keys(ratePlans).length === 0) {
+                await fetchRatePlans();
+            }
+            
+            // Your existing loadFormData code...
+            
+        } catch (error) {
+            console.error('Error loading form data:', error);
+        }
+    }
+    </script>
+</body>
+</html>

@@ -1,0 +1,181 @@
+const functions = require("firebase-functions");
+const admin = require("firebase-admin");
+
+exports.postMonthlyCharges = functions.https.onRequest(async (req, res) => {
+    const today = new Date();
+    const dayOfMonth = today.getDate();
+
+    console.log(`Running post charges for day: ${dayOfMonth}`);
+
+    const studiosSnapshot = await admin.firestore().collection("Studios").get();
+
+    for (const studioDoc of studiosSnapshot.docs) {
+        const studioData = studioDoc.data();
+        const postChargesDay = studioData.PaymentProcessing && 
+                              studioData.PaymentProcessing.Settings && 
+                              studioData.PaymentProcessing.Settings.General && 
+                              studioData.PaymentProcessing.Settings.General.PostChargesDay;
+
+        console.log(`Processing studio: ${studioDoc.id}, Post Charges Day: ${postChargesDay}`);
+
+        if (dayOfMonth === postChargesDay) {
+            console.log(`Today is post charges day for studio: ${studioDoc.id}`);
+
+            const familiesSnapshot = await studioDoc.ref.collection("Families").get();
+
+            for (const familyDoc of familiesSnapshot.docs) {
+                const familyData = familyDoc.data();
+                const chargeDetails = await calculateMonthlyCharge(familyData, studioDoc.id);
+
+                console.log(`Posting charge for family: ${familyDoc.id}, Amount: ${chargeDetails.Amount}`);
+
+                await postChargeToLedger(studioDoc.id, familyDoc.id, chargeDetails);
+            }
+        } else {
+            console.log(`Not post charges day for studio: ${studioDoc.id}`);
+        }
+    }
+
+    console.log("Monthly charges posting completed.");
+    res.send("Monthly charges posting completed.");
+});
+
+async function calculateMonthlyCharge(familyData, studioId) {
+    const lineItems = [];
+    let totalTuition = 0;
+
+    if (familyData.Students) {
+        for (const student of familyData.Students) {
+            const studentTuition = await calculateStudentTuition(student, studioId);
+            totalTuition += studentTuition;
+
+            lineItems.push({
+                Amount: studentTuition,
+                Description: `Tuition for ${student.firstName} ${student.lastName}`,
+                StudentId: student.Id,
+                StudentName: `${student.firstName} ${student.lastName}`,
+                Type: "Tuition"
+            });
+        }
+    }
+
+    const subtotal = lineItems.reduce((sum, item) => sum + item.Amount, 0);
+    const totalAmount = subtotal;
+
+    return {
+        Amount: totalAmount,
+        ChargeDate: new Date().toISOString(),
+        CreatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        Description: `Monthly Charges for ${familyData.FamilyName || "Family"}`,
+        FamilyId: familyData.FamilyId,
+        LineItems: lineItems,
+        Status: "Pending",
+        Subtotal: subtotal,
+        Type: "MonthlyCharge"
+    };
+}
+
+async function calculateStudentTuition(student, studioId) {
+    if (!student.classes || student.classes.length === 0) {
+        console.log("No classes selected for student:", student.firstName);
+        return 0;
+    }
+
+    let tuitionFromRatePlans = 0;
+    let classFees = 0;
+
+    const hoursByRatePlan = {};
+    student.classes.forEach(classInfo => {
+        const hours = classInfo.Duration / 60;
+        const ratePlanId = classInfo.RatePlanId;
+
+        if (!hoursByRatePlan[ratePlanId]) {
+            hoursByRatePlan[ratePlanId] = 0;
+        }
+
+        hoursByRatePlan[ratePlanId] += hours;
+
+        if (classInfo.Fee && classInfo.Fee.length > 0) {
+            const feeInfo = classInfo.Fee[0];
+            classFees += calculateClassFee(feeInfo);
+        }
+    });
+
+    for (const [ratePlanId, totalHours] of Object.entries(hoursByRatePlan)) {
+        const ratePlan = await getRatePlan(studioId, ratePlanId);
+        if (ratePlan) {
+            tuitionFromRatePlans += calculateRatePlanCost(ratePlan, totalHours);
+        }
+    }
+
+    return tuitionFromRatePlans + classFees;
+}
+
+function calculateClassFee(feeInfo) {
+    let feeAmount = 0;
+    switch (feeInfo.FeeType) {
+        case "OneTime":
+            feeAmount = Number(feeInfo.FeeAmount);
+            break;
+        case "BrokenUp":
+            if (feeInfo.BreakUpDuration) {
+                feeAmount = Number(feeInfo.FeeAmount) / feeInfo.BreakUpDuration;
+            }
+            break;
+        case "Recurring":
+            feeAmount = Number(feeInfo.FeeAmount);
+            break;
+    }
+    return feeAmount;
+}
+
+function calculateRatePlanCost(ratePlan, totalHours) {
+    if (!ratePlan.HourRates || ratePlan.HourRates.length === 0) {
+        return 0;
+    }
+    
+    const sortedRates = [...ratePlan.HourRates].sort((a, b) => a.Hours - b.Hours);
+    let selectedRate = sortedRates[0];
+
+    for (let i = 0; i < sortedRates.length; i++) {
+        if (totalHours >= sortedRates[i].Hours) {
+            selectedRate = sortedRates[i];
+        } else {
+            break;
+        }
+    }
+
+    return selectedRate.Rate;
+}
+
+async function getRatePlan(studioId, ratePlanId) {
+    const db = admin.firestore();
+    try {
+        const ratePlanDoc = await db.collection("Studios")
+            .doc(studioId)
+            .collection("RatePlans")
+            .doc(ratePlanId)
+            .get();
+
+        if (ratePlanDoc.exists) {
+            return ratePlanDoc.data();
+        } else {
+            console.log(`Rate plan not found for ID: ${ratePlanId}`);
+            return null;
+        }
+    } catch (error) {
+        console.error("Error fetching rate plan:", error);
+        return null;
+    }
+}
+
+async function postChargeToLedger(studioId, familyId, chargeDetails) {
+    const db = admin.firestore();
+    const familyRef = db.collection(`Studios/${studioId}/Families`).doc(familyId);
+    const studioChargesRef = db.collection(`Studios/${studioId}/Charges`);
+
+    await familyRef.collection("Charges").add(chargeDetails);
+    await studioChargesRef.add(chargeDetails);
+
+    console.log(`Charge posted to ledger for family: ${familyId}`);
+}

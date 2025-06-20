@@ -1,0 +1,30 @@
+/* Payment form styling */
+.payment-form input {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 12px;
+    width: 100%;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.payment-form #cardNumber {
+    border: 2px solid #4CAF50;
+    border-radius: 8px;
+    letter-spacing: 1px;
+}
+
+.card-details {
+    display: flex;
+    gap: 20px;
+}
+
+.card-details .expiration,
+.card-details .cvc {
+    flex: 1;
+}
+
+.card-details input {
+    border: 2px solid #4CAF50;
+    border-radius: 8px;
+} 
