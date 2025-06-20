@@ -7,7 +7,8 @@
     "source": "functions",
     "runtime": "nodejs20"
   },
-  "hosting": {
+  "hosting": [{
+    "target": "production",
     "public": "public",
     "cleanUrls": true,
     "trailingSlash": false,
@@ -103,6 +104,94 @@
       }
     ]
   },
+  {
+    "target": "development",
+    "public": "public",
+    "cleanUrls": true,
+    "trailingSlash": false,
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "/studentregister",
+        "destination": "/studentregister.html"
+      },
+      {
+        "source": "/studentregister/**",
+        "destination": "/studentregister.html"
+      },
+      {
+        "source": "/register{,/**}",
+        "destination": "/register.html"
+      },
+      {
+        "source": "/dashboard",
+        "destination": "/dashboard.html"
+      },
+      {
+        "source": "/:studioId/dashboard",
+        "destination": "/dashboard.html"
+      },
+      {
+        "source": "/settings{,/**}",
+        "destination": "/settings.html"
+      },
+      {
+        "source": "/studiologin{,/**}",
+        "destination": "/studiologin.html"
+      },
+      {
+        "source": "/portallogin{,/**}",
+        "destination": "/portallogin.html"
+      },
+      {
+        "source": "/portal/**",
+        "destination": "/portal.html"
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ],
+    "headers": [
+      {
+        "source": "**",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache, no-store, must-revalidate"
+          },
+          {
+            "key": "Access-Control-Allow-Origin",
+            "value": "*"
+          },
+          {
+            "key": "Access-Control-Allow-Methods",
+            "value": "GET,POST,OPTIONS"
+          },
+          {
+            "key": "Access-Control-Allow-Headers",
+            "value": "Content-Type,Authorization,Accept"
+          },
+          {
+            "key": "X-Robots-Tag",
+            "value": "all"
+          },
+          {
+            "key": "Access-Control-Max-Age",
+            "value": "3600"
+          },
+          {
+            "key": "Access-Control-Allow-Credentials",
+            "value": "true"
+          }
+        ]
+      }
+    ]
+  }],
   "storage": {
     "rules": "storage.rules"
   }

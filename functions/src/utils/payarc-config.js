@@ -13,6 +13,17 @@ const PAYARC_CONFIG = {
   ].join("")
 };
 
+const corsOptions = {
+  origin: [
+    'https://studiosyncdance.com',
+    'https://studiosync-dev.web.app',
+    'http://localhost:5000'  // for local testing if needed
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
+};
+
 exports.getPayarcConfig = () => {
   const payarcConfig = functions.config().payarc || {};
   const agentConfig = functions.config().agent || {};
@@ -40,4 +51,9 @@ exports.getPayarcConfig = () => {
   });
 
   return config;
+};
+
+module.exports = {
+  corsOptions,
+  // ... existing exports ...
 };

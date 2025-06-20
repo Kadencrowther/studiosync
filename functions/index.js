@@ -3,6 +3,8 @@ const express = require("express");
 const cors = require("cors");
 const admin = require("firebase-admin");
 const axios = require("axios");
+const functions = require('firebase-functions');
+const { corsOptions } = require('./src/utils/payarc-config');
 
 // Initialize Firebase Admin
 admin.initializeApp();
@@ -49,223 +51,234 @@ app.use(cors({
 
 app.use(express.json());
 
+// Apply CORS middleware to all functions
+const corsMiddleware = cors(corsOptions);
+
 // Create Customer
 app.post("/createCustomer", async (req, res) => {
-  try {
-    console.log("📦 Received customer creation request:", {
-      ...req.body,
-      email: req.body.email ? "****" + req.body.email.slice(-10) : null
-    });
-
-    const response = await axios.post(
-      `${PAYARC_CONFIG.BASE_URL}/customers`,
-      {
+  corsMiddleware(req, res, async () => {
+    try {
+      console.log("📦 Received customer creation request:", {
         ...req.body,
-        test_mode: true
-      },
-      {
-        headers: getPayarcHeaders()
+        email: req.body.email ? "****" + req.body.email.slice(-10) : null
+      });
+
+      const response = await axios.post(
+        `${PAYARC_CONFIG.BASE_URL}/customers`,
+        {
+          ...req.body,
+          test_mode: true
+        },
+        {
+          headers: getPayarcHeaders()
+        }
+      );
+
+      console.log("✅ PayArc customer response:", response.data);
+
+      // Extract customer_id from the correct location
+      const customerId = response.data && 
+                        response.data.data && 
+                        response.data.data.customer_id;
+      
+      if (!customerId) {
+        console.error("❌ Missing customer_id in PayArc response:", response.data);
+        return res.status(500).json({
+          error: "Customer created but ID not found in response",
+          details: response.data
+        });
       }
-    );
 
-    console.log("✅ PayArc customer response:", response.data);
+      res.json({
+        success: true,
+        customer_id: customerId,
+        data: response.data
+      });
 
-    // Extract customer_id from the correct location
-    const customerId = response.data && 
-                      response.data.data && 
-                      response.data.data.customer_id;
-    
-    if (!customerId) {
-      console.error("❌ Missing customer_id in PayArc response:", response.data);
-      return res.status(500).json({
-        error: "Customer created but ID not found in response",
-        details: response.data
+    } catch (error) {
+      console.error("❌ Customer creation error:", {
+        message: error.message,
+        response: error.response && error.response.data,
+        status: error.response && error.response.status
+      });
+
+      const statusCode = error.response && error.response.status || 500;
+      const errorMessage = error.response && error.response.data && error.response.data.message || error.message;
+      
+      res.status(statusCode).json({
+        error: errorMessage,
+        details: error.response && error.response.data
       });
     }
-
-    res.json({
-      success: true,
-      customer_id: customerId,
-      data: response.data
-    });
-
-  } catch (error) {
-    console.error("❌ Customer creation error:", {
-      message: error.message,
-      response: error.response && error.response.data,
-      status: error.response && error.response.status
-    });
-
-    const statusCode = error.response && error.response.status || 500;
-    const errorMessage = error.response && error.response.data && error.response.data.message || error.message;
-    
-    res.status(statusCode).json({
-      error: errorMessage,
-      details: error.response && error.response.data
-    });
-  }
+  });
 });
 
 // Create Token
 app.post("/createToken", async (req, res) => {
-  try {
-    console.log("Received token creation request:", {
-      ...req.body,
-      card_number: req.body.card_number ? "****" + req.body.card_number.slice(-4) : null,
-      cvv: "***"
-    });
-
-    const response = await axios.post(
-      `${PAYARC_CONFIG.BASE_URL}/tokens`,
-      {
+  corsMiddleware(req, res, async () => {
+    try {
+      console.log("Received token creation request:", {
         ...req.body,
-        test_mode: true,
-        authorize_card: 1
-      },
-      {
-        headers: getPayarcHeaders()
-      }
-    );
-
-    console.log("✅ Token created successfully:", {
-      token_id: response.data && response.data.data && response.data.data.id,
-      response: response.data
-    });
-
-    res.json({ data: response.data });
-  } catch (error) {
-    console.error("❌ Token creation error:", {
-      message: error.message,
-      response: error.response && error.response.data,
-      status: error.response && error.response.status,
-      requestBody: {
-        ...req.body,
-        card_number: "****",
+        card_number: req.body.card_number ? "****" + req.body.card_number.slice(-4) : null,
         cvv: "***"
-      }
-    });
+      });
 
-    const statusCode = error.response && error.response.status || 500;
-    const errorMessage = error.response && error.response.data && error.response.data.message || error.message;
-    
-    res.status(statusCode).json({
-      error: errorMessage,
-      details: error.response && error.response.data
-    });
-  }
+      const response = await axios.post(
+        `${PAYARC_CONFIG.BASE_URL}/tokens`,
+        {
+          ...req.body,
+          test_mode: true,
+          authorize_card: 1
+        },
+        {
+          headers: getPayarcHeaders()
+        }
+      );
+
+      console.log("✅ Token created successfully:", {
+        token_id: response.data && response.data.data && response.data.data.id,
+        response: response.data
+      });
+
+      res.json({ data: response.data });
+    } catch (error) {
+      console.error("❌ Token creation error:", {
+        message: error.message,
+        response: error.response && error.response.data,
+        status: error.response && error.response.status,
+        requestBody: {
+          ...req.body,
+          card_number: "****",
+          cvv: "***"
+        }
+      });
+
+      const statusCode = error.response && error.response.status || 500;
+      const errorMessage = error.response && error.response.data && error.response.data.message || error.message;
+      
+      res.status(statusCode).json({
+        error: errorMessage,
+        details: error.response && error.response.data
+      });
+    }
+  });
 });
 
 // Update Customer with Payment Method
 app.post("/attachPaymentSource", async (req, res) => {
-  try {
-    console.log("📦 Updating customer with payment method:", {
-      customer_id: req.body.customer_id,
-      token_id: req.body.token_id
-    });
+  corsMiddleware(req, res, async () => {
+    try {
+      console.log("📦 Updating customer with payment method:", {
+        customer_id: req.body.customer_id,
+        token_id: req.body.token_id
+      });
 
-    // Update customer with token_id using PATCH
-    const updateResponse = await axios.patch(
-      `${PAYARC_CONFIG.BASE_URL}/customers/${req.body.customer_id}`,
-      { 
-        token_id: req.body.token_id,
-        test_mode: true
-      },
-      { 
-        headers: {
-          ...getPayarcHeaders(),
-          "Accept": "application/json",
-          "Content-Type": "application/json"
+      // Update customer with token_id using PATCH
+      const updateResponse = await axios.patch(
+        `${PAYARC_CONFIG.BASE_URL}/customers/${req.body.customer_id}`,
+        { 
+          token_id: req.body.token_id,
+          test_mode: true
+        },
+        { 
+          headers: {
+            ...getPayarcHeaders(),
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+          }
         }
-      }
-    );
+      );
 
-    console.log("✅ Customer updated with payment method:", updateResponse.data);
+      console.log("✅ Customer updated with payment method:", updateResponse.data);
 
-    // Don't try to set as default - it's already handled
-    res.json({
-      success: true,
-      data: updateResponse.data
-    });
-
-  } catch (error) {
-    // If it's a 409 conflict (already default), treat it as success
-    if (error.response && error.response.status === 409) {
-      console.log("✅ Payment method already set as default");
-      return res.json({
+      // Don't try to set as default - it's already handled
+      res.json({
         success: true,
-        data: error.response.data
+        data: updateResponse.data
+      });
+
+    } catch (error) {
+      // If it's a 409 conflict (already default), treat it as success
+      if (error.response && error.response.status === 409) {
+        console.log("✅ Payment method already set as default");
+        return res.json({
+          success: true,
+          data: error.response.data
+        });
+      }
+
+      console.error("❌ Error updating customer payment method:", {
+        message: error.message,
+        response: error.response && error.response.data,
+        status: error.response && error.response.status,
+        url: `${PAYARC_CONFIG.BASE_URL}/customers/${req.body.customer_id}`
+      });
+      
+      const errorStatus = error.response && error.response.status || 500;
+      res.status(errorStatus).json({
+        error: error.message,
+        details: error.response && error.response.data
       });
     }
-
-    console.error("❌ Error updating customer payment method:", {
-      message: error.message,
-      response: error.response && error.response.data,
-      status: error.response && error.response.status,
-      url: `${PAYARC_CONFIG.BASE_URL}/customers/${req.body.customer_id}`
-    });
-    
-    const errorStatus = error.response && error.response.status || 500;
-    res.status(errorStatus).json({
-      error: error.message,
-      details: error.response && error.response.data
-    });
-  }
+  });
 });
 
 // Create Subscription
 app.post("/createSubscription", async (req, res) => {
-  try {
-    console.log("📦 Creating subscription:", {
-      customer_id: req.body.customer_id,
-      plan_id: req.body.plan_id,
-      billing_cycle: req.body.billing_cycle
-    });
+  corsMiddleware(req, res, async () => {
+    try {
+      console.log("📦 Creating subscription:", {
+        customer_id: req.body.customer_id,
+        plan_id: req.body.plan_id,
+        billing_cycle: req.body.billing_cycle
+      });
 
-    const subscriptionData = {
-      customer_id: req.body.customer_id,
-      plan_id: req.body.plan_id,
-      billing_cycle: req.body.billing_cycle,
-      test_mode: true,
-      start_after_days: 30,  // Start after 30-day trial
-      trial_days: 30,        // 30-day trial period
-      description: `${req.body.plan_name || "Studio Sync"} Subscription`
-    };
+      const subscriptionData = {
+        customer_id: req.body.customer_id,
+        plan_id: req.body.plan_id,
+        billing_cycle: req.body.billing_cycle,
+        test_mode: true,
+        start_after_days: 30,  // Start after 30-day trial
+        trial_days: 30,        // 30-day trial period
+        description: `${req.body.plan_name || "Studio Sync"} Subscription`
+      };
 
-    const response = await axios.post(
-      `${PAYARC_CONFIG.BASE_URL}/subscriptions`,
-      subscriptionData,
-      { 
-        headers: {
-          ...getPayarcHeaders(),
-          "Accept": "application/json",
-          "Content-Type": "application/json"
+      const response = await axios.post(
+        `${PAYARC_CONFIG.BASE_URL}/subscriptions`,
+        subscriptionData,
+        { 
+          headers: {
+            ...getPayarcHeaders(),
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+          }
         }
-      }
-    );
+      );
 
-    console.log("✅ Subscription created:", {
-      subscription_id: response.data && response.data.data && response.data.data.subscription_id,
-      status: response.status,
-      data: response.data
-    });
+      console.log("✅ Subscription created:", {
+        subscription_id: response.data && response.data.data && response.data.data.subscription_id,
+        status: response.status,
+        data: response.data
+      });
 
-    res.json({
-      success: true,
-      data: response.data
-    });
-  } catch (error) {
-    console.error("❌ Error creating subscription:", {
-      message: error.message,
-      response: error.response && error.response.data,
-      status: error.response && error.response.status
-    });
-    
-    const errorStatus = error.response && error.response.status || 500;
-    res.status(errorStatus).json({
-      error: error.message,
-      details: error.response && error.response.data
-    });
-  }
+      res.json({
+        success: true,
+        data: response.data
+      });
+    } catch (error) {
+      console.error("❌ Error creating subscription:", {
+        message: error.message,
+        response: error.response && error.response.data,
+        status: error.response && error.response.status
+      });
+      
+      const errorStatus = error.response && error.response.status || 500;
+      res.status(errorStatus).json({
+        error: error.message,
+        details: error.response && error.response.data
+      });
+    }
+  });
 });
 
 // Export the Express app as a Firebase Function v2 with proper configuration

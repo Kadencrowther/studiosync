@@ -5,11 +5,11 @@
   "targets": {
     "studiosync-af73d": {
       "hosting": {
-        "portal": [
-          "studiosyncportal"
-        ],
-        "public": [
+        "production": [
           "studiosync-af73d"
+        ],
+        "development": [
+          "studiosync-dev"
         ]
       }
     }
