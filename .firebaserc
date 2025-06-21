@@ -8,8 +8,11 @@
         "production": [
           "studiosync-af73d"
         ],
-        "development": [
-          "studiosync-dev"
+        "dev1": [
+          "studiosync-dev1"
+        ],
+        "dev2": [
+          "studiosync-dev2"
         ]
       }
     }

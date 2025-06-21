@@ -16,7 +16,8 @@ const PAYARC_CONFIG = {
 const corsOptions = {
   origin: [
     'https://studiosyncdance.com',
-    'https://studiosync-dev.web.app',
+    'https://studiosync-dev1.web.app',
+    'https://studiosync-dev2.web.app',
     'http://localhost:5000'  // for local testing if needed
   ],
   credentials: true,

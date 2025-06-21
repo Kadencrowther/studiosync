@@ -9,9 +9,12 @@
 4. Select "Write" access
 5. Send invitation
 
-### Development & Production Environments
-- Development: studiosync-dev.web.app (for testing)
-- Production: studiosyncdance.com (live site)
+### Development Environments
+
+We have three environments:
+- **Production**: studiosyncdance.com (live site)
+- **Dev1**: https://studiosync-dev1.web.app (Testing Environment 1)
+- **Dev2**: https://studiosync-dev2.web.app (Testing Environment 2)
 
 ### Why We Use Development Environment Instead of Local Testing
 1. **Real Environment Testing**:
@@ -176,4 +179,30 @@ git checkout -- filename
 **Q: What if I need to test something quickly?**
 - Always use the development environment
 - Never test directly in production
-- Deploy to development as often as needed 
+- Deploy to development as often as needed
+
+### Using Development Environments
+
+1. **For Vinny**:
+   ```bash
+   # Deploy to Dev1
+   firebase deploy --only hosting:dev1
+   ```
+   - Test your changes at https://studiosync-dev1.web.app
+   - This is your dedicated testing environment
+
+2. **For Kaden**:
+   ```bash
+   # Deploy to Dev2
+   firebase deploy --only hosting:dev2
+   ```
+   - Test your changes at https://studiosync-dev2.web.app
+   - This is your dedicated testing environment
+
+3. **For Production**:
+   ```bash
+   # Only Kaden deploys to production
+   firebase deploy --only hosting:production
+   ```
+
+This setup allows both developers to test independently without overriding each other's work. 

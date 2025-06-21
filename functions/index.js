@@ -42,9 +42,11 @@ app.use(cors({
     "https://studiosync-af73d.web.app",
     "https://studiosync-af73d.firebaseapp.com", 
     "https://studiosyncdance.com",
+    "https://studiosync-dev1.web.app",
+    "https://studiosync-dev2.web.app",
     "http://localhost:5000"
   ],
-  methods: ["POST", "OPTIONS"],
+  methods: ["POST", "GET", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
 }));
