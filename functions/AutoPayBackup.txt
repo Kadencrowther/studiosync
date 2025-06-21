@@ -1,0 +1,1101 @@
+const { onSchedule } = require("firebase-functions/v2/scheduler");
+const { onRequest } = require("firebase-functions/v2/https");
+const admin = require("firebase-admin");
+const express = require("express");
+const cors = require("cors");
+const axios = require("axios"); // Make sure axios is installed
+
+// Initialize Firebase Admin if not already initialized
+if (!admin.apps.length) {
+  admin.initializeApp();
+}
+
+// Create Express app for HTTP endpoint
+const app = express();
+
+// CORS configuration
+app.use(cors({
+  origin: [
+    "https://studiosync-af73d.web.app",
+    "https://studiosync-af73d.firebaseapp.com", 
+    "https://studiosyncdance.com",
+    "http://localhost:5000"
+  ],
+  methods: ["POST", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}));
+
+/**
+ * Process a payment using the same endpoint as student registration
+ */
+async function processPayment(paymentData) {
+  try {
+    console.log('🔄 Processing payment with external service:', {
+      studioId: paymentData.studioId,
+      familyId: paymentData.familyId,
+      amount: paymentData.amount,
+      customerId: paymentData.customerId ? paymentData.customerId.substring(0, 4) + "..." + paymentData.customerId.substring(paymentData.customerId.length - 4) : undefined
+    });
+    
+    // Get studio and family data
+    console.log(`🔄 Fetching studio data for ${paymentData.studioId}`);
+    const studioDoc = await admin.firestore().collection('Studios').doc(paymentData.studioId).get();
+    if (!studioDoc.exists) {
+      console.error(`❌ Studio not found: ${paymentData.studioId}`);
+      throw new Error(`Studio not found: ${paymentData.studioId}`);
+    }
+    const studioData = studioDoc.data();
+    console.log(`✅ Found studio: ${studioData.StudioName || paymentData.studioId}`);
+    
+    console.log(`🔄 Fetching family data for ${paymentData.familyId}`);
+    const familyDoc = await admin.firestore().collection(`Studios/${paymentData.studioId}/Families`).doc(paymentData.familyId).get();
+    if (!familyDoc.exists) {
+      console.error(`❌ Family not found: ${paymentData.familyId}`);
+      throw new Error(`Family not found: ${paymentData.familyId}`);
+    }
+    const familyData = familyDoc.data();
+    console.log(`✅ Found family: ${familyData.LastName || paymentData.familyId}`);
+    
+    // Format the request data for the payment processing endpoint
+    const paymentRequest = {
+      url: process.env.PAYMENT_PROCESSOR_URL || "https://processpayments-22djwxzgmq-uc.a.run.app/process-payment",
+      data: {
+        studioId: paymentData.studioId,
+        customerId: paymentData.customerId,
+        payment: {
+          amount: paymentData.amount,
+          description: paymentData.description || `Auto payment for ${familyData.LastName} family`,
+          reference: `autopay-${Date.now()}-${familyData.LastName}-${paymentData.familyId.substring(0, 8)}`
+        },
+        paymentType: "existingCustomer",
+        card: {
+          use_saved_method: true
+        },
+        transactionId: `autopay-${Date.now()}-${paymentData.familyId.substring(0, 8)}`,
+        test_mode: true  // Set to true for testing with Payarc test API
+      }
+    };
+    
+    console.log('🔄 Sending payment request to payment processor:', {
+      url: paymentRequest.url,
+      data: {
+        ...paymentRequest.data,
+        customerId: '****' // Mask sensitive data in logs
+      }
+    });
+    
+    // Call the payment processing endpoint
+    console.log(`🔄 Making API call to payment processor...`);
+    const response = await axios.post(
+      paymentRequest.url,
+      { data: paymentRequest.data },
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+    
+    console.log(`✅ Received response from payment processor with status: ${response.status}`);
+    console.log('🔄 Payment processor response:', {
+      success: response.data.success,
+      amount: response.data.amount,
+      chargeId: response.data.chargeId,
+      status: response.data.status,
+      isPartialPayment: response.data.isPartialPayment
+    });
+    
+    if (response.data.success) {
+      // Payment was successful or partially successful
+      console.log(`✅ Payment was processed successfully by payment processor`);
+      
+      // Check if this was a partial payment
+      const isPartialPayment = response.data.isPartialPayment || false;
+      const actualAmount = response.data.amount || paymentData.amount;
+      const requestedAmount = response.data.requestedAmount || paymentData.amount;
+      
+      if (isPartialPayment) {
+        console.log(`⚠️ PARTIAL PAYMENT DETECTED: Requested $${requestedAmount.toFixed(2)}, Approved $${actualAmount.toFixed(2)}`);
+        console.log(`⚠️ Difference: $${(requestedAmount - actualAmount).toFixed(2)}`);
+      } else {
+        console.log(`✅ Full payment processed: $${actualAmount.toFixed(2)}`);
+      }
+      
+      // Create a batch for all updates
+      console.log(`🔄 Creating Firestore batch for database updates...`);
+      const batch = admin.firestore().batch();
+      
+      // Inside processPayment function, add logging before document creation
+      console.log(`🔄 Creating payment documents for family ${paymentData.familyId}...`);
+
+      // Create payment record in family's payments subcollection
+      const familyPaymentRef = admin.firestore()
+        .collection(`Studios/${paymentData.studioId}/Families/${paymentData.familyId}/Payments`)
+        .doc();
+      
+      // Create payment record in studio's payments subcollection
+      const studioPaymentRef = admin.firestore()
+        .collection(`Studios/${paymentData.studioId}/Payments`)
+        .doc();
+      
+      console.log(`📝 Created payment document references:
+      - Family Payment ID: ${familyPaymentRef.id}
+      - Studio Payment ID: ${studioPaymentRef.id}`);
+      
+      // Verify studio collection exists
+      console.log(`🔄 Verifying studio payments collection exists...`);
+      const studioPaymentsCollection = admin.firestore()
+        .collection(`Studios/${paymentData.studioId}/Payments`);
+      
+      try {
+        const collectionSnapshot = await studioPaymentsCollection.limit(1).get();
+        console.log(`✅ Studio payments collection exists: ${collectionSnapshot.empty ? 'Empty collection' : 'Has documents'}`);
+      } catch (error) {
+        console.error(`❌ Error accessing studio payments collection: ${error.message}`);
+      }
+      
+      // Prepare line items
+      console.log(`🔄 Preparing payment line items...`);
+      const lineItems = [
+        {
+          Amount: response.data.subtotal || paymentData.amount,
+          Description: "Payment Subtotal",
+          Type: "Subtotal",
+          StudentId: null
+        }
+      ];
+      
+      console.log(`🔄 Added subtotal line item: $${lineItems[0].Amount.toFixed(2)}`);
+      
+      // Add surcharge line item if applicable
+      if (response.data.surchargeAmount && response.data.surchargeAmount > 0) {
+        console.log(`🔄 Adding surcharge line item: $${response.data.surchargeAmount.toFixed(2)}`);
+        lineItems.push({
+          Amount: response.data.surchargeAmount,
+          Description: "Processing Fee",
+          Type: "ProcessingFee",
+          StudentId: null
+        });
+      }
+      
+      // Determine payment method details
+      console.log(`🔄 Determining payment method details...`);
+      const paymentMethodDetails = {
+        Type: "Credit Card",
+        LastFour: familyData.PaymentMethod?.LastFour || "****",
+        CardType: familyData.PaymentMethod?.CardType || "Card"
+      };
+      
+      console.log(`🔄 Payment method: ${paymentMethodDetails.Type}, LastFour: ${paymentMethodDetails.LastFour}`);
+      
+      // Determine payment status
+      const paymentStatus = isPartialPayment ? "Partial Payment" : "Paid";
+      console.log(`🔄 Setting payment status to: ${paymentStatus}`);
+      
+      // Create the payment document
+      console.log(`🔄 Creating payment document...`);
+      const paymentDoc = {
+        Amount: parseFloat(actualAmount.toFixed(2)),
+        Subtotal: parseFloat(response.data.subtotal || (actualAmount - (response.data.surchargeAmount || 0)).toFixed(2)),
+        ProcessingFee: parseFloat(response.data.surchargeAmount || 0).toFixed(2),
+        CreatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        Description: paymentData.description || `Payment from ${familyData.FirstName} ${familyData.LastName}`,
+        FamilyId: paymentData.familyId,
+        FamilyName: `${familyData.FirstName} ${familyData.LastName}`,
+        PayarcChargeId: response.data.chargeId || `test_${Date.now()}`,
+        PaymentDate: admin.firestore.FieldValue.serverTimestamp(),
+        PaymentMethod: paymentMethodDetails,
+        Status: paymentStatus,
+        Type: "Payment",
+        RequestedAmount: requestedAmount,
+        IsPartialPayment: isPartialPayment,
+        UpdatedBalance: 0,
+        LineItems: lineItems
+      };
+      
+      console.log(`🔄 Payment document prepared:`, {
+        Amount: paymentDoc.Amount,
+        Subtotal: paymentDoc.Subtotal,
+        ProcessingFee: paymentDoc.ProcessingFee,
+        Status: paymentDoc.Status,
+        IsPartialPayment: paymentDoc.IsPartialPayment,
+        FamilyId: paymentDoc.FamilyId,
+        FamilyName: paymentDoc.FamilyName
+      });
+      
+      // Set both payment documents
+      console.log(`🔄 Setting payment documents in batch...`);
+      try {
+        batch.set(familyPaymentRef, paymentDoc);
+        console.log(`✅ Added family payment document to batch`);
+        
+        batch.set(studioPaymentRef, paymentDoc);
+        console.log(`✅ Added studio payment document to batch`);
+        
+        // Update family balance - only reduce by the actual amount paid
+        const currentBalance = familyData.Balance || 0;
+        const newBalance = Math.max(0, currentBalance - actualAmount);
+        
+        // Use the family document reference we already have
+        const familyRef = admin.firestore()
+          .collection(`Studios/${paymentData.studioId}/Families`)
+          .doc(paymentData.familyId);
+        
+        batch.update(familyRef, {
+          Balance: newBalance,
+          LastPayment: {
+            Amount: actualAmount,
+            Date: new Date().toISOString(),
+            Method: 'Card',
+            IsPartialPayment: isPartialPayment
+          },
+          UpdatedAt: admin.firestore.FieldValue.serverTimestamp()
+        });
+        console.log(`✅ Added family balance update to batch`);
+        
+        // First update family-level charges
+        for (const charge of paymentData.chargeIds) {
+          const familyChargeRef = admin.firestore()
+            .collection(`Studios/${paymentData.studioId}/Families/${paymentData.familyId}/Charges`)
+            .doc(charge);
+            
+          const updateData = {
+            Status: 'Paid',
+            AmountPaid: paymentData.amount,
+            PaymentDate: admin.firestore.FieldValue.serverTimestamp(),
+            PaymentId: familyPaymentRef.id,
+            UpdatedAt: admin.firestore.FieldValue.serverTimestamp()
+          };
+          
+          batch.update(familyChargeRef, updateData);
+        }
+
+        // After successful payment, get unpaid charges and filter by family in memory
+        const studioChargesSnapshot = await admin.firestore()
+          .collection(`Studios/${paymentData.studioId}/Charges`)
+          .where('Status', '==', 'Unpaid')  // This simple where clause doesn't need an index
+          .get();
+
+        if (!studioChargesSnapshot.empty) {
+          // Filter charges for this family
+          const unpaidCharges = studioChargesSnapshot.docs
+            .filter(doc => doc.data().FamilyId === paymentData.familyId)
+            // Sort by CreatedAt in memory
+            .sort((a, b) => b.data().CreatedAt.toDate() - a.data().CreatedAt.toDate());
+
+          let remainingPaymentAmount = actualAmount;
+          
+          for (const studioChargeDoc of unpaidCharges) {
+            const studioChargeData = studioChargeDoc.data();
+            const chargeAmount = studioChargeData.Amount;
+            
+            if (remainingPaymentAmount <= 0) break;
+            
+            let amountToApply = Math.min(remainingPaymentAmount, chargeAmount);
+            remainingPaymentAmount -= amountToApply;
+            
+            const updateData = {
+              AmountPaid: amountToApply,
+              PaymentDate: admin.firestore.FieldValue.serverTimestamp(),
+              PaymentId: familyPaymentRef.id,
+              UpdatedAt: admin.firestore.FieldValue.serverTimestamp()
+            };
+            
+            // If full amount was paid, mark as Paid, otherwise Partial Payment
+            if (amountToApply >= chargeAmount) {
+              updateData.Status = 'Paid';
+            } else {
+              updateData.Status = 'Partial Payment';
+            }
+            
+            batch.update(studioChargeDoc.ref, updateData);
+            console.log(`✅ Updated studio charge ${studioChargeDoc.id}: ${updateData.Status} - Amount: $${amountToApply}`);
+          }
+        }
+        
+        // Commit all the updates
+        console.log(`🔄 Committing batch updates...`);
+        await batch.commit();
+        
+        // Verify documents were created
+        console.log(`🔄 Verifying documents were created...`);
+        const familyDoc = await familyPaymentRef.get();
+        const studioDoc = await studioPaymentRef.get();
+        
+        console.log(`✅ Payment documents created and verified:
+        - Family Payment: ${familyDoc.exists ? '✅ Created' : '❌ Not Created'} (ID: ${familyPaymentRef.id})
+        - Studio Payment: ${studioDoc.exists ? '✅ Created' : '❌ Not Created'} (ID: ${studioPaymentRef.id})`);
+        
+        if (!studioDoc.exists) {
+          console.error(`❌ Studio payment document was not created. Document ID: ${studioPaymentRef.id}`);
+          console.error(`Collection path: Studios/${paymentData.studioId}/Payments`);
+        }
+        
+        console.log(`✅ Payment records created with IDs: Family=${familyPaymentRef.id}, Studio=${studioPaymentRef.id}`);
+        
+        return {
+          success: true,
+          paymentId: familyPaymentRef.id,
+          chargeId: response.data.chargeId,
+          amount: actualAmount,
+          subtotal: response.data.subtotal,
+          surchargeAmount: response.data.surchargeAmount,
+          isPartialPayment: isPartialPayment,
+          status: paymentStatus
+        };
+      } catch (error) {
+        console.error(`❌ Error in batch operation: ${error.message}`);
+        console.error(`Error details:`, error);
+        throw error;
+      }
+    } else {
+      console.error('Payment processing failed:', response.data.error);
+      return {
+        success: false,
+        error: response.data.error || 'Payment processing failed'
+      };
+    }
+    
+  } catch (error) {
+    console.error('Error processing payment:', error);
+    return {
+      success: false,
+      error: error.message
+    };
+  }
+}
+
+// Add this helper function
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+/**
+ * Process auto payments for all studios or a specific studio
+ */
+async function processAutoPayments(studioId = null) {
+  console.log(`Starting auto payment processing${studioId ? ` for studio ${studioId}` : ' for all studios'}`);
+  
+  try {
+    // Get studios to process
+    let studiosQuery = admin.firestore().collection('Studios');
+    if (studioId) {
+      studiosQuery = studiosQuery.where(admin.firestore.FieldPath.documentId(), '==', studioId);
+    }
+    
+    const studiosSnapshot = await studiosQuery.get();
+    
+    if (studiosSnapshot.empty) {
+      console.log(`No studios found${studioId ? ` with ID ${studioId}` : ''}`);
+      return { success: false, error: 'No studios found' };
+    }
+    
+    let totalProcessed = 0;
+    let totalSuccessful = 0;
+    let totalFailed = 0;
+    const results = [];
+    
+    // Process each studio
+    for (const studioDoc of studiosSnapshot.docs) {
+      const currentStudioId = studioDoc.id;
+      console.log(`Processing auto payments for studio: ${currentStudioId}`);
+      
+      // Get families on auto-pay with unpaid charges
+      const familiesSnapshot = await admin.firestore()
+        .collection(`Studios/${currentStudioId}/Families`)
+        .where('IsOnAutoPay', '==', true)
+        .get();
+      
+      console.log(`Found ${familiesSnapshot.size} families on auto-pay for studio ${currentStudioId}`);
+      
+      // Process each family
+      for (const familyDoc of familiesSnapshot.docs) {
+        const familyId = familyDoc.id;
+        const familyData = familyDoc.data();
+        
+        // Skip if no payment method
+        if (!familyData.PayarcCustomerId) {
+          console.log(`Family ${familyId} is on auto-pay but has no payment method, skipping`);
+          results.push({
+            familyId,
+            success: false,
+            error: 'No payment method on file'
+          });
+          totalFailed++;
+          continue;
+        }
+        
+        // Get unpaid charges
+        const chargesSnapshot = await admin.firestore()
+          .collection(`Studios/${currentStudioId}/Families/${familyId}/Charges`)
+          .where('Status', '==', 'Unpaid')
+          .get();
+        
+        if (chargesSnapshot.empty) {
+          console.log(`No unpaid charges for family ${familyId}, skipping`);
+          continue;
+        }
+        
+        // Calculate total amount to charge
+        let totalAmount = 0;
+        const chargesToUpdate = [];
+        
+        chargesSnapshot.forEach(chargeDoc => {
+          const chargeData = chargeDoc.data();
+          totalAmount += chargeData.Amount || 0;
+          chargesToUpdate.push({
+            id: chargeDoc.id,
+            data: chargeData
+          });
+        });
+        
+        console.log(`Found ${chargesSnapshot.size} unpaid charges for family ${familyId}`);
+        console.log(`Total amount to charge for family ${familyId}: $${totalAmount.toFixed(2)}`);
+        
+        if (totalAmount <= 0) {
+          console.log(`No amount to charge for family ${familyId}, skipping`);
+          continue;
+        }
+        
+        totalProcessed++;
+        
+        // Add a random delay between payment attempts (2-5 seconds)
+        await sleep(2000 + Math.random() * 3000);
+        
+        // Process payment
+        try {
+          console.log(`Processing payment for family ${familyId}, amount: $${totalAmount.toFixed(2)}`);
+          
+          // Create payment data object for processPayment function
+          const paymentData = {
+            studioId: currentStudioId,
+            familyId: familyId,
+            amount: totalAmount,
+            description: `Auto payment for ${familyData.LastName} family`,
+            paymentMethod: 'Card',
+            customerId: familyData.PayarcCustomerId,
+            chargeIds: chargesToUpdate.map(charge => charge.id)
+          };
+          
+          // Call the processPayment function
+          const paymentResult = await processPayment(paymentData);
+          
+          if (paymentResult.success) {
+            console.log(`Payment successful for family ${familyId}`);
+            totalSuccessful++;
+            results.push({
+              familyId,
+              success: true,
+              amount: totalAmount,
+              paymentId: paymentResult.paymentId
+            });
+          } else {
+            console.error(`Payment failed for family ${familyId}: ${paymentResult.error}`);
+            totalFailed++;
+            results.push({
+              familyId,
+              success: false,
+              error: paymentResult.error
+            });
+          }
+        } catch (error) {
+          console.error(`Error processing payment for family ${familyId}:`, error);
+          totalFailed++;
+          results.push({
+            familyId,
+            success: false,
+            error: error.message
+          });
+        }
+      }
+    }
+    
+    return {
+      success: true,
+      processed: totalProcessed,
+      successful: totalSuccessful,
+      failed: totalFailed,
+      results: results
+    };
+  } catch (error) {
+    console.error('Error processing auto payments:', error);
+    return {
+      success: false,
+      error: error.message
+    };
+  }
+}
+
+// Add this helper function at the top level
+async function createAutoPayLog(type, startedAt, details) {
+    try {
+        const logData = {
+            Type: 'AutoPay',
+            SubType: type,
+            StartedAt: startedAt,
+            CompletedAt: new Date().toISOString(),
+            Details: {
+                StudioId: details.studioId || null,
+                TotalFamiliesProcessed: details.totalFamiliesProcessed || 0,
+                TotalPaymentsProcessed: details.totalPaymentsProcessed || 0,
+                TotalAmountProcessed: details.totalAmountProcessed || 0,
+                SuccessCount: details.successCount || 0,
+                ErrorCount: details.errorCount || 0,
+                Logs: details.logs || [],
+                Error: details.error || null
+            }
+        };
+
+        const logRef = await admin.firestore()
+            .collection('Studios')
+            .doc(details.studioId)
+            .collection('FunctionLogs')
+            .add(logData);
+
+        console.log('AutoPay log created with ID:', logRef.id);
+        return logRef.id;
+    } catch (error) {
+        console.error('Error creating AutoPay log:', error);
+        throw error;
+    }
+}
+
+// Function to capture console logs
+function captureConsoleLogs() {
+    const logs = [];
+    const originalConsoleLog = console.log;
+    const originalConsoleError = console.error;
+    const originalConsoleWarn = console.warn;
+
+    console.log = function() {
+        logs.push({
+            type: 'log',
+            timestamp: new Date().toISOString(),
+            message: Array.from(arguments).join(' ')
+        });
+        originalConsoleLog.apply(console, arguments);
+    };
+
+    console.error = function() {
+        logs.push({
+            type: 'error',
+            timestamp: new Date().toISOString(),
+            message: Array.from(arguments).join(' ')
+        });
+        originalConsoleError.apply(console, arguments);
+    };
+
+    console.warn = function() {
+        logs.push({
+            type: 'warn',
+            timestamp: new Date().toISOString(),
+            message: Array.from(arguments).join(' ')
+        });
+        originalConsoleWarn.apply(console, arguments);
+    };
+
+    return logs;
+}
+
+// HTTP endpoint for processing auto payments
+app.post('/', async (req, res) => {
+  const logs = captureConsoleLogs();
+  const startedAt = new Date().toISOString();
+  
+  try {
+    console.log("🕒 Auto payments HTTP endpoint triggered");
+    console.log("==========================================");
+    
+    // Set CORS headers explicitly
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    
+    const { studioId } = req.body;
+    
+    if (!studioId) {
+      console.log("❌ Error: studioId is required");
+      return res.status(400).json({ error: "studioId is required" });
+    }
+    
+    // Initialize all counters
+    let totalFamiliesProcessed = 0;
+    let totalPaymentsProcessed = 0;
+    let totalAmountProcessed = 0;
+    let totalFailed = 0;  // Add this initialization
+
+    // Get current date and log time in different timezones
+    const today = new Date();
+    const dayOfMonth = today.getDate();
+    
+    // Log times in different timezones
+    const estTime = new Date(today.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+    const cstTime = new Date(today.toLocaleString('en-US', { timeZone: 'America/Chicago' }));
+    const mstTime = new Date(today.toLocaleString('en-US', { timeZone: 'America/Denver' }));
+    const pstTime = new Date(today.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }));
+    
+    console.log(`\n⏰ EXECUTION START TIME (Day ${dayOfMonth} of month):
+    EST: ${estTime.toLocaleString()}
+    CST: ${cstTime.toLocaleString()}
+    MST: ${mstTime.toLocaleString()}
+    PST: ${pstTime.toLocaleString()}`);
+    
+    console.log("\n📊 EXECUTION SUMMARY:");
+    console.log("==========================================");
+    
+    // Get studio data
+    console.log(`\n🔍 PROCESSING STUDIO: ${studioId}`);
+    console.log("------------------------------------------");
+    
+    const studioDoc = await admin.firestore().collection("Studios").doc(studioId).get();
+    
+    if (!studioDoc.exists) {
+      console.log(`❌ Studio not found: ${studioId}`);
+      return res.status(404).json({ error: "Studio not found" });
+    }
+    
+    const studioData = studioDoc.data();
+    
+    // Get PaymentProcessing settings
+    const settingsDoc = await admin
+      .firestore()
+      .collection(`Studios/${studioId}/PaymentProcessing`)
+      .doc("Settings")
+      .get();
+
+    const settingsData = settingsDoc.exists ? settingsDoc.data() : null;
+    const autoPayBillingDay = settingsData?.General?.AutoPayBillingDay;
+    const autoPaymentsEnabled = settingsData?.General?.AutoPaymentsEnabled;
+    
+    console.log(`Settings Status:
+    - Settings Document Exists: ${settingsDoc.exists ? '✅' : '❌'}
+    - AutoPayments Enabled: ${autoPaymentsEnabled ? '✅' : '❌'}
+    - AutoPay Billing Day: ${autoPayBillingDay || 'Not Set'}`);
+    
+    // Get all families for this studio
+    const familiesSnapshot = await studioDoc.ref.collection("Families").get();
+    
+    console.log(`\n👨‍👩‍👧‍👦 Found ${familiesSnapshot.docs.length} families for studio ${studioId}`);
+    
+    // Process each family
+    for (const familyDoc of familiesSnapshot.docs) {
+      const familyId = familyDoc.id;
+      const familyData = familyDoc.data();
+      
+      try {
+        console.log(`\n👨‍👩‍👧‍👦 Processing family: ${familyData.LastName || familyId}`);
+        
+        // Skip if no payment method
+        if (!familyData.PayarcCustomerId) {
+          console.log(`❌ No payment method on file - skipping`);
+          continue;
+        }
+        
+        // Get unpaid charges from both family and studio level
+        const familyChargesSnapshot = await admin.firestore()
+          .collection(`Studios/${studioId}/Families/${familyId}/Charges`)
+          .where('Status', '==', 'Unpaid')
+          .get();
+          
+        const studioChargesSnapshot = await admin.firestore()
+          .collection(`Studios/${studioId}/Charges`)
+          .where('FamilyId', '==', familyId)
+          .where('Status', '==', 'Unpaid')
+          .get();
+        
+        if (familyChargesSnapshot.empty && studioChargesSnapshot.empty) {
+          console.log(`ℹ️ No unpaid charges - skipping`);
+          continue;
+        }
+        
+        // Calculate total amount
+        let totalAmount = 0;
+        const chargesToUpdate = [];
+        
+        // Process family-level charges
+        familyChargesSnapshot.forEach(chargeDoc => {
+          const chargeData = chargeDoc.data();
+          totalAmount += chargeData.Amount || 0;
+          chargesToUpdate.push({
+            id: chargeDoc.id,
+            data: chargeData
+          });
+        });
+        
+        console.log(`💰 Found ${familyChargesSnapshot.size} unpaid charges totaling $${totalAmount.toFixed(2)}`);
+        
+        if (totalAmount <= 0) {
+          console.log(`ℹ️ No amount to charge - skipping`);
+          continue;
+        }
+        
+        // Process payment
+        const paymentData = {
+          studioId,
+          familyId,
+          amount: totalAmount,
+          description: `Auto payment for ${familyData.LastName} family`,
+          paymentMethod: 'Card',
+          customerId: familyData.PayarcCustomerId,
+          chargeIds: chargesToUpdate.map(charge => charge.id)
+        };
+        
+        console.log(`💳 Processing payment of $${totalAmount.toFixed(2)}`);
+        
+        const paymentResult = await processPayment(paymentData);
+        
+        if (paymentResult.success) {
+          console.log(`✅ Payment successful`);
+          
+          totalFamiliesProcessed++;
+          totalPaymentsProcessed++;
+          totalAmountProcessed += totalAmount;
+        } else {
+          console.log(`❌ Payment failed: ${paymentResult.error}`);
+          totalFailed++;
+        }
+      } catch (error) {
+        console.error(`❌ Error processing family ${familyId}:`, error);
+      }
+    }
+    
+    // Log final summary
+    console.log("\n==========================================");
+    console.log("🏁 EXECUTION COMPLETE");
+    console.log("==========================================");
+    console.log(`Final Summary:
+    - Total Families Processed: ${totalFamiliesProcessed}
+    - Total Payments Processed: ${totalPaymentsProcessed}
+    - Total Amount Processed: $${totalAmountProcessed.toFixed(2)}`);
+    
+    await createAutoPayLog('HTTP', startedAt, {
+      studioId: studioId,
+      totalFamiliesProcessed: totalFamiliesProcessed,
+      totalPaymentsProcessed: totalPaymentsProcessed,
+      totalAmountProcessed: totalAmountProcessed,
+      successCount: totalPaymentsProcessed,
+      errorCount: totalFailed,
+      logs: logs
+    });
+
+    return res.status(200).json({
+      success: true,
+      familiesProcessed: totalFamiliesProcessed,
+      paymentsProcessed: totalPaymentsProcessed,
+      amountProcessed: totalAmountProcessed
+    });
+    
+  } catch (error) {
+    await createAutoPayLog('HTTP', startedAt, {
+      studioId: req.body.studioId,
+      error: error.message,
+      logs: logs
+    });
+    console.error("❌ Error in auto payment HTTP endpoint:", error);
+    return res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Scheduled function for processing auto payments
+exports.processAutoPay = onSchedule({
+  schedule: "30 5 * * *", // Run at 5:30 AM every day
+  timeZone: "America/New_York",
+  retryCount: 3,
+  region: "us-central1",
+  memory: "1GiB",
+  timeoutSeconds: 540 // 9 minutes timeout
+}, async (event) => {
+  const logs = captureConsoleLogs();
+  const startedAt = new Date().toISOString();
+  
+  try {
+    console.log("🕒 Auto payments scheduled function triggered");
+    console.log("==========================================");
+    
+    // Get current date and log time in different timezones
+    const today = new Date();
+    const dayOfMonth = today.getDate();
+    
+    // Log times in different timezones
+    const estTime = new Date(today.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+    const cstTime = new Date(today.toLocaleString('en-US', { timeZone: 'America/Chicago' }));
+    const mstTime = new Date(today.toLocaleString('en-US', { timeZone: 'America/Denver' }));
+    const pstTime = new Date(today.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }));
+    
+    console.log(`\n⏰ EXECUTION START TIME (Day ${dayOfMonth} of month):
+    EST: ${estTime.toLocaleString()}
+    CST: ${cstTime.toLocaleString()}
+    MST: ${mstTime.toLocaleString()}
+    PST: ${pstTime.toLocaleString()}`);
+    
+    console.log("\n📊 EXECUTION SUMMARY:");
+    console.log("==========================================");
+    
+    // Get all studios
+    const studiosSnapshot = await admin.firestore().collection("Studios").get();
+    console.log(`\n🏢 Found ${studiosSnapshot.docs.length} studios to check for auto payments`);
+    
+    let studiosProcessed = 0;
+    let totalFamiliesProcessed = 0;
+    let totalPaymentsProcessed = 0;
+    let totalAmountProcessed = 0;
+    let totalFailed = 0;
+    
+    // Process each studio
+    for (const studioDoc of studiosSnapshot.docs) {
+      const studioId = studioDoc.id;
+      const studioData = studioDoc.data();
+      
+      try {
+        console.log(`\n🔍 PROCESSING STUDIO: ${studioId}`);
+        console.log("------------------------------------------");
+        
+        // Get PaymentProcessing settings
+        const settingsDoc = await admin
+          .firestore()
+          .collection(`Studios/${studioId}/PaymentProcessing`)
+          .doc("Settings")
+          .get();
+
+        const settingsData = settingsDoc.exists ? settingsDoc.data() : null;
+        const autoPayBillingDay = settingsData?.General?.AutoPayBillingDay;
+        const autoPaymentsEnabled = settingsData?.General?.AutoPaymentsEnabled;
+        
+        console.log(`Settings Status:
+        - Settings Document Exists: ${settingsDoc.exists ? '✅' : '❌'}
+        - AutoPayments Enabled: ${autoPaymentsEnabled ? '✅' : '❌'}
+        - AutoPay Billing Day: ${autoPayBillingDay || 'Not Set'}`);
+        
+        // Check if studio has auto pay configured
+        if (autoPayBillingDay === undefined || !autoPaymentsEnabled) {
+          console.log(`❌ Skipping studio ${studioId} - AutoPay not configured or disabled`);
+          continue;
+        }
+
+        // Check if today is the auto pay day
+        const isTodayAutoPayDay = dayOfMonth === autoPayBillingDay;
+        console.log(`\n📅 Day Check:
+        - Current Day: ${dayOfMonth}
+        - Studio's AutoPay Day: ${autoPayBillingDay}
+        - Is Today AutoPay Day? ${isTodayAutoPayDay ? '✅ YES' : '❌ NO'}`);
+        
+        if (!isTodayAutoPayDay) {
+          console.log(`⏭️ Skipping studio ${studioId} - not their AutoPay day`);
+          continue;
+        }
+        
+        console.log(`\n💳 Processing payments for studio ${studioId}`);
+        
+        // Get families on auto-pay
+        const familiesSnapshot = await admin.firestore()
+          .collection(`Studios/${studioId}/Families`)
+          .where('IsOnAutoPay', '==', true)
+          .get();
+        
+        console.log(`\n👨‍👩‍👧‍👦 Found ${familiesSnapshot.size} families on auto-pay`);
+        
+        let studioFamiliesProcessed = 0;
+        let studioPaymentsProcessed = 0;
+        let studioAmountProcessed = 0;
+        
+        // Process families in batches
+        const batchSize = 5;
+        const families = familiesSnapshot.docs;
+        
+        for (let i = 0; i < families.length; i += batchSize) {
+          const batch = families.slice(i, i + batchSize);
+          console.log(`\n🔄 Processing batch ${i/batchSize + 1} of ${Math.ceil(families.length/batchSize)}`);
+          
+          // Process each family in the batch
+          const batchResults = await Promise.all(batch.map(async (familyDoc) => {
+            const familyId = familyDoc.id;
+            const familyData = familyDoc.data();
+            
+            try {
+              console.log(`\n👨‍👩‍👧‍👦 Processing family: ${familyData.LastName || familyId}`);
+              
+              // Skip if no payment method
+              if (!familyData.PayarcCustomerId) {
+                console.log(`❌ No payment method on file - skipping`);
+                return {
+                  familyId,
+                  success: false,
+                  error: 'No payment method on file'
+                };
+              }
+              
+              // Get unpaid charges from both family and studio level
+              const familyChargesSnapshot = await admin.firestore()
+                .collection(`Studios/${studioId}/Families/${familyId}/Charges`)
+                .where('Status', '==', 'Unpaid')
+                .get();
+                
+              const studioChargesSnapshot = await admin.firestore()
+                .collection(`Studios/${studioId}/Charges`)
+                .where('FamilyId', '==', familyId)
+                .where('Status', '==', 'Unpaid')
+                .get();
+              
+              if (familyChargesSnapshot.empty && studioChargesSnapshot.empty) {
+                console.log(`ℹ️ No unpaid charges - skipping`);
+                return {
+                  familyId,
+                  success: true,
+                  message: 'No unpaid charges'
+                };
+              }
+              
+              // Calculate total amount
+              let totalAmount = 0;
+              const chargesToUpdate = [];
+              
+              // Process family-level charges
+              familyChargesSnapshot.forEach(chargeDoc => {
+                const chargeData = chargeDoc.data();
+                totalAmount += chargeData.Amount || 0;
+                chargesToUpdate.push({
+                  id: chargeDoc.id,
+                  data: chargeData
+                });
+              });
+              
+              console.log(`💰 Found ${familyChargesSnapshot.size} unpaid charges totaling $${totalAmount.toFixed(2)}`);
+              
+              if (totalAmount <= 0) {
+                console.log(`ℹ️ No amount to charge - skipping`);
+                return {
+                  familyId,
+                  success: true,
+                  message: 'No amount to charge'
+                };
+              }
+              
+              // Process payment
+              const paymentData = {
+                studioId,
+                familyId,
+                amount: totalAmount,
+                description: `Auto payment for ${familyData.LastName} family`,
+                paymentMethod: 'Card',
+                customerId: familyData.PayarcCustomerId,
+                chargeIds: chargesToUpdate.map(charge => charge.id)
+              };
+              
+              console.log(`💳 Processing payment of $${totalAmount.toFixed(2)}`);
+              
+              const paymentResult = await processPayment(paymentData);
+              
+              if (paymentResult.success) {
+                console.log(`✅ Payment successful`);
+                return {
+                  familyId,
+                  success: true,
+                  amount: totalAmount,
+                  paymentId: paymentResult.paymentId
+                };
+              } else {
+                console.log(`❌ Payment failed: ${paymentResult.error}`);
+                return {
+                  familyId,
+                  success: false,
+                  error: paymentResult.error
+                };
+              }
+            } catch (error) {
+              console.error(`❌ Error processing family ${familyId}:`, error);
+              return {
+                familyId,
+                success: false,
+                error: error.message
+              };
+            }
+          }));
+          
+          // Process batch results
+          batchResults.forEach(result => {
+            if (result.success) {
+              studioFamiliesProcessed++;
+              if (result.amount) {
+                studioPaymentsProcessed++;
+                studioAmountProcessed += result.amount;
+              }
+            }
+          });
+          
+          // Add delay between batches
+          if (i + batchSize < families.length) {
+            await new Promise(resolve => setTimeout(resolve, 2000));
+          }
+        }
+        
+        // Update totals
+        totalFamiliesProcessed += studioFamiliesProcessed;
+        totalPaymentsProcessed += studioPaymentsProcessed;
+        totalAmountProcessed += studioAmountProcessed;
+        
+        console.log(`\n📊 Studio ${studioId} Summary:
+        - Families Processed: ${studioFamiliesProcessed}
+        - Payments Processed: ${studioPaymentsProcessed}
+        - Total Amount: $${studioAmountProcessed.toFixed(2)}`);
+        
+        studiosProcessed++;
+
+        // After processing each studio, create a log document
+        await createAutoPayLog('Scheduled', startedAt, {
+          studioId: studioId,
+          totalFamiliesProcessed: studioFamiliesProcessed,
+          totalPaymentsProcessed: studioPaymentsProcessed,
+          totalAmountProcessed: studioAmountProcessed,
+          successCount: studioPaymentsProcessed,
+          errorCount: totalFailed,
+          logs: logs
+        });
+
+      } catch (error) {
+        console.error(`❌ Error processing studio ${studioId}:`, error);
+        // Create error log for this studio
+        await createAutoPayLog('Scheduled', startedAt, {
+          studioId: studioId,
+          error: error.message,
+          logs: logs
+        });
+      }
+    }
+    
+    // Log final summary
+    console.log("\n==========================================");
+    console.log("🏁 EXECUTION COMPLETE");
+    console.log("==========================================");
+    console.log(`Final Summary:
+    - Studios Processed: ${studiosProcessed}
+    - Total Families Processed: ${totalFamiliesProcessed}
+    - Total Payments Processed: ${totalPaymentsProcessed}
+    - Total Amount Processed: $${totalAmountProcessed.toFixed(2)}`);
+
+    return {
+      success: true,
+      studiosProcessed,
+      familiesProcessed: totalFamiliesProcessed,
+      paymentsProcessed: totalPaymentsProcessed,
+      amountProcessed: totalAmountProcessed
+    };
+    
+  } catch (error) {
+    console.error("❌ Error in auto payments processing:", error);
+    throw error;
+  }
+});
+
+// Export the HTTP endpoint
+exports.processAutoPayHttp = onRequest({
+  region: "us-central1",
+  memory: "512MiB",
+  cors: true,
+  invoker: "public"
+}, app);
+
+// Also export the function for testing or manual triggering
+exports.processAutoPayments = processAutoPayments;

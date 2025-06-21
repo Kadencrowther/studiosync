@@ -1,0 +1,180 @@
+/* Modal size and positioning */
+#classDetailsModal .modal-dialog.modal-lg {
+    max-width: 95%;
+    width: 1400px;
+}
+
+/* Primary color variable - used throughout for consistent branding */
+:root {
+    --primary-color: #3DCED7;
+    --primary-hover: #36B8C0;
+    --secondary-color: #3A506B;
+}
+
+/* Modern tab styling */
+#classDetailsModal .nav-tabs {
+    border-bottom: 0;
+    margin-bottom: 1.5rem;
+}
+
+#classDetailsModal .nav-link {
+    color: #6c757d;
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 0;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+#classDetailsModal .nav-link:hover {
+    color: var(--primary-color);
+    background-color: rgba(61, 206, 215, 0.05);
+}
+
+#classDetailsModal .nav-link.active {
+    color: var(--primary-color);
+    background-color: transparent;
+    border: none;
+}
+
+#classDetailsModal .nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: var(--primary-color);
+    border-radius: 3px 3px 0 0;
+}
+
+/* Header styling */
+#classDetailsModal .modal-header {
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 15px 15px 0 0;
+    padding: 1.25rem 1.5rem;
+}
+
+#classDetailsModal .modal-content {
+    border-radius: 15px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+/* Class details info row */
+#classDetailsModal .row.mb-4 {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem !important;
+}
+
+/* Class details styling */
+#classDetailsModal .col-md-6 p {
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+}
+
+#classDetailsModal .col-md-6 p strong {
+    min-width: 120px;
+    color: #6c757d;
+}
+
+#classDetailsModal .col-md-6 p span {
+    font-weight: 500;
+    color: #333;
+}
+
+/* Tab content styling */
+#classDetailsModal .tab-content {
+    background-color: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+/* Info tab sections */
+#classDetailsModal #info h5 {
+    color: var(--secondary-color);
+    font-weight: 600;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #f1f1f1;
+}
+
+#classDetailsModal #info p {
+    display: flex;
+    margin-bottom: 0.75rem;
+}
+
+#classDetailsModal #info p strong {
+    min-width: 120px;
+    color: #6c757d;
+}
+
+/* Students tab styling */
+#classDetailsModal #students .table-responsive {
+    margin-top: 1rem;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+#classDetailsModal #students table {
+    margin-bottom: 0;
+}
+
+#classDetailsModal #students th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #495057;
+    border-top: none;
+}
+
+#classDetailsModal #students td {
+    vertical-align: middle;
+}
+
+/* Table styling for all tabs */
+#classDetailsModal .table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+#classDetailsModal .table th,
+#classDetailsModal .table td {
+    padding: 1rem;
+}
+
+#classDetailsModal .table thead th {
+    background-color: #f8f9fa;
+    border: none;
+    font-weight: 600;
+    color: #495057;
+}
+
+#classDetailsModal .table tbody tr {
+    transition: all 0.2s ease;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+#classDetailsModal .table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Close button styling */
+#classDetailsModal .btn-close {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    padding: 0.5rem;
+    margin: -0.5rem -0.5rem -0.5rem auto;
+    transition: all 0.2s ease;
+}
+
+#classDetailsModal .btn-close:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+} 

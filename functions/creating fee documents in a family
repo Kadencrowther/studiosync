@@ -1,0 +1,29 @@
+Let me help think through this logic for each association type:
+Season Association:
+When a fee is created and associated with a season mid-season:
+We need to find all students who are in ANY class in that season
+Then find all families that have those students
+Add the fee to each family's Fees subcollection
+The fee should reference which student it's for and which season it came from
+Class Association:
+When a fee is created and associated with a specific class mid-season:
+We need to find all students currently enrolled in that class
+Then find all families that have those students
+Add the fee to each family's Fees subcollection
+The fee should reference which student it's for and which class it came from
+Family Association:
+This is the simplest case
+The fee would be added directly to the specified family's Fees subcollection
+No need to look up students or classes
+The fee would apply to the whole family (not tied to a specific student)
+Student Association:
+When a fee is associated with a specific student:
+We find that student's family
+Add the fee to their family's Fees subcollection
+The fee should reference which student it's for
+For all these cases, when adding the fee to a family's Fees subcollection, we need to:
+Create the proper payment schedule (one-time or recurring)
+Set the correct start date (current date)
+Handle any end dates for recurring fees
+Set the proper status (Unpaid for future payments)
+Would you like me to start implementing this logic? We can begin with one association type first to make sure the pattern works correctly.

@@ -1,0 +1,4013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>All Classes - Studio Sync</title>
+    <!-- Favicon -->
+    <link rel="icon" href="assets/ssdancer.svg" type="image/svg+xml">
+
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="css/styles.css" rel="stylesheet" />
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-...+..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Custom CSS for Modern Styling -->
+    <style>
+        :root {
+            --primary-color: #3DCED7;
+            --primary-hover: #36B8C0;
+            --secondary-color: #3A506B;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        #sidebar-wrapper {
+            background-color: var(--primary-color);
+            min-height: 100vh;
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-heading {
+            color: white;
+            background-color: var(--primary-color);
+            padding: 1.5rem 1rem;
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .list-group-item {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, padding 0.3s ease, transform 0.3s ease;
+            padding: 1rem 1.5rem;
+        }
+
+        .list-group-item:hover,
+        .list-group-item-action:focus {
+            background-color: var(--primary-hover);
+            color: white;
+            transform: translateX(5px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar {
+            background-color: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1rem 1.5rem;
+        }
+
+        .navbar .navbar-nav .nav-link {
+            color: #333;
+            transition: color 0.3s ease;
+        }
+
+        .navbar .navbar-nav .nav-link:hover {
+            color: var(--primary-color);
+        }
+
+        .container-fluid {
+            background-color: #fff;
+            color: #525f7f;
+            padding: 2rem;
+        }
+
+        /* Modernized Dashboard Content */
+        .dashboard-insights {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .dashboard-insights .insight-box {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .insight-box h3 {
+            font-size: 1.2rem;
+            color: #525f7f;
+            margin-bottom: 0.5rem;
+        }
+
+        .insight-box p {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .progress-ring {
+            margin-top: 20px;
+        }
+
+        /* Schedule Table */
+        .schedule-table {
+            margin-top: 2rem;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .schedule-table th,
+        .schedule-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .schedule-table th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .schedule-table td {
+            background-color: #f9f9f9;
+        }
+
+        /* New styles for the pie chart and layout */
+        .dashboard-container {
+            display: flex;
+            gap: 1.5rem; /* Match the gap of dashboard-insights */
+        }
+
+        .pie-chart-container {
+            flex: 0.8;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: calc(100% - 3rem); /* Subtract padding to match KPI cards exactly */
+            transition: box-shadow 0.3s ease;
+        }
+
+        .pie-chart-container:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .chart-wrapper {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .capacity-input-container {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            margin-top: 0.5rem;
+        }
+
+        .capacity-input-container label {
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
+            color: #525f7f;
+        }
+
+        #capacityInput {
+            width: 60px;
+            padding: 0.3rem 0.5rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: #525f7f;
+            transition: all 0.3s ease;
+            background-color: #f8f9fa;
+        }
+
+        #capacityInput:focus {
+            outline: none;
+            border-color: #3DCED7;
+            box-shadow: 0 0 0 2px rgba(61, 206, 215, 0.1);
+            background-color: #ffffff;
+        }
+
+        #capacityInput::-webkit-inner-spin-button,
+        #capacityInput::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        #capacityInput {
+            -moz-appearance: textfield;
+        }
+
+        .kpi-container {
+            flex: 2;
+        }
+
+        .dashboard-insights {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            height: 100%;
+        }
+
+        .insight-box {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* Payment form styles */
+        #payment-form {
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        #card-element {
+            margin-bottom: 20px;
+        }
+
+        #submit-payment {
+            background-color: #3DCED7;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #submit-payment:hover {
+            background-color: #36B8C0;
+        }
+
+        #submit-payment:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        /* Subscription form styles */
+        .subscription-form {
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .subscription-form input, .subscription-form select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .subscription-form button {
+            background-color: #3DCED7;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .subscription-form button:hover {
+            background-color: #36B8C0;
+        }
+
+        .navbar-nav .dropdown-menu {
+            min-width: 250px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            padding: 0;
+        }
+
+        .navbar-nav .dropdown-item {
+            padding: 12px 20px;
+            color: #333;
+            transition: background-color 0.3s ease;
+        }
+
+        .navbar-nav .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .navbar-nav .dropdown-divider {
+            margin: 0;
+            border-top-color: #e9ecef;
+        }
+
+        .navbar-nav .dropdown-header {
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #6c757d;
+            background-color: #f8f9fa;
+        }
+
+        .navbar-nav .dropdown-item-text {
+            padding: 12px 20px;
+            color: #6c757d;
+        }
+
+        .fa-user-circle {
+            font-size: 1.8em; /* Slightly smaller profile icon */
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            padding: 0.5rem 0.5rem;
+        }
+
+        .fa-bell {
+            font-size: 1.2em;
+            position: relative;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            font-size: 0.6em;
+            background-color: #dc3545;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 5px;
+            font-weight: bold;
+            min-width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+        }
+
+        .notification-icon {
+            margin-right: 15px;
+            font-size: 1.2em;
+            color: #3DCED7;
+        }
+
+        .notification-content {
+            flex-grow: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .notification-subtitle {
+            font-size: 0.85em;
+            color: #6c757d;
+        }
+
+        .navbar-nav .dropdown-toggle::after {
+            display: none;
+        }
+
+        @media (max-width: 991.98px) {
+            .navbar-brand-center {
+                position: static;
+                transform: none;
+            }
+
+            .navbar-nav {
+                flex-direction: row;
+            }
+
+            .nav-item.dropdown {
+                position: static;
+            }
+
+            .dropdown-menu {
+                left: 0;
+                right: 0;
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 575.98px) {
+            .navbar-brand-center {
+                max-width: 200px;
+                margin: 0 auto;
+            }
+
+            #studio-logo, #studio-name {
+                max-width: 100%;
+            }
+
+            .navbar-nav {
+                justify-content: center;
+            }
+        }
+
+        /* Add styles for the page content wrapper */
+        #page-content-wrapper {
+            flex: 1;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        /* Update the wrapper styles */
+        #wrapper {
+            display: flex;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* Sidebar overlay styles */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1045;
+            transition: opacity 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            #sidebar-wrapper {
+                margin-left: -250px;
+                transition: margin 0.3s ease-out;
+                position: fixed;
+                z-index: 1050;
+                height: 100vh;
+            }
+
+            .sidebar-overlay.show {
+                display: block;
+            }
+
+            #wrapper.toggled #sidebar-wrapper {
+                margin-left: 0;
+            }
+        }
+
+        /* Wrapper transitions */
+        #wrapper.toggled #sidebar-wrapper {
+            margin-left: -250px;
+        }
+
+        #wrapper.toggled #page-content-wrapper {
+            margin-left: 0;
+        }
+
+        /* Update the toggle button styles */
+        #sidebarToggle {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        #sidebarToggle:hover {
+            background-color: var(--primary-hover);
+            border-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Update other elements that use the primary color */
+        .navbar .navbar-nav .nav-link:hover {
+            color: var(--primary-color);
+        }
+
+        .insight-box p {
+            color: var(--primary-color);
+        }
+
+        .schedule-table th {
+            background-color: var(--primary-color);
+        }
+
+        /* Loading Overlay Styles */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .loading-content {
+            text-align: center;
+        }
+
+        .loading-text {
+            margin-top: 20px;
+        }
+
+        .loading-text h2 {
+            color: #ffffff;
+            margin-bottom: 10px;
+            transition: color 0.5s ease;
+        }
+
+        .loading-text p {
+            color: #ffffff;
+            font-size: 1.1em;
+            transition: color 0.5s ease;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #ffffff;
+            border-radius: 50%;
+            margin: 0 auto;
+            animation: spin 1s linear infinite;
+            transition: border-top-color 0.5s ease;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-overlay.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* User Avatar Styles */
+        .user-avatar {
+            width: 38px;
+            height: 38px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .initials {
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Profile Dropdown Styles */
+        .dropdown-menu .dropdown-item-text#studioNameDisplay {
+            padding: 0.3rem 1.5rem;
+            margin: 0;
+            color: #333333;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .dropdown-menu .dropdown-item-text#userRole {
+            padding: 0.2rem 1.5rem;
+            margin: 0;
+            color: #666;
+            font-size: 0.85rem;
+            font-weight: 400;
+        }
+
+        /* User Profile Styles */
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 0.75rem);
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+            min-width: 280px;
+            display: none;
+            z-index: 1000;
+            border: 1px solid rgba(0,0,0,0.08);
+            position: fixed;
+            margin-right: 1rem;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 991.98px) {
+            .dashboard-container {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .pie-chart-container {
+                width: 100%;
+                min-height: 300px;
+            }
+
+            .kpi-container {
+                width: 100%;
+            }
+
+            .dashboard-insights {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+
+            .insight-box {
+                padding: 1rem;
+            }
+
+            .insight-box h3 {
+                font-size: 1rem;
+            }
+
+            .insight-box p {
+                font-size: 2rem;
+            }
+
+            .schedule-table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .schedule-table th,
+            .schedule-table td {
+                padding: 8px;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 575.98px) {
+            .dashboard-insights {
+                grid-template-columns: 1fr;
+            }
+
+            .container-fluid {
+                padding: 1rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            .pie-chart-container {
+                min-height: 250px;
+            }
+
+            .insight-box {
+                margin-bottom: 0.5rem;
+            }
+
+            .schedule-table th,
+            .schedule-table td {
+                padding: 6px;
+                font-size: 0.85rem;
+            }
+
+            #wrapper {
+                min-height: 100vh;
+                overflow-x: hidden;
+                position: relative;
+            }
+
+            #sidebar-wrapper {
+                margin-left: -250px;
+                transition: margin 0.25s ease-out;
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                z-index: 1050;
+                width: 250px;
+            }
+
+            #wrapper.toggled #sidebar-wrapper {
+                margin-left: 0;
+            }
+
+            #page-content-wrapper {
+                min-width: 100vw;
+                margin-left: 0;
+                transition: margin 0.25s ease-out;
+            }
+
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 1045;
+            }
+
+            #wrapper.toggled .sidebar-overlay {
+                display: block;
+            }
+
+            /* Adjust navbar for mobile */
+            .navbar {
+                padding: 0.5rem;
+            }
+
+            .navbar-brand-center {
+                max-width: 150px;
+            }
+
+            #studio-logo {
+                max-height: 80px;
+            }
+
+            #studio-name {
+                font-size: 1.2rem;
+            }
+
+            #sidebarToggle {
+                padding: 0.375rem 0.75rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Ensure content doesn't overflow on very small devices */
+        @media (max-width: 360px) {
+            .container-fluid {
+                padding: 0.75rem;
+            }
+
+            .insight-box {
+                padding: 0.75rem;
+            }
+
+            .insight-box h3 {
+                font-size: 0.9rem;
+            }
+
+            .insight-box p {
+                font-size: 1.75rem;
+            }
+
+            .navbar-brand-center {
+                max-width: 120px;
+            }
+
+            #studio-name {
+                font-size: 1rem;
+            }
+        }
+
+        /* Add these new styles for the All Classes page */
+        .table-container {
+            margin-top: 20px;
+        }
+        .btn-create-class {
+            margin-bottom: 20px;
+        }
+
+        /* Reduced font size for tooltips */
+        .tooltip-inner.small {
+            font-size: 0.7rem;
+            padding: 0.15rem 0.3rem;
+        }
+
+        /* Reduced arrow size for tooltips */
+        .tooltip .arrow::before {
+            border-width: 0.3rem 0.3rem 0;
+        }
+
+        /* Add this to your existing styles or in a <style> tag in the head */
+        #classesTable tbody tr.selected {
+            background-color: #e6f2ff !important;
+        }
+        .btn-warning {
+            background-color: #ffe699;
+            border-color: #ffd966;
+            color: #000;
+        }
+        .btn-warning:hover {
+            background-color: #ffd966;
+            border-color: #ffc933;
+            color: #000;
+        }
+        .btn-warning.text-white {
+            color: white !important;
+        }
+        #editClassBtn, #deleteClassBtn {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            border-radius: 0.2rem;
+        }
+
+     
+
+        /* Add these new styles for responsiveness */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        #classesTable {
+            width: 100% !important;
+        }
+
+        @media (max-width: 992px) {
+            #classesTable {
+                font-size: 0.85rem;
+            }
+
+            #classesTable th,
+            #classesTable td {
+                padding: 0.5rem 0.3rem;
+            }
+
+            #classesTable th {
+                white-space: nowrap;
+            }
+        }
+
+        /* Form validation styles */
+        .is-invalid {
+            border-color: #dc3545;
+        }
+
+        .btn-group-sm.is-invalid {
+            outline: 2px solid #dc3545;
+            border-radius: 0.25rem;
+        }
+
+        /* Add these styles to your existing styles section */
+        .modal-lg {
+            max-width: 800px;
+        }
+
+        .btn-check:checked + .btn-outline-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-outline-primary {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--primary-hover);
+            border-color: var(--primary-hover);
+            color: white;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #525f7f;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(61, 206, 215, 0.25);
+        }
+
+        #addClassModal .modal-content {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        #addClassModal .modal-header {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 15px 15px 0 0;
+        }
+
+        #addClassModal .modal-footer {
+            border-top: 1px solid #eee;
+        }
+
+        #addClassModal .btn-close {
+            color: white;
+        }
+
+        #saveClassBtn {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        #saveClassBtn:hover {
+            background-color: var(--primary-hover);
+            border-color: var(--primary-hover);
+        }
+
+        .form-check-input:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .btn-group {
+                flex-wrap: wrap;
+            }
+            
+            .btn-group label {
+                flex: 1 0 14.285%;
+            }
+        }
+
+        /* Add these new styles for modern DataTable appearance */
+        .table-responsive {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+            display: none; /* Initially hidden until data loads */
+        }
+
+        #classesTable {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
+            border: none;
+        }
+
+        #classesTable thead th {
+            background-color: #f8f9fa;
+            border: none;
+            padding: 1rem;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        #classesTable tbody td {
+            border: none;
+            padding: 1rem;
+            vertical-align: middle;
+        }
+
+        #classesTable tbody tr {
+            transition: all 0.2s ease;
+            border-bottom: 1px solid #f1f1f1;
+        }
+
+        #classesTable tbody tr:hover {
+            background-color: #f8f9fa;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Shimmer loading effect */
+        .shimmer-table {
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+            display: none;
+        }
+
+        .shimmer-row {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #f1f1f1;
+        }
+
+        .shimmer-cell {
+            height: 20px;
+            background: #f6f7f8;
+            border-radius: 4px;
+            margin-right: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .shimmer-cell::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.6) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        /* DataTables specific styling */
+        .dataTables_wrapper .dataTables_filter input {
+            border: 1px solid #e0e0e0;
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            margin-left: 0.5rem;
+        }
+
+        .dataTables_wrapper .dataTables_length select {
+            border: 1px solid #e0e0e0;
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            margin: 0 0.5rem;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            border: none !important;
+            padding: 0.5rem 1rem !important;
+            border-radius: 0.5rem;
+            margin: 0 2px;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            background: var(--primary-color) !important;
+            color: white !important;
+            border: none !important;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+            background: var(--primary-hover) !important;
+            color: white !important;
+            border: none !important;
+        }
+
+        /* Update shimmer table styles */
+        .shimmer-table {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+            display: none;
+        }
+
+        .shimmer-table .table {
+            margin-bottom: 1rem;
+        }
+
+        .shimmer-checkbox {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+            background: #f6f7f8;
+            position: relative;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+
+        .shimmer-content {
+            height: 20px;
+            background: #f6f7f8;
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .shimmer-table thead th {
+            background-color: #f8f9fa;
+            border: none;
+            padding: 1rem;
+            font-weight: 600;
+            color: #495057;
+            vertical-align: middle;
+        }
+
+        .shimmer-table tbody td {
+            border: none;
+            padding: 1rem;
+            vertical-align: middle;
+            background: white;
+        }
+
+        .shimmer-table tr {
+            border-bottom: 1px solid #f1f1f1;
+        }
+
+        .dataTables_length label,
+        .dataTables_filter label {
+            color: #495057;
+            font-weight: 400;
+            margin-bottom: 0;
+        }
+
+        .shimmer-checkbox::after,
+        .shimmer-content::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.6) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            animation: shimmer 1.5s infinite;
+        }
+
+        /* Update these styles in your existing style section */
+        .shimmer-table .dataTables_length,
+        .shimmer-table .dataTables_filter {
+            font-size: 0.875rem;
+            color: #495057;
+        }
+
+        .shimmer-table .dataTables_length label {
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+
+        .shimmer-table .dataTables_filter {
+            text-align: right;
+        }
+
+        .shimmer-table .dataTables_filter label {
+            display: block;
+            text-align: left;
+        }
+
+        /* Add these styles to your existing styles section */
+        .student-row {
+            transition: all 0.3s ease;
+            opacity: 1;
+        }
+
+        .opacity-0 {
+            opacity: 0;
+        }
+
+        .opacity-100 {
+            opacity: 1;
+        }
+
+        .student-row:hover {
+            background-color: rgba(61, 206, 215, 0.05) !important;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .spinner-border {
+            color: var(--primary-color) !important;
+        }
+
+        #studentsTable {
+            margin-bottom: 0;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        #studentsTable th {
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        #studentsTable td {
+            vertical-align: middle;
+            padding: 1rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        #studentsTable tbody tr:last-child td {
+            border-bottom: none;
+        }
+    </style>
+    <!-- Stripe JS -->
+    <script src="https://js.stripe.com/v3/"></script>
+    <!-- Payarc JS -->
+    <script>
+        function loadPayarcScript(src) {
+            var script = document.createElement('script');
+            script.src = src;
+            script.onerror = function() {
+                if (src === 'https://js.payarc.com/v1/payarc.js') {
+                    console.warn('CDN failed, falling back to local copy');
+                    loadPayarcScript('/path/to/local/payarc.js');
+                } else {
+                    console.error('Failed to load Payarc library');
+                }
+            };
+            document.head.appendChild(script);
+        }
+        loadPayarcScript('https://js.payarc.com/v1/payarc.js');
+    </script>
+    <!-- Add this in the head section if not already present -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <div class="loading-text">
+                <h2>Loading</h2>
+                <p id="loadingStatus">Loading studio branding...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex" id="wrapper">
+          <!-- Sidebar-->
+          <div class="border-end" id="sidebar-wrapper">
+            <div class="sidebar-heading">
+                <img src="assets/StudioSyncTransparent.svg" alt="Studio Sync Logo" style="width: 150px; height: auto;">
+            </div>
+            <div class="list-group list-group-flush">
+                <a class="list-group-item list-group-item-action p-3" href="dashboard.html">
+                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="class-calendar.html">
+                    <i class="fas fa-calendar-alt me-2"></i>Class Calendar
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="allclasses.html">
+                    <i class="fas fa-chalkboard-teacher me-2"></i>Classes
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="families.html">
+                    <i class="fas fa-home me-2"></i>Families
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="students.html">
+                    <i class="fas fa-user-graduate me-2"></i>Students
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="instructors.html">
+                    <i class="fas fa-chalkboard-teacher me-2"></i>Instructors
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="costumes.html">
+                    <i class="fas fa-tshirt me-2"></i>Costumes
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="recital.html">
+                    <i class="fas fa-theater-masks me-2"></i>Recital
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="communication.html">
+                    <i class="fas fa-comments me-2"></i>Communication
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="studiostore.html">
+                    <i class="fas fa-store me-2"></i>Studio Store
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="charges-payments.html">
+                    <i class="fas fa-dollar-sign me-2"></i>Charges/Payments
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="reports.html">
+                    <i class="fas fa-chart-bar me-2"></i>Reports
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="settings.html">
+                    <i class="fas fa-cog me-2"></i>Settings
+                </a>
+            </div>
+            
+            <!-- Bottom Margin -->
+            <div style="margin-bottom: 4rem;"></div>
+        </div>
+
+        <!-- Page content wrapper-->
+        <div id="page-content-wrapper">
+            <!-- Top navigation-->
+            <nav class="navbar navbar-expand-lg navbar-light border-bottom">
+                <div class="container-fluid">
+                    <button class="btn btn-primary" id="sidebarToggle" style="width: 100px;" data-bs-toggle="tooltip" data-bs-placement="right" title="Toggle Menu" data-bs-trigger="hover focus">
+                        <i class="fas fa-bars"></i>
+                    </button>
+
+                    <!-- Centered Logo -->
+                    <div class="navbar-brand-center">
+                        <img id="studio-logo" src="" alt="Studio Logo" style="max-height: 120px; max-width: 240px; display: none;">
+                        <span id="studio-name" style="font-size: 1.5rem; font-weight: bold; color: #3DCED7;"></span>
+                    </div>
+
+                    <!-- Notifications and Profile Icons -->
+                    <div class="navbar-nav ms-auto d-flex align-items-center">
+                        <!-- Profile Icon Dropdown -->
+                        <div class="nav-item dropdown">
+                            <a class="nav-link" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <div class="user-avatar">
+                                    <span class="initials"></span>
+                                </div>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                                <li><h6 class="dropdown-header" id="userName" style="font-size: 1.2rem; font-weight: 700; color: #333333;">User Name</h6></li>
+                                <li><p class="dropdown-item-text" id="userEmail" style="font-size: 0.95rem; font-weight: 400; color: #333333;">user@example.com</p></li>
+                                <li><p class="dropdown-item-text" id="studioNameDisplay" style="font-size: 1.1rem; font-weight: 600; color: #333333;">Studio Name</p></li>
+                                <li><p class="dropdown-item-text" id="userRole" style="font-size: 0.85rem; font-weight: 400; color: #333333;">Role</p></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="settings.html"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                                <li><a class="dropdown-item" href="account.html"><i class="fas fa-user-cog me-2"></i>Account</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#" id="logoutButton"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Page content-->
+            <div class="container-fluid">
+                <h1 class="mt-4">All Classes</h1>
+                <div class="mb-3 d-flex align-items-center">
+                    <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#addClassModal">
+                        <i class="fas fa-plus"></i> Create New Class
+                    </button>
+                    <button id="editClassBtn" class="btn btn-sm btn-warning text-white me-2" disabled>
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button id="deleteClassBtn" class="btn btn-sm btn-danger me-2" disabled>
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                  
+                </div>
+                <!-- Replace the existing tableShimmer div with this updated version -->
+                <div id="tableShimmer" class="shimmer-table">
+                    <div class="dataTables_wrapper dt-bootstrap5">
+                        <!-- DataTable Controls -->
+                        <div class="row mb-3">
+                            <!-- Length Control -->
+                            <div class="col-sm-12 col-md-6">
+                                <div class="dataTables_length" id="classesTable_length">
+                                    <label>Show</label>
+                                    <div class="shimmer-content" style="display: block; width: 75px; height: 38px; border: 1px solid #e0e0e0; border-radius: 0.5rem; margin-top: 0.5rem;"></div>
+                                    <label style="margin-top: 0.5rem;">entries</label>
+                                </div>
+                            </div>
+                            <!-- Search Control -->
+                            <div class="col-sm-12 col-md-6">
+                                <div class="dataTables_filter" id="classesTable_filter">
+                                    <label style="display: block;">Search:</label>
+                                    <div class="shimmer-content" style="display: block; width: 198px; height: 38px; border: 1px solid #e0e0e0; border-radius: 0.5rem; margin-top: 0.5rem;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Table -->
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <table class="table table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 30px;"><div class="shimmer-checkbox"></div></th>
+                                            <th style="width: 20%;">Class Name</th>
+                                            <th style="width: 15%;">Days</th>
+                                            <th style="width: 12%;">Time</th>
+                                            <th style="width: 12%;">Room</th>
+                                            <th style="width: 15%;">Instructor</th>
+                                            <th style="width: 8%;">Capacity</th>
+                                            <th style="width: 8%;">Enrolled</th>
+                                            <th style="width: 10%;">Type</th>
+                                            <th style="width: 10%;">Style</th>  <!-- Add this new column -->
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- 5 shimmer rows that match the table structure -->
+                                        <tr>
+                                            <td><div class="shimmer-checkbox"></div></td>
+                                            <td><div class="shimmer-content" style="width: 90%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 85%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 80%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 75%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 85%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 50%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 50%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 70%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 70%;"></div></td>
+                                        </tr>
+                                        <tr>
+                                            <td><div class="shimmer-checkbox"></div></td>
+                                            <td><div class="shimmer-content" style="width: 85%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 70%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 80%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 65%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 90%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 50%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 50%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 75%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 75%;"></div></td>
+                                        </tr>
+                                        <tr>
+                                            <td><div class="shimmer-checkbox"></div></td>
+                                            <td><div class="shimmer-content" style="width: 95%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 80%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 80%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 70%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 80%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 50%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 50%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 80%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 80%;"></div></td>
+                                        </tr>
+                                        <tr>
+                                            <td><div class="shimmer-checkbox"></div></td>
+                                            <td><div class="shimmer-content" style="width: 80%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 75%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 80%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 80%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 85%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 50%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 50%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 65%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 65%;"></div></td>
+                                        </tr>
+                                        <tr>
+                                            <td><div class="shimmer-checkbox"></div></td>
+                                            <td><div class="shimmer-content" style="width: 88%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 85%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 80%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 75%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 90%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 50%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 50%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 70%;"></div></td>
+                                            <td><div class="shimmer-content" style="width: 70%;"></div></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Pagination -->
+                        <div class="row">
+                            <div class="col-sm-12 col-md-5">
+                                <div class="dataTables_info">
+                                    <div class="shimmer-content" style="width: 200px;"></div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-7">
+                                <div class="dataTables_paginate paging_simple_numbers d-flex justify-content-md-end">
+                                    <div class="shimmer-content" style="width: 250px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table id="classesTable" class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAll"></th>
+                                <th>Class Name</th>
+                                <th>Days</th>
+                                <th>Time</th>
+                                <th>Room</th>
+                                <th>Instructor</th>
+                                <th>Capacity</th>
+                                <th>Enrolled</th>
+                                <th>Type</th>
+                                <th>Style</th>  <!-- Add this new column -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Table body will be populated by DataTables -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Add Class Modal -->
+                <div class="modal fade" id="addClassModal" tabindex="-1" aria-labelledby="addClassModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="addClassModalLabel">New Class</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="addClassForm">
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="className" class="form-label">Class Name *</label>
+                                            <input type="text" class="form-control" id="className" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="season" class="form-label">Season *</label>
+                                            <select class="form-select" id="season" required>
+                                                <option value="">Select Season</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-12">
+                                            <label class="form-label">Days *</label>
+                                            <div class="btn-group d-flex" role="group">
+                                                <input type="checkbox" class="btn-check" id="sun" name="days">
+                                                <label class="btn btn-outline-primary" for="sun">Sun</label>
+                                                <input type="checkbox" class="btn-check" id="mon" name="days">
+                                                <label class="btn btn-outline-primary" for="mon">M</label>
+                                                <input type="checkbox" class="btn-check" id="tue" name="days">
+                                                <label class="btn btn-outline-primary" for="tue">Tu</label>
+                                                <input type="checkbox" class="btn-check" id="wed" name="days">
+                                                <label class="btn btn-outline-primary" for="wed">W</label>
+                                                <input type="checkbox" class="btn-check" id="thu" name="days">
+                                                <label class="btn btn-outline-primary" for="thu">Th</label>
+                                                <input type="checkbox" class="btn-check" id="fri" name="days">
+                                                <label class="btn btn-outline-primary" for="fri">F</label>
+                                                <input type="checkbox" class="btn-check" id="sat" name="days">
+                                                <label class="btn btn-outline-primary" for="sat">Sat</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-4">
+                                            <label for="startTime" class="form-label">Start Time</label>
+                                            <input type="time" class="form-control" id="startTime" required>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="endTime" class="form-label">End Time</label>
+                                            <input type="time" class="form-control" id="endTime" required>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="location" class="form-label">Room</label>
+                                            <select class="form-select" id="location" required>
+                                                <option value="">Select Room</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="instructor" class="form-label">Instructor</label>
+                                            <select class="form-select" id="instructor" required>
+                                                <option value="">Select Instructor</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="paymentType" class="form-label">Class Payment Type</label>
+                                            <select class="form-select" id="paymentType" required>
+                                                <option value="">Select Payment Type</option>
+                                                <option value="ClassFee">Class Fee</option>
+                                                <option value="PayRate">Pay Rate</option>
+                                                <option value="Both">(Payment Rate & Class Fee) Both</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Pay Rate section - only shown when PayRate or Both is selected -->
+                                    <div class="row mb-3 payment-section" id="payRateSection" style="display: none;">
+                                        <div class="col-md-12">
+                                            <label for="ratePlan" class="form-label">Pay Rate</label>
+                                            <select class="form-select" id="ratePlan">
+                                                <option value="">Select Rate Plan</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Class Fee section - only shown when ClassFee or Both is selected -->
+                                    <div class="row mb-3 payment-section" id="classFeeSection" style="display: none;">
+                                        <div class="col-md-6">
+                                            <label for="feeType" class="form-label">Fee Type</label>
+                                            <select class="form-select" id="feeType">
+                                                <option value="OneTime">One Time</option>
+                                                <option value="Recurring">Recurring</option>
+                                               
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="feeAmount" class="form-label">Amount ($)</label>
+                                            <input type="number" class="form-control" id="feeAmount" min="0" step="0.01">
+                                        </div>
+                                    </div>
+
+                                    <!-- One Time Fee - no additional fields needed -->
+
+                                    <!-- Recurring Fee - only shown when FeeType is Recurring -->
+                                    <div class="row mb-3 fee-section" id="recurringFeeSection" style="display: none;">
+                                        <div class="col-md-6">
+                                            <label for="recurringFrequency" class="form-label">Frequency</label>
+                                            <select class="form-select" id="recurringFrequency">
+                                                <option value="Weekly">Weekly</option>
+                                                <option value="Monthly">Monthly</option>
+                                                <option value="Quarterly">Quarterly</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="recurringDuration" class="form-label">Duration</label>
+                                            <input type="number" class="form-control" id="recurringDuration" min="1" value="1">
+                                        </div>
+                                    </div>
+
+                                    <!-- Broken Up Fee - only shown when FeeType is BrokenUp -->
+                                    <div class="row mb-3 fee-section" id="brokenUpFeeSection" style="display: none;">
+                                        <div class="col-md-6">
+                                            <label for="breakupFrequency" class="form-label">Break Up By</label>
+                                            <select class="form-select" id="breakupFrequency">
+                                                <option value="Weekly">Weekly</option>
+                                                <option value="Monthly">Monthly</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="breakupDuration" class="form-label">Duration (payments)</label>
+                                            <input type="number" class="form-control" id="breakupDuration" min="2" value="2">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="classType" class="form-label">Class Type</label>
+                                            <select class="form-select" id="classType" required>
+                                                <option value="Team">Team</option>
+                                                <option value="Recreational">Recreational</option>
+                                                <option value="SoloDuetTrio">Solo/Duet/Trio</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="classStyle" class="form-label">Class Style</label>
+                                            <select class="form-select" id="classStyle" required>
+                                                <option value="">Select Style</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="maxSize" class="form-label">Max Size</label>
+                                            <input type="number" class="form-control" id="maxSize" required min="1">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="minAge" class="form-label">Min Age</label>
+                                            <input type="number" class="form-control" id="minAge" required min="0">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="maxAge" class="form-label">Max Age</label>
+                                            <input type="number" class="form-control" id="maxAge" required min="0">
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="enforceAgeLimit">
+                                            <label class="form-check-label" for="enforceAgeLimit">
+                                                Must meet age min/max to enroll
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="description" class="form-label">Description</label>
+                                        <textarea class="form-control" id="description" rows="3"></textarea>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="classNotes" class="form-label">Class Notes</label>
+                                        <textarea class="form-control" id="classNotes" rows="2"></textarea>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-primary" id="saveClassBtn">Save Class</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Edit Class Modal -->
+                <div class="modal fade" id="editClassModal" tabindex="-1" aria-labelledby="editClassModalLabel" aria-hidden="true">
+                    <!-- Edit Class Modal content from allclassesbackup.html -->
+                </div>
+
+                <!-- Delete Confirmation Modal -->
+                <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deleteConfirmModalLabel">Confirm Delete</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Are you sure you want to delete the following classes?</p>
+                                <ul id="deleteClassList" class="list-unstyled">
+                                    <!-- Class names will be inserted here -->
+                                </ul>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Class Details Modal -->
+                <div class="modal fade" id="classDetailsModal" tabindex="-1" aria-labelledby="classDetailsModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <!-- Update the modal header in the Class Details Modal -->
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="classDetailsModalLabel">Class Details</h5>
+                                <div class="ms-auto me-2">
+                                    <button type="button" class="btn btn-sm btn-outline-primary" id="copyRegistrationLink">
+                                        <i class="fas fa-link me-1"></i> Copy Registration Link
+                                    </button>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- Update the Class Details Modal body -->
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <p><strong>Class Name:</strong> <span id="detailClassName"></span></p>
+                                        <p><strong>Season:</strong> <span id="detailSeason"></span></p>
+                                        <p><strong>Days:</strong> <span id="detailDays"></span></p>
+                                        <p><strong>Time:</strong> <span id="detailTime"></span></p>
+                                        <p><strong>Room:</strong> <span id="detailRoom"></span></p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p><strong>Instructor:</strong> <span id="detailInstructor"></span></p>
+                                        <p><strong>Class Type:</strong> <span id="detailClassType"></span></p>
+                                        <p><strong>Style:</strong> <span id="detailStyle"></span></p>
+                                        <p><strong>Capacity:</strong> <span id="detailCapacity"></span></p>
+                                        <p><strong>Enrolled:</strong> <span id="detailEnrolled"></span></p>
+                                    </div>
+                                </div>
+
+                                <!-- Tabs Navigation -->
+                                <ul class="nav nav-tabs" id="classDetailsTabs" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab">
+                                            Info
+                                        </button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="students-tab" data-bs-toggle="tab" data-bs-target="#students" type="button" role="tab">
+                                            Students
+                                        </button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="costumes-tab" data-bs-toggle="tab" data-bs-target="#costumes" type="button" role="tab">
+                                            Costumes
+                                        </button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="music-tab" data-bs-toggle="tab" data-bs-target="#music" type="button" role="tab">
+                                            Music
+                                        </button>
+                                    </li>
+                                </ul>
+
+                                <!-- Tabs Content -->
+                                <div class="tab-content pt-3" id="classDetailsTabContent">
+                                    <!-- Info Tab -->
+                                    <div class="tab-pane fade show active" id="info" role="tabpanel">
+                                        <p><strong>Age Range:</strong> <span id="detailAgeRange"></span></p>
+                                        <p><strong>Description:</strong> <span id="detailDescription"></span></p>
+                                        <p><strong>Class Notes:</strong> <span id="detailNotes"></span></p>
+                                    </div>
+
+                                    <!-- Students Tab -->
+                                    <div class="tab-pane fade" id="students" role="tabpanel">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped" id="studentsTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Student Name</th>
+                                                        <th>Age</th>
+                                                        <th>Family</th>
+                                                        <th>Attendance</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <!-- Students will be populated here -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <!-- Costumes Tab -->
+                                    <div class="tab-pane fade" id="costumes" role="tabpanel">
+                                        <div class="p-3 text-center">
+                                            <i class="fas fa-tshirt fa-3x mb-3 text-muted"></i>
+                                            <p class="text-muted mb-0">Costume information will be available here</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Music Tab -->
+                                    <div class="tab-pane fade" id="music" role="tabpanel">
+                                        <div class="p-3 text-center">
+                                            <i class="fas fa-music fa-3x mb-3 text-muted"></i>
+                                            <p class="text-muted mb-0">Music information will be available here</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap core JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Core theme JS-->
+    <script src="js/scripts.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const wrapper = document.getElementById('wrapper');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const overlay = document.querySelector('.sidebar-overlay');
+
+            function toggleSidebar(e) {
+                if (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                
+                wrapper.classList.toggle('toggled');
+                
+                if (window.innerWidth <= 768) {
+                    if (wrapper.classList.contains('toggled')) {
+                        overlay.classList.add('show');
+                    } else {
+                        overlay.classList.remove('show');
+                    }
+                }
+            }
+
+            // Toggle button click handler
+            sidebarToggle.addEventListener('click', toggleSidebar);
+
+            // Overlay click handler
+            overlay.addEventListener('click', toggleSidebar);
+
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 768) {
+                    overlay.classList.remove('show');
+                }
+            });
+        });
+    </script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Enrollment chart
+        const ctx = document.getElementById('enrollmentChart').getContext('2d');
+        let enrollmentChart;
+
+        function getColor(percentage) {
+            // Ensure the percentage is between 0 and 100
+            percentage = Math.max(0, Math.min(100, percentage));
+            
+            if (percentage <= 50) {
+                // Vibrant Red (220,55,55) to Muted Yellow (220,200,110)
+                const g = Math.round(55 + (145 * (percentage / 50)));
+                const b = Math.round(55 + (55 * (percentage / 50)));
+                return `rgb(220, ${g}, ${b})`;
+            } else {
+                // Muted Yellow (220,200,110) to Muted Green (110,200,110)
+                const r = Math.round(220 - (110 * ((percentage - 50) / 50)));
+                return `rgb(${r}, 200, 110)`;
+            }
+        }
+
+        function updateChart(enrolled, capacity) {
+            if (enrollmentChart) {
+                enrollmentChart.destroy();
+            }
+
+            const percentageFilled = Math.round((enrolled / capacity) * 100);
+            const filledColor = getColor(percentageFilled);
+
+            enrollmentChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Enrolled', 'Available'],
+                    datasets: [{
+                        data: [enrolled, Math.max(0, capacity - enrolled)],
+                        backgroundColor: [filledColor, '#E0E0E0']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '75%',
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label;
+                                    const value = context.raw;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${value} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                },
+                plugins: [{
+                    id: 'centerText',
+                    afterDraw: (chart) => {
+                        const width = chart.width;
+                        const height = chart.height;
+                        const ctx = chart.ctx;
+
+                        ctx.restore();
+                        ctx.font = 'bold 32px Arial';
+                        ctx.textBaseline = 'middle';
+                        ctx.textAlign = 'center';
+                        ctx.fillStyle = filledColor;
+
+                        const text = `${percentageFilled}%`;
+                        const textX = width / 2;
+                        const textY = height / 2;
+
+                        ctx.fillText(text, textX, textY);
+
+                        ctx.font = '16px Arial';
+                        ctx.fillStyle = '#525f7f';
+                        ctx.fillText('Capacity', textX, textY + 30);
+
+                        ctx.save();
+                    }
+                }]
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const enrolledStudents = 267; // Get this value from your KPI card
+            
+            // Delay chart initialization by 0.9 seconds
+            setTimeout(() => {
+                updateChart(enrolledStudents, 300);
+            }, 900);  // 900 milliseconds = 0.9 seconds
+
+            // Keep the existing capacity input listener
+            const capacityInput = document.getElementById('capacityInput');
+            capacityInput.addEventListener('input', function() {
+                const capacity = parseInt(this.value) || 1;
+                updateChart(enrolledStudents, capacity);
+            });
+        });
+    </script>
+
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+
+    <script>
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDRSW3u6gJSs98Z2Mkp5DYSC__ibDXXHAE",
+            authDomain: "studiosync-af73d.firebaseapp.com",
+            projectId: "studiosync-af73d",
+            storageBucket: "studiosync-af73d.appspot.com",
+            messagingSenderId: "172555302276",
+            appId: "1:172555302276:web:55b661f9849441e2de59d1",
+            measurementId: "G-EK7EFQGMSG"
+        };
+        firebase.initializeApp(firebaseConfig);
+
+        // Function to apply studio branding colors
+        function applyStudioBranding(studioData) {
+            console.log('🎨 Applying studio branding colors:', {
+                PrimaryColor: studioData.PrimaryColor,
+                SecondaryColor: studioData.SecondaryColor
+            });
+
+            const primaryColor = studioData.PrimaryColor || '#3DCED7';
+            const secondaryColor = studioData.SecondaryColor || '#3A506B';
+
+            // Update CSS variables for the sidebar and related elements
+            document.documentElement.style.setProperty('--primary-color', primaryColor);
+            document.documentElement.style.setProperty('--primary-hover', adjustColor(primaryColor, -10));
+            document.documentElement.style.setProperty('--secondary-color', secondaryColor);
+
+            // Update loading overlay elements with branded colors
+            const loadingTitle = document.querySelector('.loading-text h2');
+            const loadingText = document.querySelector('.loading-text p');
+            const spinner = document.querySelector('.spinner');
+
+            if (loadingTitle) loadingTitle.style.color = primaryColor;
+            if (loadingText) loadingText.style.color = secondaryColor;
+            if (spinner) spinner.style.borderTopColor = primaryColor;
+        }
+
+        // Helper function to adjust color brightness
+        function adjustColor(color, percent) {
+            const num = parseInt(color.replace('#', ''), 16);
+            const amt = Math.round(2.55 * percent);
+            const R = (num >> 16) + amt;
+            const G = (num >> 8 & 0x00FF) + amt;
+            const B = (num & 0x0000FF) + amt;
+            return '#' + (
+                0x1000000 +
+                (R < 255 ? (R < 1 ? 0 : R) : 255) * 0x10000 +
+                (G < 255 ? (G < 1 ? 0 : G) : 255) * 0x100 +
+                (B < 255 ? (B < 1 ? 0 : B) : 255)
+            ).toString(16).slice(1);
+        }
+
+        // Function to get current user data
+        async function getCurrentUserData() {
+            const loadingStatus = document.getElementById('loadingStatus');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+
+            try {
+                const user = await new Promise((resolve) => {
+                    firebase.auth().onAuthStateChanged((user) => {
+                        if (user) {
+                            loadingStatus.textContent = "Authenticating user...";
+                            resolve(user);
+                        } else {
+                            console.log('No user signed in');
+                            window.location.href = '/studiologin.html';
+                        }
+                    });
+                });
+
+                const studioId = localStorage.getItem('currentStudioId');
+                const studioData = JSON.parse(localStorage.getItem('currentStudioData'));
+                const userDocId = localStorage.getItem('userDocId');
+
+                loadingStatus.textContent = "Loading studio branding...";
+                
+                if (studioData) {
+                    applyStudioBranding(studioData);
+                }
+
+                loadingStatus.textContent = "Fetching user data...";
+
+                try {
+                    const userDoc = await firebase.firestore()
+                        .collection('Studios')
+                        .doc(studioId)
+                        .collection('Users')
+                        .doc(userDocId)
+                        .get();
+
+                    const instructorDoc = !userDoc.exists ? await firebase.firestore()
+                        .collection('Studios')
+                        .doc(studioId)
+                        .collection('Instructors')
+                        .doc(user.uid)
+                        .get() : null;
+
+                    let userData;
+                    let collectionType;
+
+                    if (userDoc.exists) {
+                        userData = userDoc.data();
+                        collectionType = 'Users';
+                    } else if (instructorDoc?.exists) {
+                        userData = instructorDoc.data();
+                        collectionType = 'Instructors';
+                    }
+
+                    if (userData) {
+                        loadingStatus.textContent = "Loading...";
+                        
+                        const fullName = `${userData.FirstName} ${userData.LastName}`;
+                        document.getElementById('userName').textContent = fullName;
+                        document.getElementById('userEmail').textContent = userData.Email;
+                        
+                        // Set studio name in profile dropdown
+                        const studioNameElement = document.getElementById('studioNameDisplay');
+                        if (studioNameElement && studioData) {
+                            studioNameElement.textContent = studioData.StudioName || 'Studio Name';
+                        }
+                        
+                        // Set user initials in avatar
+                        const initials = `${userData.FirstName[0]}${userData.LastName[0]}`;
+                        const initialsElement = document.querySelector('.initials');
+                        if (initialsElement) {
+                            initialsElement.textContent = initials;
+                        }
+
+                        const roleElement = document.getElementById('userRole');
+                        if (userData.Role) {
+                            roleElement.textContent = userData.Role;
+                            roleElement.style.color = '#333333';
+                            roleElement.style.fontWeight = '700';
+                        } else {
+                            roleElement.textContent = 'No Role Assigned';
+                            roleElement.style.color = '#666';
+                        }
+
+                        if (studioData?.LogoUrl) {
+                            await loadStudioLogo(studioData.LogoUrl, studioData.StudioName);
+                        } else {
+                            await loadStudioLogo(null, studioData?.StudioName);
+                        }
+
+                        // Hide loading overlay with fade effect
+                        loadingOverlay.classList.add('fade-out');
+                        setTimeout(() => {
+                            loadingOverlay.style.display = 'none';
+                        }, 500);
+                    }
+                } catch (error) {
+                    console.error('Error getting user document:', error);
+                    loadingStatus.textContent = "Error loading dashboard. Please refresh...";
+                }
+                
+                if (studioData) {
+                    applyStudioBranding(studioData);
+                    updateSidebarLinks(studioData);
+                    updatePageUrl(studioData.StudioName);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                loadingStatus.textContent = "Error loading dashboard. Please refresh...";
+            }
+        }
+
+        // Function to load and display the studio logo
+        function loadStudioLogo(logoUrl, studioName) {
+            return new Promise((resolve) => {
+                const logoElement = document.getElementById('studio-logo');
+                const nameElement = document.getElementById('studio-name');
+                
+                if (logoUrl) {
+                    logoElement.onload = () => resolve();
+                    logoElement.src = logoUrl;
+                    logoElement.alt = studioName || 'Studio Logo';
+                    logoElement.style.display = 'block';
+                    nameElement.style.display = 'none';
+                } else {
+                    logoElement.style.display = 'none';
+                    nameElement.textContent = studioName || 'Studio Sync';
+                    nameElement.style.display = 'block';
+                    resolve();
+                }
+            });
+        }
+
+        // Call the function when the page loads
+        getCurrentUserData();
+
+        // Logout functionality
+        document.getElementById('logoutButton').addEventListener('click', function() {
+            firebase.auth().signOut().then(() => {
+                // Clear studio context from localStorage
+                localStorage.removeItem('currentStudioId');
+                localStorage.removeItem('currentStudioData');
+                // Redirect to studio login
+                window.location.href = '/studiologin.html';
+            }).catch((error) => {
+                console.error('Logout Error:', error);
+            });
+        });
+
+        // Add this function after the firebase initialization
+        function getStudioNameForUrl(studioName) {
+            // Remove spaces and special characters, keep alphanumeric only
+            return studioName.replace(/[^a-zA-Z0-9]/g, '');
+        }
+
+        function updateSidebarLinks(studioData) {
+            if (studioData?.StudioName) {
+                const studioNameParam = getStudioNameForUrl(studioData.StudioName);
+                
+                const sidebarLinks = document.querySelectorAll('#sidebar-wrapper .list-group-item');
+                sidebarLinks.forEach(link => {
+                    const currentHref = link.getAttribute('href');
+                    if (currentHref && currentHref.endsWith('.html')) {
+                        const newHref = currentHref.replace('.html', `?studio=${studioNameParam}`);
+                        link.setAttribute('href', newHref);
+                    }
+                });
+            }
+        }
+
+        function updatePageUrl(studioName) {
+            if (studioName) {
+                const studioNameParam = getStudioNameForUrl(studioName);
+                const currentUrl = new URL(window.location.href);
+                
+                // Only update if we're on a .html page and don't already have the studio parameter
+                if (currentUrl.pathname.endsWith('.html') && !currentUrl.searchParams.has('studio')) {
+                    const newUrl = `${currentUrl.pathname.replace('.html', '')}?studio=${studioNameParam}`;
+                    window.history.replaceState({}, '', newUrl);
+                }
+            }
+        }
+    </script>
+
+    <!-- Add these additional script includes before the closing body tag -->
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap5.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap5.min.js"></script>
+
+    <script>
+        // Initialize DataTables
+        $(document).ready(function() {
+            // Make table variable accessible to other functions
+            window.table = $('#classesTable').DataTable({
+                responsive: true,
+                columns: [
+                    { 
+                        data: null,
+                        defaultContent: '',
+                        orderable: false,
+                        className: 'select-checkbox',
+                        render: function (data, type, row) {
+                            return '<input type="checkbox" class="row-select">';
+                        }
+                    },
+                    { data: 'ClassName', title: 'Class Name' },
+                    { 
+                        data: 'Days',
+                        title: 'Days',
+                        render: function(data) {
+                            if (!Array.isArray(data)) return '';
+                            
+                            // Map of abbreviated days to full names
+                            const dayMap = {
+                                'sun': 'Sunday',
+                                'mon': 'Monday',
+                                'tue': 'Tuesday',
+                                'wed': 'Wednesday',
+                                'thu': 'Thursday',
+                                'fri': 'Friday',
+                                'sat': 'Saturday'
+                            };
+                            
+                            return data.map(d => dayMap[d.toLowerCase()] || d).join(', ');
+                        }
+                    },
+                    { 
+                        data: null,
+                        title: 'Time',
+                        render: function(data) {
+                            const startTime12 = convertTo12Hour(data.StartTime);
+                            const endTime12 = convertTo12Hour(data.EndTime);
+                            return `${startTime12} - ${endTime12}`;
+                        }
+                    },
+                    { data: 'RoomName', title: 'Room' },
+                    { data: 'InstructorName', title: 'Instructor' },
+                    { data: 'MaxSize', title: 'Capacity' },
+                    { data: 'StudentsEnrolled', title: 'Enrolled', defaultContent: '0' },
+                    { data: 'ClassType', title: 'Type' },
+                    { 
+                        data: 'StyleName',  // Add this new column
+                        title: 'Style',
+                        defaultContent: ''
+                    }
+                ],
+                order: [[1, 'asc']]
+            });
+
+            // Now call loadClasses() after table is initialized
+            loadClasses();
+
+            // Select all checkbox functionality
+            $('#selectAll').on('change', function() {
+                const isChecked = $(this).prop('checked');
+                $('.row-select').prop('checked', isChecked);
+                updateButtonStates();
+            });
+
+            // Individual checkbox functionality
+            $('#classesTable tbody').on('change', '.row-select', function() {
+                updateButtonStates();
+            });
+
+            // Delete button click handler
+            $('#deleteClassBtn').on('click', function() {
+                const selectedRows = $('.row-select:checked').closest('tr');
+                const classesToDelete = [];
+                
+                console.log('Delete button clicked');
+                console.log('Selected rows:', selectedRows.length);
+                
+                selectedRows.each(function() {
+                    const rowData = window.table.row(this).data();
+                    console.log('Selected class:', rowData);
+                    classesToDelete.push({
+                        id: rowData.Id,
+                        name: rowData.ClassName
+                    });
+                });
+
+                console.log('Classes to delete:', classesToDelete);
+
+                // Populate the confirmation modal
+                const deleteList = $('#deleteClassList');
+                deleteList.empty();
+                classesToDelete.forEach(classItem => {
+                    deleteList.append(`<li>${classItem.name}</li>`);
+                });
+
+                // Show the confirmation modal
+                $('#deleteConfirmModal').modal('show');
+            });
+
+            // Handle delete confirmation
+            $('#confirmDeleteBtn').on('click', async function() {
+                try {
+                    const selectedRows = $('.row-select:checked').closest('tr');
+                    const studioId = localStorage.getItem('currentStudioId');
+                    const db = firebase.firestore();
+                    
+                    const deletePromises = [];
+                    const rowIndexes = [];
+
+                    // Collect all the delete operations
+                    for (const row of selectedRows) {
+                        const rowData = window.table.row(row).data();
+                        
+                        // Get the class document to find the instructor and students
+                        const classDoc = await db.collection('Studios')
+                            .doc(studioId)
+                            .collection('Classes')
+                            .doc(rowData.Id)
+                            .get();
+
+                        if (classDoc.exists) {
+                            const classData = classDoc.data();
+                            
+                            // Remove class from instructor's Classes array if there is one
+                            if (classData.InstructorId) {
+                                const instructorRef = db.collection('Studios')
+                                    .doc(studioId)
+                                    .collection('Instructors')
+                                    .doc(classData.InstructorId);
+                                
+                                // Check if instructor exists before updating
+                                const instructorDoc = await instructorRef.get();
+                                if (instructorDoc.exists) {
+                                    deletePromises.push(
+                                        instructorRef.update({
+                                            Classes: firebase.firestore.FieldValue.arrayRemove(rowData.Id)
+                                        })
+                                    );
+                                }
+                            }
+
+                            // Remove class from all students' Classes arrays
+                            if (classData.Students && classData.Students.length > 0) {
+                                for (const studentId of classData.Students) {
+                                    const studentRef = db.collection('Studios')
+                                        .doc(studioId)
+                                        .collection('Students')
+                                        .doc(studentId);
+                                    
+                                    // Check if student exists before updating
+                                    const studentDoc = await studentRef.get();
+                                    if (studentDoc.exists) {
+                                        deletePromises.push(
+                                            studentRef.update({
+                                                Classes: firebase.firestore.FieldValue.arrayRemove(rowData.Id)
+                                            })
+                                        );
+                                    }
+                                }
+                            }
+
+                            // Delete the class document
+                            deletePromises.push(
+                                db.collection('Studios')
+                                    .doc(studioId)
+                                    .collection('Classes')
+                                    .doc(rowData.Id)
+                                    .delete()
+                            );
+
+                            rowIndexes.push(window.table.row(row).index());
+                        }
+                    }
+
+                    // Execute all delete operations
+                    await Promise.all(deletePromises);
+
+                    // Remove rows from DataTable
+                    rowIndexes.sort((a, b) => b - a).forEach(index => {
+                        window.table.row(index).remove();
+                    });
+
+                    window.table.draw();
+
+                    // Reset select all checkbox
+                    $('#selectAll').prop('checked', false);
+                    
+                    // Update button states
+                    updateButtonStates();
+
+                    // Hide the modal
+                    $('#deleteConfirmModal').modal('hide');
+
+                    // Show success message
+                    alert('Classes deleted successfully');
+
+                } catch (error) {
+                    console.error('Error in delete operation:', error);
+                    alert('Error deleting classes. Please try again.');
+                }
+            });
+
+            // Update button states function with logging
+            function updateButtonStates() {
+                const selectedCount = $('.row-select:checked').length;
+                console.log('Selected count:', selectedCount);
+                $('#editClassBtn').prop('disabled', selectedCount !== 1);
+                $('#deleteClassBtn').prop('disabled', selectedCount === 0);
+            }
+
+            // Initial load of classes
+            loadClasses();
+        });
+
+        // Function to load classes with related data
+        async function loadClasses() {
+            // Show shimmer, hide table
+            $('#tableShimmer').show();
+            $('.table-responsive').hide();
+            
+            const studioId = localStorage.getItem('currentStudioId');
+            const db = firebase.firestore();
+            
+            try {
+                const classesSnapshot = await db.collection('Studios')
+                    .doc(studioId)
+                    .collection('Classes')
+                    .get();
+
+                const classes = [];
+                
+                for (const doc of classesSnapshot.docs) {
+                    const classData = doc.data();
+                    
+                    // Get room name
+                    if (classData.RoomId) {
+                        const roomDoc = await db.collection('Studios')
+                            .doc(studioId)
+                            .collection('StudioRooms')
+                            .doc(classData.RoomId)
+                            .get();
+                        if (roomDoc.exists) {
+                            classData.RoomName = roomDoc.data().Name;
+                        }
+                    }
+
+                    // Get instructor name
+                    let instructorName = '';
+                    if (classData.InstructorId) {
+                        try {
+                            const instructorDoc = await db.collection('Studios')
+                                .doc(studioId)
+                                .collection('Instructors')
+                                .doc(classData.InstructorId)
+                                .get();
+                            
+                            if (instructorDoc.exists) {
+                                const instructor = instructorDoc.data();
+                                instructorName = `${instructor.FirstName} ${instructor.LastName}`;
+                            }
+                        } catch (error) {
+                            console.error('Error fetching instructor:', error);
+                            // Continue without instructor name if there's an error
+                        }
+                    }
+
+                    // Get style name from ClassStyles subcollection
+                    let styleName = '';
+                    if (classData.ClassStyleId) {
+                        try {
+                            const styleDoc = await db.collection('Studios')
+                                .doc(studioId)
+                                .collection('ClassStyles')
+                                .doc(classData.ClassStyleId)
+                                .get();
+                            
+                            if (styleDoc.exists) {
+                                styleName = styleDoc.data().StyleName; // Use StyleName field specifically
+                            }
+                        } catch (error) {
+                            console.error('Error fetching style:', error);
+                        }
+                    }
+
+                    // Get enrolled count from Students array length
+                    const enrolledCount = classData.Students ? classData.Students.length : 0;
+
+                    // Make sure all required fields are present
+                    const processedData = {
+                        Id: doc.id,
+                        ClassName: classData.ClassName || '',
+                        Days: classData.Days || [],
+                        StartTime: classData.StartTime || '',
+                        EndTime: classData.EndTime || '',
+                        RoomName: classData.RoomName || '',
+                        InstructorName: instructorName,
+                        MaxSize: classData.MaxSize || 0,
+                        StudentsEnrolled: enrolledCount,  // Use the array length here
+                        ClassType: classData.ClassType || '',
+                        StyleName: styleName // Add the style name from ClassStyles
+                    };
+
+                    classes.push(processedData);
+                }
+
+                // Hide shimmer, show table
+                $('#tableShimmer').hide();
+                $('.table-responsive').show();
+
+                // Use window.table instead of table
+                window.table.clear().rows.add(classes).draw();
+                
+            } catch (error) {
+                console.error("Error loading classes:", error);
+                // Still hide shimmer and show table on error
+                $('#tableShimmer').hide();
+                $('.table-responsive').show();
+            }
+        }
+
+        // Add this helper function to get class data with related information
+        async function getClassWithRelatedData(studioId, classId) {
+            const db = firebase.firestore();
+            
+            const classDoc = await db.collection('Studios')
+                .doc(studioId)
+                .collection('Classes')
+                .doc(classId)
+                .get();
+            
+            const classData = classDoc.data();
+            
+            // Get room name
+            if (classData.RoomId) {
+                const roomDoc = await db.collection('Studios')
+                    .doc(studioId)
+                    .collection('StudioRooms')
+                    .doc(classData.RoomId)
+                    .get();
+                if (roomDoc.exists) {
+                    classData.RoomName = roomDoc.data().Name;
+                }
+            }
+
+            // Get instructor name
+            if (classData.InstructorId) {
+                const instructorDoc = await db.collection('Studios')
+                    .doc(studioId)
+                    .collection('Instructors')
+                    .doc(classData.InstructorId)
+                    .get();
+                if (instructorDoc.exists) {
+                    const instructor = instructorDoc.data();
+                    classData.InstructorName = `${instructor.FirstName} ${instructor.LastName}`;
+                }
+            }
+
+            // Get style name from ClassStyles subcollection
+            let styleName = '';
+            if (classData.ClassStyleId) {
+                try {
+                    const styleDoc = await db.collection('Studios')
+                        .doc(studioId)
+                        .collection('ClassStyles')
+                        .doc(classData.ClassStyleId)
+                        .get();
+                    
+                    if (styleDoc.exists) {
+                        styleName = styleDoc.data().StyleName; // Use StyleName field specifically
+                    }
+                } catch (error) {
+                    console.error('Error fetching style:', error);
+                }
+            }
+
+            // Get enrolled count
+            const enrolledCount = await db.collection('Studios')
+                .doc(studioId)
+                .collection('Classes')
+                .doc(classId)
+                .collection('Students')
+                .get()
+                .then(snap => snap.size)
+                .catch(() => 0);
+
+            // Return formatted data including the style name
+            return {
+                Id: classId,
+                ClassName: classData.ClassName || '',
+                Days: classData.Days || [],
+                StartTime: classData.StartTime || '',
+                EndTime: classData.EndTime || '',
+                RoomName: classData.RoomName || '',
+                InstructorName: classData.InstructorName || '',
+                MaxSize: classData.MaxSize || 0,
+                StudentsEnrolled: enrolledCount,
+                ClassType: classData.ClassType || '',
+                StyleName: styleName // Add the style name from ClassStyles
+            };
+        }
+
+        // Initial load of classes
+        loadClasses();
+
+        // Add this code after your existing DataTables initialization
+        $(document).ready(function() {
+            // Select all checkbox functionality
+            $('#selectAll').on('change', function() {
+                const isChecked = $(this).prop('checked');
+                $('.row-select').prop('checked', isChecked);
+                updateButtonStates();
+            });
+
+            // Individual checkbox functionality
+            $('#classesTable tbody').on('change', '.row-select', function() {
+                updateButtonStates();
+            });
+
+            // Update edit/delete button states
+            function updateButtonStates() {
+                const selectedCount = $('.row-select:checked').length;
+                $('#editClassBtn').prop('disabled', selectedCount !== 1);
+                $('#deleteClassBtn').prop('disabled', selectedCount === 0);
+            }
+
+            // Edit button click handler - add logging
+            $('#editClassBtn').on('click', async function() {
+                try {
+                    const selectedCheckbox = $('.row-select:checked').first();
+                    const row = selectedCheckbox.closest('tr');
+                    const rowData = window.table.row(row).data();
+                    const classId = rowData.Id;
+                    
+                    console.log(`Selected class for editing: "${rowData.ClassName}" (ID: ${classId})`);
+                    
+                    // Get the full class data from Firebase
+                    const studioId = localStorage.getItem('currentStudioId');
+                    const db = firebase.firestore();
+                    const classDoc = await db.collection('Studios')
+                        .doc(studioId)
+                        .collection('Classes')
+                        .doc(classId)
+                        .get();
+                    
+                    const classData = classDoc.data();
+                    console.log('Retrieved class data:', classData);
+
+                    // Clear form before loading
+                    $('#addClassForm')[0].reset();
+
+                    // Load dropdown data first
+                    await loadFormData();
+                    
+                    // Load Class Styles specifically for edit
+                    const classStylesSnapshot = await db.collection('Studios')
+                        .doc(studioId)
+                        .collection('ClassStyles')
+                        .get();
+
+                    const classStyleSelect = document.getElementById('classStyle');
+                    classStyleSelect.innerHTML = '<option value="">Select Style</option>';
+                    classStylesSnapshot.forEach(doc => {
+                        const style = doc.data();
+                        const option = new Option(style.StyleName || style.Name || 'Unknown Style', doc.id);
+                        classStyleSelect.appendChild(option);
+                    });
+                    
+                    // Populate basic form fields
+                    $('#className').val(classData.ClassName);
+                    $('#season').val(classData.SeasonId);
+                    $('#startTime').val(classData.StartTime);
+                    $('#endTime').val(classData.EndTime);
+                    $('#location').val(classData.RoomId);
+                    $('#instructor').val(classData.InstructorId);
+                    $('#classType').val(classData.ClassType);
+                    $('#classStyle').val(classData.ClassStyleId);
+                    $('#maxSize').val(classData.MaxSize);
+                    $('#minAge').val(classData.MinAge || '');
+                    $('#maxAge').val(classData.MaxAge || '');
+                    $('#enforceAgeLimit').prop('checked', classData.EnforceAgeLimit);
+                    $('#description').val(classData.Description || '');
+                    $('#classNotes').val(classData.ClassNotes || '');
+
+                    // Set days checkboxes
+                    $('input[name="days"]').prop('checked', false);
+                    if (Array.isArray(classData.Days)) {
+                        classData.Days.forEach(day => {
+                            $(`#${day.toLowerCase()}`).prop('checked', true);
+                        });
+                    }
+
+                    // Populate payment type fields
+                    $('#paymentType').val(classData.PaymentType || '');
+                    $('#paymentType').trigger('change');
+                    
+                    // Handle rate plan if applicable
+                    if (classData.PaymentType === 'PayRate' || classData.PaymentType === 'Both') {
+                        $('#ratePlan').val(classData.RatePlanId);
+                    }
+                    
+                    // Handle fee if applicable
+                    if ((classData.PaymentType === 'ClassFee' || classData.PaymentType === 'Both') && classData.Fee && classData.Fee.length > 0) {
+                        // Get the first fee in the array
+                        const fee = classData.Fee[0];
+                        
+                        $('#feeType').val(fee.FeeType);
+                        $('#feeAmount').val(fee.FeeAmount);
+                        
+                        // Trigger change to show the appropriate fee section
+                        $('#feeType').trigger('change');
+                        
+                        // Set specific fee type fields
+                        if (fee.FeeType === 'Recurring') {
+                            $('#recurringFrequency').val(fee.RecurringFrequency);
+                            $('#recurringDuration').val(fee.RecurringDuration);
+                        } else if (fee.FeeType === 'BreakUp') {
+                            $('#breakupFrequency').val(fee.BreakUpFrequency);
+                            $('#breakupDuration').val(fee.BreakUpDuration);
+                        }
+                    } else if ((classData.PaymentType === 'ClassFee' || classData.PaymentType === 'Both') && classData.FeeType) {
+                        // Backward compatibility with old fee structure
+                        $('#feeType').val(classData.FeeType);
+                        $('#feeAmount').val(classData.FeeAmount);
+                        
+                        // Trigger change to show the appropriate fee section
+                        $('#feeType').trigger('change');
+                        
+                        // Set specific fee type fields
+                        if (classData.FeeType === 'Recurring') {
+                            $('#recurringFrequency').val(classData.RecurringFrequency);
+                            $('#recurringDuration').val(classData.RecurringDuration);
+                        } else if (classData.FeeType === 'BrokenUp' || classData.FeeType === 'BreakUp') {
+                            $('#breakupFrequency').val(classData.BreakupFrequency || classData.BreakUpFrequency);
+                            $('#breakupDuration').val(classData.BreakupDuration || classData.BreakUpDuration);
+                        }
+                    }
+
+                    // Store the class ID for updating
+                    $('#addClassModal').data('classId', classId);
+                    
+                    // Update modal title and button
+                    $('#addClassModalLabel').text('Edit Class');
+                    $('#saveClassBtn').text('Update Class');
+                    
+                    // Show the modal
+                    $('#addClassModal').modal('show');
+
+                } catch (error) {
+                    console.error('Error loading class data for edit:', error);
+                    alert('Error loading class data. Please try again.');
+                }
+            });
+
+            // Reset modal when closed
+            $('#addClassModal').on('hidden.bs.modal', function() {
+                $('#addClassForm')[0].reset();
+                $(this).removeData('classId');
+                $('#addClassModalLabel').text('New Class');
+                $('#saveClassBtn').text('Save Class');
+            });
+        });
+    </script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+       
+
+        // Handle form submission
+        document.getElementById('saveClassBtn').addEventListener('click', function() {
+            const form = document.getElementById('addClassForm');
+            
+            if (form.checkValidity()) {
+                const classData = {
+                    className: document.getElementById('className').value,
+                    season: document.getElementById('season').value,
+                    days: Array.from(document.querySelectorAll('input[name="days"]:checked')).map(cb => cb.id),
+                    startTime: document.getElementById('startTime').value,
+                    endTime: document.getElementById('endTime').value,
+                    location: document.getElementById('location').value,
+                    instructor: document.getElementById('instructor').value,
+                    ratePlan: document.getElementById('ratePlan').value,
+                    classType: document.getElementById('classType').value,
+                    maxSize: document.getElementById('maxSize').value,
+                    minAge: document.getElementById('minAge').value,
+                    maxAge: document.getElementById('maxAge').value,
+                    enforceAgeLimit: document.getElementById('enforceAgeLimit').checked,
+                    description: document.getElementById('description').value,
+                    classNotes: document.getElementById('classNotes').value
+                };
+
+                saveClass(classData);
+            } else {
+                form.reportValidity();
+            }
+        });
+
+        // Load instructors for the dropdowns
+        async function loadFormData() {
+            const studioId = localStorage.getItem('currentStudioId');
+            const db = firebase.firestore();
+            
+            try {
+                // Load Seasons
+                const seasonsSnapshot = await db.collection('Studios')
+                    .doc(studioId)
+                    .collection('Seasons')
+                    .get();
+                
+                const seasonSelect = document.getElementById('season');
+                seasonSelect.innerHTML = '<option value="">Select Season</option>';
+                seasonsSnapshot.forEach(doc => {
+                    const season = doc.data();
+                    const option = new Option(season.Name, doc.id);
+                    seasonSelect.appendChild(option);
+                });
+                
+                // Load Instructors
+                const instructorsSnapshot = await db.collection('Studios')
+                    .doc(studioId)
+                    .collection('Instructors')
+                    .get();
+                
+                const instructorSelect = document.getElementById('instructor');
+                instructorSelect.innerHTML = '<option value="">Select Instructor</option>';
+                instructorsSnapshot.forEach(doc => {
+                    const instructor = doc.data();
+                    const option = new Option(`${instructor.FirstName} ${instructor.LastName}`, doc.id);
+                    instructorSelect.appendChild(option);
+                });
+                
+                // Load Rooms
+                const roomsSnapshot = await db.collection('Studios')
+                    .doc(studioId)
+                    .collection('StudioRooms')
+                    .get();
+                
+                const roomSelect = document.getElementById('location');
+                roomSelect.innerHTML = '<option value="">Select Room</option>';
+                roomsSnapshot.forEach(doc => {
+                    const room = doc.data();
+                    const option = new Option(room.Name, doc.id);
+                    roomSelect.appendChild(option);
+                });
+                
+                // Load Rate Plans
+                const ratePlansSnapshot = await db.collection('Studios')
+                    .doc(studioId)
+                    .collection('RatePlans')
+                    .get();
+                
+                const ratePlanSelect = document.getElementById('ratePlan');
+                ratePlanSelect.innerHTML = '<option value="">Select Rate Plan</option>';
+                ratePlansSnapshot.forEach(doc => {
+                    const ratePlan = doc.data();
+                    const option = new Option(ratePlan.Name, doc.id);
+                    ratePlanSelect.appendChild(option);
+                });
+
+                // Load Class Styles
+                const classStylesSnapshot = await db.collection('Studios')
+                    .doc(studioId)
+                    .collection('ClassStyles')
+                    .get();
+
+                console.log('Retrieved class styles count:', classStylesSnapshot.size);
+                const classStyleSelect = document.getElementById('classStyle');
+                classStyleSelect.innerHTML = '<option value="">Select Style</option>';
+                classStylesSnapshot.forEach(doc => {
+                    const style = doc.data();
+                    console.log('Adding style option:', {id: doc.id, name: style.StyleName || style.Name});
+                    const option = new Option(style.StyleName || style.Name || 'Unknown Style', doc.id);
+                    classStyleSelect.appendChild(option);
+                });
+                console.log('Class style options after population:', classStyleSelect.options.length);
+
+            } catch (error) {
+                console.error('Error loading form data:', error);
+                throw error;
+            }
+        }
+
+        // Update the modal show event listener
+        $('#addClassModal').on('show.bs.modal', function () {
+            loadFormData();
+        });
+    });
+    </script>
+
+    <!-- Add this function to check your data -->
+    <script>
+    async function debugCheckData() {
+        const studioId = localStorage.getItem('currentStudioId');
+        const db = firebase.firestore();
+        const studioRef = db.collection('Studios').doc(studioId);
+
+        console.log('Checking studio:', studioId);
+
+        try {
+            // Check Seasons (changed from Dance Seasons)
+            const seasons = await studioRef.collection('Seasons').get();  // Changed from DanceSeasons
+            console.log('Seasons count:', seasons.size);
+            seasons.forEach(doc => console.log('Season:', {id: doc.id, data: doc.data()}));
+
+            // Check Instructors
+            const instructors = await studioRef.collection('Instructors').get();
+            console.log('Instructors count:', instructors.size);
+            instructors.forEach(doc => console.log('Instructor:', doc.data()));
+
+            // Check Rooms
+            const rooms = await studioRef.collection('StudioRooms').get();
+            console.log('Rooms count:', rooms.size);
+            rooms.forEach(doc => console.log('Room:', doc.data()));
+
+            // Check Rate Plans
+            const rates = await studioRef.collection('RatePlans').get();
+            console.log('Rate plans count:', rates.size);
+            rates.forEach(doc => console.log('Rate plan:', doc.data()));
+
+        } catch (error) {
+            console.error('Debug check failed:', error);
+        }
+    }
+
+    // Update the second loadFormData function
+    async function loadFormData() {
+        const studioId = localStorage.getItem('currentStudioId');
+        console.log('Loading form data for studio:', studioId);
+        
+        if (!studioId) {
+            console.error('No studio ID found');
+            return;
+        }
+
+        const db = firebase.firestore();
+        
+        try {
+            // Load Seasons first (changed from Dance Seasons)
+            console.log('Loading seasons...');
+            const seasonsRef = db.collection('Studios').doc(studioId).collection('Seasons');  // Changed from DanceSeasons
+            const seasonsSnapshot = await seasonsRef.get();
+            const seasonSelect = document.getElementById('season');
+            
+            // Clear existing options
+            seasonSelect.innerHTML = '<option value="">Select Season</option>';
+            
+            // Add all seasons
+            seasonsSnapshot.forEach(doc => {
+                const season = doc.data();
+                console.log('Adding season to dropdown:', {id: doc.id, name: season.Name});
+                const option = document.createElement('option');
+                option.value = doc.id;
+                option.textContent = season.Name;
+                seasonSelect.appendChild(option);
+            });
+
+            // Load Instructors
+            const instructorsRef = db.collection('Studios').doc(studioId).collection('Instructors');
+            const instructorsSnapshot = await instructorsRef.get();
+            const instructorSelect = document.getElementById('instructor');
+            
+            // Clear existing options
+            instructorSelect.innerHTML = '<option value="">Select Instructor</option>';
+            
+            // Add all instructors
+            instructorsSnapshot.forEach(doc => {
+                const instructor = doc.data();
+                const option = document.createElement('option');
+                option.value = doc.id;
+                option.textContent = `${instructor.FirstName} ${instructor.LastName}`;
+                instructorSelect.appendChild(option);
+            });
+
+            // Load Studio Rooms
+            const roomsRef = db.collection('Studios').doc(studioId).collection('StudioRooms');
+            const roomsSnapshot = await roomsRef.get();
+            const roomSelect = document.getElementById('location');
+            
+            // Clear existing options
+            roomSelect.innerHTML = '<option value="">Select Room</option>';
+            
+            // Add all rooms
+            roomsSnapshot.forEach(doc => {
+                const room = doc.data();
+                const option = document.createElement('option');
+                option.value = doc.id;
+                option.textContent = room.Name;
+                roomSelect.appendChild(option);
+            });
+
+            // Load Rate Plans
+            const ratePlansRef = db.collection('Studios').doc(studioId).collection('RatePlans');
+            const ratePlansSnapshot = await ratePlansRef.get();
+            const ratePlanSelect = document.getElementById('ratePlan');
+            
+            // Clear existing options
+            ratePlanSelect.innerHTML = '<option value="">Select Rate Plan</option>';
+            
+            // Add all rate plans
+            ratePlansSnapshot.forEach(doc => {
+                const ratePlan = doc.data();
+                const option = document.createElement('option');
+                option.value = doc.id;
+                option.textContent = ratePlan.Name;
+                ratePlanSelect.appendChild(option);
+            });
+
+        } catch (error) {
+            console.error('Error loading form data:', error);
+            alert('Error loading form data. Please try again.');
+        }
+    }
+
+    // Make sure to call both when document is ready
+    document.addEventListener('DOMContentLoaded', function() {
+        debugCheckData();
+        loadFormData();
+    });
+    </script>
+
+    <!-- Add this script right before the closing </body> tag -->
+    <script>
+    // Make sure we have jQuery loaded first
+    document.addEventListener('DOMContentLoaded', function() {
+        // Debug function to check if elements exist
+        function checkElements() {
+            console.log('Instructor select:', document.getElementById('instructor'));
+            console.log('Room select:', document.getElementById('location'));
+            console.log('Rate Plan select:', document.getElementById('ratePlan'));
+        }
+
+        // Initialize the modal properly
+        const addClassModal = new bootstrap.Modal(document.getElementById('addClassModal'));
+
+        // Add click handler for the Create New Class button
+        document.querySelector('[data-bs-target="#addClassModal"]').addEventListener('click', async function(e) {
+            e.preventDefault();
+            console.log('Create New Class button clicked');
+            
+            try {
+                const studioId = localStorage.getItem('currentStudioId');
+                console.log('Studio ID:', studioId);
+                
+                const db = firebase.firestore();
+                
+                // Load Instructors
+                const instructorsSnapshot = await db.collection('Studios').doc(studioId).collection('Instructors').get();
+                const instructorSelect = document.getElementById('instructor');
+                instructorSelect.innerHTML = '<option value="">Select Instructor</option>';
+                
+                instructorsSnapshot.forEach(doc => {
+                    const instructor = doc.data();
+                    console.log('Adding instructor:', instructor);
+                    const option = new Option(`${instructor.FirstName} ${instructor.LastName}`, doc.id);
+                    instructorSelect.appendChild(option);
+                });
+
+                // Load Rooms
+                const roomsRef = db.collection('Studios').doc(studioId).collection('StudioRooms');
+                const roomsSnapshot = await roomsRef.get();
+                const roomSelect = document.getElementById('location');
+                roomSelect.innerHTML = '<option value="">Select Room</option>';
+                
+                roomsSnapshot.forEach(doc => {
+                    const room = doc.data();
+                    console.log('Adding room:', room);
+                    const option = new Option(room.Name, doc.id);
+                    roomSelect.appendChild(option);
+                });
+
+                // Load Rate Plans
+                const ratePlansRef = db.collection('Studios').doc(studioId).collection('RatePlans');
+                const ratePlansSnapshot = await ratePlansRef.get();
+                const ratePlanSelect = document.getElementById('ratePlan');
+                ratePlanSelect.innerHTML = '<option value="">Select Rate Plan</option>';
+                
+                ratePlansSnapshot.forEach(doc => {
+                    const ratePlan = doc.data();
+                    console.log('Adding rate plan:', ratePlan);
+                    const option = new Option(ratePlan.Name, doc.id);
+                    ratePlanSelect.appendChild(option);
+                });
+
+                // Load Class Styles
+                const classStylesSnapshot = await db.collection('Studios')
+                    .doc(studioId)
+                    .collection('ClassStyles')
+                    .get();
+
+                const classStyleSelect = document.getElementById('classStyle');
+                classStyleSelect.innerHTML = '<option value="">Select Style</option>';
+                classStylesSnapshot.forEach(doc => {
+                    const style = doc.data();
+                    const option = new Option(style.StyleName || style.Name || 'Unknown Style', doc.id);
+                    classStyleSelect.appendChild(option);
+                });
+
+                // Show the modal after data is loaded
+                addClassModal.show();
+                
+                // Check if options were added
+                console.log('Final instructor options:', instructorSelect.options.length);
+                console.log('Final room options:', roomSelect.options.length);
+                console.log('Final rate plan options:', ratePlanSelect.options.length);
+                console.log('Final class style options:', classStyleSelect.options.length);
+
+            } catch (error) {
+                console.error('Error loading form data:', error);
+                alert('Error loading form data. Please try again.');
+            }
+        });
+
+        // Add change event listeners to verify the dropdowns are working
+        document.getElementById('instructor').addEventListener('change', function() {
+            console.log('Selected instructor:', this.value);
+        });
+
+        document.getElementById('location').addEventListener('change', function() {
+            console.log('Selected room:', this.value);
+        });
+
+        document.getElementById('ratePlan').addEventListener('change', function() {
+            console.log('Selected rate plan:', this.value);
+        });
+
+        // Remove the old modal show event listener
+        $('#addClassModal').off('show.bs.modal');
+
+        // Check elements on page load
+        checkElements();
+    });
+    </script>
+
+    <!-- Add this validation function -->
+    <script>
+    function validateForm(formId) {
+        const form = document.querySelector(formId);
+        const requiredFields = form.querySelectorAll('[required]');
+        let isValid = true;
+
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                field.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                field.classList.remove('is-invalid');
+            }
+        });
+
+        // Validate days selection
+        const daysChecked = form.querySelectorAll('input[name="days"]:checked').length;
+        const daysGroup = form.querySelector('.btn-group');
+        if (daysChecked === 0) {
+            daysGroup.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            daysGroup.classList.remove('is-invalid');
+        }
+        
+        // Validate payment type specific fields
+        const paymentType = document.getElementById('paymentType').value;
+        if (paymentType) {
+            if ((paymentType === 'PayRate' || paymentType === 'Both') && 
+                !document.getElementById('ratePlan').value) {
+                document.getElementById('ratePlan').classList.add('is-invalid');
+                isValid = false;
+            }
+            
+            if ((paymentType === 'ClassFee' || paymentType === 'Both') && 
+                !document.getElementById('feeAmount').value) {
+                document.getElementById('feeAmount').classList.add('is-invalid');
+                isValid = false;
+            }
+        }
+
+        return isValid;
+    }
+    </script>
+
+    <!-- Add this helper function after your existing scripts -->
+    <script>
+    async function updateInstructorClasses(studioId, classId, newInstructorId, oldInstructorId = null) {
+        const db = firebase.firestore();
+        
+        try {
+            // If there's an old instructor, remove the class from their array
+            if (oldInstructorId) {
+                await db.collection('Studios')
+                    .doc(studioId)
+                    .collection('Instructors')
+                    .doc(oldInstructorId)
+                    .update({
+                        Classes: firebase.firestore.FieldValue.arrayRemove(classId)
+                    });
+                console.log(`Removed class ${classId} from instructor ${oldInstructorId}`);
+            }
+
+            // Add the class to the new instructor's array
+            if (newInstructorId) {
+                await db.collection('Studios')
+                    .doc(studioId)
+                    .collection('Instructors')
+                    .doc(newInstructorId)
+                    .update({
+                        Classes: firebase.firestore.FieldValue.arrayUnion(classId)
+                    });
+                console.log(`Added class ${classId} to instructor ${newInstructorId}`);
+            }
+        } catch (error) {
+            console.error('Error updating instructor classes:', error);
+            throw error;
+        }
+    }
+
+    // Move this function outside of any document.ready blocks
+    function updateButtonStates() {
+        const selectedCount = $('.row-select:checked').length;
+        console.log('Selected count:', selectedCount);
+        $('#editClassBtn').prop('disabled', selectedCount !== 1);
+        $('#deleteClassBtn').prop('disabled', selectedCount === 0);
+    }
+
+    </script>
+
+    <!-- Add this time conversion helper function after your existing scripts -->
+    <script>
+    function convertTo12Hour(time24) {
+        if (!time24) return '';
+        
+        const [hours, minutes] = time24.split(':');
+        const hour = parseInt(hours);
+        const ampm = hour >= 12 ? 'PM' : 'AM';
+        const hour12 = hour % 12 || 12;
+        
+        return `${hour12}:${minutes} ${ampm}`;
+    }
+    </script>
+
+    <!-- Add this script before the closing </body> tag -->
+    <script>
+    // Add click handler for table rows
+    $('#classesTable tbody').on('click', 'tr', async function(e) {
+        // Ignore clicks on checkbox and its cell
+        if ($(e.target).is('input[type="checkbox"]') || $(e.target).is('td:first-child')) {
+            return;
+        }
+
+        const rowData = window.table.row(this).data();
+        const studioId = localStorage.getItem('currentStudioId');
+        const db = firebase.firestore();
+
+        // Store the class ID in the modal for reference
+        $('#classDetailsModal').data('classId', rowData.Id);
+
+        // Load initial info tab data
+        await loadInfoTabData(rowData.Id);
+
+        // Show the modal and ensure info tab is active
+        const modal = new bootstrap.Modal(document.getElementById('classDetailsModal'));
+        $('#classDetailsTabs button[data-bs-target="#info"]').tab('show');
+        modal.show();
+    });
+
+    // Add these new functions to handle tab data loading
+    async function loadInfoTabData(classId) {
+        console.log('Loading info tab data for class:', classId);
+        const studioId = localStorage.getItem('currentStudioId');
+        const db = firebase.firestore();
+
+        try {
+            const classDoc = await db.collection('Studios')
+                .doc(studioId)
+                .collection('Classes')
+                .doc(classId)
+                .get();
+
+            const classData = classDoc.data();
+
+            // Get season name
+            let seasonName = '';
+            if (classData.SeasonId) {
+                const seasonDoc = await db.collection('Studios')
+                    .doc(studioId)
+                    .collection('Seasons')
+                    .doc(classData.SeasonId)
+                    .get();
+                if (seasonDoc.exists) {
+                    seasonName = seasonDoc.data().Name;
+                }
+            }
+
+            // Get room name
+            let roomName = '';
+            if (classData.RoomId) {
+                const roomDoc = await db.collection('Studios')
+                    .doc(studioId)
+                    .collection('StudioRooms')
+                    .doc(classData.RoomId)
+                    .get();
+                if (roomDoc.exists) {
+                    roomName = roomDoc.data().Name;
+                }
+            }
+
+            // Get instructor name
+            let instructorName = '';
+            if (classData.InstructorId) {
+                const instructorDoc = await db.collection('Studios')
+                    .doc(studioId)
+                    .collection('Instructors')
+                    .doc(classData.InstructorId)
+                    .get();
+                if (instructorDoc.exists) {
+                    const instructor = instructorDoc.data();
+                    instructorName = `${instructor.FirstName} ${instructor.LastName}`;
+                }
+            }
+
+            // Get style name
+            let styleName = '';
+            if (classData.ClassStyleId) {
+                const styleDoc = await db.collection('Studios')
+                    .doc(studioId)
+                    .collection('ClassStyles')
+                    .doc(classData.ClassStyleId)
+                    .get();
+                if (styleDoc.exists) {
+                    styleName = styleDoc.data().StyleName || styleDoc.data().Name || 'Unknown Style';
+                }
+            }
+            
+            // Get rate plan name if applicable
+            let ratePlanName = '';
+            if (classData.RatePlanId) {
+                const ratePlanDoc = await db.collection('Studios')
+                    .doc(studioId)
+                    .collection('RatePlans')
+                    .doc(classData.RatePlanId)
+                    .get();
+                if (ratePlanDoc.exists) {
+                    ratePlanName = ratePlanDoc.data().Name;
+                }
+            }
+
+            // Get enrolled count
+            const enrolledCount = await db.collection('Studios')
+                .doc(studioId)
+                .collection('Students')
+                .where('Classes', 'array-contains', classId)
+                .get()
+                .then(snap => snap.size);
+
+            // Format time and days
+            const timeString = `${convertTo12Hour(classData.StartTime)} - ${convertTo12Hour(classData.EndTime)}`;
+            
+            // Map abbreviated days to full names
+            const dayMap = {
+                'sun': 'Sunday',
+                'mon': 'Monday',
+                'tue': 'Tuesday',
+                'wed': 'Wednesday',
+                'thu': 'Thursday',
+                'fri': 'Friday',
+                'sat': 'Saturday'
+            };
+            
+            const daysString = classData.Days ? 
+                classData.Days.map(d => dayMap[d.toLowerCase()] || d).join(', ') : 
+                '';
+
+            // Update modal content
+            $('#detailClassName').text(classData.ClassName);
+            $('#detailSeason').text(seasonName || 'No season assigned');
+            $('#detailDays').text(daysString || 'No days assigned');
+            $('#detailTime').text(timeString || 'No time assigned');
+            $('#detailRoom').text(roomName || 'No room assigned');
+            $('#detailInstructor').text(instructorName || 'No instructor assigned');
+            $('#detailClassType').text(classData.ClassType || 'Not specified');
+            $('#detailStyle').text(styleName || 'No style assigned');
+            $('#detailCapacity').text(classData.MaxSize || '0');
+            $('#detailEnrolled').text(enrolledCount || '0');
+            $('#detailAgeRange').text(
+                classData.MinAge && classData.MaxAge ? 
+                `${classData.MinAge} - ${classData.MaxAge} years` + 
+                (classData.EnforceAgeLimit ? ' (Enforced)' : ' (Not Enforced)') : 
+                'No age restrictions'
+            );
+            $('#detailDescription').text(classData.Description || 'No description available');
+            $('#detailNotes').text(classData.ClassNotes || 'No notes available');
+            
+            // Build and add payment information
+            let paymentInfoHtml = '';
+            
+            // Add payment type
+            if (classData.PaymentType) {
+                paymentInfoHtml += `<div class="mb-2"><strong>Payment Type:</strong> ${classData.PaymentType}</div>`;
+                
+                // Add pay rate details if applicable
+                if (classData.PaymentType === 'PayRate' || classData.PaymentType === 'Both') {
+                    paymentInfoHtml += `<div class="mb-2 ms-3"><strong>Rate Plan:</strong> ${ratePlanName || 'Not specified'}</div>`;
+                }
+                
+                // Add fee details if applicable
+                if (classData.PaymentType === 'ClassFee' || classData.PaymentType === 'Both') {
+                    // Format fee type with proper spacing for display
+                    let displayFeeType = 'One Time';
+                    if (classData.FeeType === 'Recurring') {
+                        displayFeeType = 'Recurring';
+                    } else if (classData.FeeType === 'BrokenUp') {
+                        displayFeeType = 'Broken Up';
+                    }
+                    paymentInfoHtml += `<div class="mb-2 ms-3"><strong>Fee Type:</strong> ${displayFeeType}</div>`;
+                    paymentInfoHtml += `<div class="mb-2 ms-3"><strong>Fee Amount:</strong> $${classData.FeeAmount ? classData.FeeAmount.toFixed(2) : '0.00'}</div>`;
+                    
+                    // Add specific fee type details
+                    if (classData.FeeType === 'Recurring' && classData.RecurringFrequency) {
+                        paymentInfoHtml += `<div class="mb-2 ms-3"><strong>Frequency:</strong> ${classData.RecurringFrequency}</div>`;
+                        paymentInfoHtml += `<div class="mb-2 ms-3"><strong>Duration:</strong> ${classData.RecurringDuration || 1} month(s)</div>`;
+                    } else if (classData.FeeType === 'BrokenUp' && classData.BreakupFrequency) {
+                        paymentInfoHtml += `<div class="mb-2 ms-3"><strong>Break Up By:</strong> ${classData.BreakupFrequency}</div>`;
+                        paymentInfoHtml += `<div class="mb-2 ms-3"><strong>Payments:</strong> ${classData.BreakupDuration || 2}</div>`;
+                    }
+                }
+            } else if (classData.RatePlanId) {
+                // Legacy format - just show rate plan
+                paymentInfoHtml += `<div class="mb-2"><strong>Payment Type:</strong> Pay Rate</div>`;
+                paymentInfoHtml += `<div class="mb-2 ms-3"><strong>Rate Plan:</strong> ${ratePlanName || 'Not specified'}</div>`;
+            } else {
+                paymentInfoHtml += '<div class="mb-2">No payment information available</div>';
+            }
+            
+            // Add payment section to the modal
+            if ($('#detailPaymentInfo').length) {
+                $('#detailPaymentInfo').html(paymentInfoHtml);
+            } else {
+                // If the payment info container doesn't exist yet, add it after age range
+                $('#detailAgeRange').parent().after(`
+                    <div class="col-md-6 mb-3">
+                        <h5 class="mb-2">Payment Information</h5>
+                        <div id="detailPaymentInfo">${paymentInfoHtml}</div>
+                    </div>
+                `);
+            }
+
+        } catch (error) {
+            console.error('Error loading info tab data:', error);
+            // Show error state in the modal
+            const fields = ['ClassName', 'Season', 'Days', 'Time', 'Room', 'Instructor', 
+                           'ClassType', 'Style', 'Capacity', 'Enrolled', 'AgeRange', 
+                           'Description', 'Notes'];
+            fields.forEach(field => {
+                $(`#detail${field}`).text('Error loading data');
+            });
+            $('#detailPaymentInfo').html('<div class="text-danger">Error loading payment data</div>');
+        }
+    }
+
+    // Add the calculateAge function back
+    function calculateAge(dateOfBirth) {
+        if (!dateOfBirth) return 'N/A';
+        
+        let dob;
+        if (dateOfBirth.toDate) {
+            // Handle Firestore Timestamp
+            dob = dateOfBirth.toDate();
+        } else if (typeof dateOfBirth === 'string') {
+            // Handle date string
+            dob = new Date(dateOfBirth);
+        } else {
+            return 'N/A';
+        }
+
+        const today = new Date();
+        let age = today.getFullYear() - dob.getFullYear();
+        const monthDiff = today.getMonth() - dob.getMonth();
+        
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+            age--;
+        }
+        
+        return age;
+    }
+
+    // Update the loadStudentsTabData function
+    async function loadStudentsTabData(classId) {
+        console.log('Loading students tab data for class:', classId);
+        const studioId = localStorage.getItem('currentStudioId');
+        const db = firebase.firestore();
+        const studentsTableBody = $('#studentsTable tbody');
+        
+        // Show loading spinner
+        studentsTableBody.html(`
+            <tr>
+                <td colspan="4" class="text-center py-5">
+                    <div class="d-flex flex-column align-items-center">
+                        <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="text-muted mb-0">Loading students...</p>
+                    </div>
+                </td>
+            </tr>
+        `);
+
+        try {
+            const studentsSnapshot = await db.collection('Studios')
+                .doc(studioId)
+                .collection('Students')
+                .where("Classes", "array-contains", classId)
+                .get();
+
+            if (studentsSnapshot.empty) {
+                studentsTableBody.html(`
+                    <tr>
+                        <td colspan="4" class="text-center py-4">
+                            <i class="fas fa-users text-muted mb-2" style="font-size: 2rem;"></i>
+                            <p class="text-muted mb-0">No students enrolled in this class</p>
+                        </td>
+                    </tr>
+                `);
+                return;
+            }
+
+            // Prepare array to collect all student rows
+            const studentRows = [];
+            
+            // Process all students and collect their data
+            const studentPromises = studentsSnapshot.docs.map(async (doc) => {
+                const studentData = doc.data();
+                const age = calculateAge(studentData.DateOfBirth);
+                
+                // Get family name using FamilyId
+                let familyName = 'Not assigned';
+                if (studentData.FamilyId) {
+                    try {
+                        const familyDoc = await db.collection('Studios')
+                            .doc(studioId)
+                            .collection('Families')
+                            .doc(studentData.FamilyId)
+                            .get();
+                        
+                        if (familyDoc.exists) {
+                            const familyData = familyDoc.data();
+                            familyName = `${familyData.FirstName} ${familyData.LastName}`;
+                        }
+                    } catch (error) {
+                        console.error('Error fetching family data:', error);
+                    }
+                }
+
+                // Calculate attendance percentage
+                let attendancePercentage = '0%';
+                if (studentData.Attendance && studentData.Attendance[classId]) {
+                    const attendance = studentData.Attendance[classId];
+                    const present = attendance.Present || 0;
+                    const total = attendance.Total || 0;
+                    if (total > 0) {
+                        attendancePercentage = `${Math.round((present / total) * 100)}%`;
+                    }
+                }
+
+                return `
+                    <tr class="student-row opacity-0">
+                        <td>${studentData.FirstName} ${studentData.LastName}</td>
+                        <td>${age}</td>
+                        <td>${familyName}</td>
+                        <td>${attendancePercentage}</td>
+                    </tr>
+                `;
+            });
+
+            // Wait for all student data to be processed
+            const completedRows = await Promise.all(studentPromises);
+
+            // Now that all data is ready, update the table
+            studentsTableBody.empty();
+            studentsTableBody.append(completedRows.join(''));
+
+            // Fade in all rows together
+            $('.student-row').each(function(i) {
+                $(this).removeClass('opacity-0').addClass('opacity-100');
+                $(this).css('transition', `opacity 300ms ease-in ${i * 50}ms`);
+            });
+
+        } catch (error) {
+            console.error('Error loading students tab data:', error);
+            studentsTableBody.html(`
+                <tr>
+                    <td colspan="4" class="text-center py-4">
+                        <div class="d-flex flex-column align-items-center">
+                            <i class="fas fa-exclamation-circle text-danger mb-3" style="font-size: 2rem;"></i>
+                            <p class="text-danger mb-0">Error loading student data</p>
+                            <button class="btn btn-link text-danger mt-2" onclick="loadStudentsTabData('${classId}')">
+                                <i class="fas fa-redo-alt me-1"></i>Try again
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `);
+        }
+    }
+
+    // Update the loadCostumesTabData function
+    async function loadCostumesTabData(classId) {
+        console.log('Loading costumes tab data for class:', classId);
+        const costumesTab = $('#costumes');
+        
+        // Show loading state
+        costumesTab.html(`
+            <div class="text-center py-4">
+                <i class="fas fa-tshirt text-muted mb-2" style="font-size: 2rem;"></i>
+                <p class="text-muted mb-0">No costume information available for this class</p>
+            </div>
+        `);
+    }
+
+    // Update the loadMusicTabData function
+    async function loadMusicTabData(classId) {
+        console.log('Loading music tab data for class:', classId);
+        const musicTab = $('#music');
+        
+        // Show loading state
+        musicTab.html(`
+            <div class="text-center py-4">
+                <i class="fas fa-music text-muted mb-2" style="font-size: 2rem;"></i>
+                <p class="text-muted mb-0">No music information available for this class</p>
+            </div>
+        `);
+    }
+
+    // Update the tab change handler to prevent multiple loads
+    let lastLoadedTab = null;
+
+    $('#classDetailsModal').on('shown.bs.tab', 'button[data-bs-toggle="tab"]', async function (e) {
+        const classId = $('#classDetailsModal').data('classId');
+        const targetTab = $(e.target).data('bs-target');
+        
+        // Prevent reloading the same tab
+        if (lastLoadedTab === targetTab) {
+            console.log(`Skipping reload of ${targetTab} as it was just loaded`);
+            return;
+        }
+        
+        console.log(`Tab changed to ${targetTab} for class ${classId}`);
+        lastLoadedTab = targetTab;
+
+        switch (targetTab) {
+            case '#info':
+                await loadInfoTabData(classId);
+                break;
+            case '#students':
+                await loadStudentsTabData(classId);
+                break;
+            case '#costumes':
+                await loadCostumesTabData(classId);
+                break;
+            case '#music':
+                await loadMusicTabData(classId);
+                break;
+        }
+    });
+
+    // Update the modal reset handler
+    $('#classDetailsModal').on('hidden.bs.modal', function () {
+        // Clear any stored data
+        $(this).removeData('classId');
+        lastLoadedTab = null;
+        
+        // Reset tab content
+        $('#studentsTable tbody').empty();
+        $('#costumes').empty();
+        $('#music').empty();
+        // Reset to info tab
+        $('#classDetailsTabs button[data-bs-target="#info"]').tab('show');
+    });
+    </script>
+
+    <!-- Add this script to handle student view -->
+    <script>
+    // Add click handler for student view buttons
+    $('#studentsTable tbody').on('click', '.view-student', function() {
+        const studentId = $(this).data('student-id');
+        // Add your logic to view student details
+        console.log('Viewing student:', studentId);
+    });
+    </script>
+
+    <!-- Add this script to handle payment type changes -->
+    <script>
+    // Handle Payment Type changes
+    $('#paymentType').on('change', function() {
+        const selectedType = $(this).val();
+        
+        // Hide all payment sections first
+        $('.payment-section').hide();
+        $('.fee-section').hide();
+        
+        // Remove required attribute from all payment fields
+        $('#ratePlan, #feeAmount').removeAttr('required');
+        
+        // Show relevant sections based on selection
+        if (selectedType === 'PayRate' || selectedType === 'Both') {
+            $('#payRateSection').show();
+            $('#ratePlan').attr('required', 'required');
+        }
+        
+        if (selectedType === 'ClassFee' || selectedType === 'Both') {
+            $('#classFeeSection').show();
+            $('#feeAmount').attr('required', 'required');
+            
+            // Trigger fee type change to show relevant subsections
+            $('#feeType').trigger('change');
+        }
+    });
+    
+    // Handle Fee Type changes
+    $('#feeType').on('change', function() {
+        const selectedType = $(this).val();
+        
+        // Hide all fee sections first
+        $('.fee-section').hide();
+        
+        // Show relevant section based on selection
+        if (selectedType === 'Recurring') {
+            $('#recurringFeeSection').show();
+        } else if (selectedType === 'BrokenUp') {
+            $('#brokenUpFeeSection').show();
+        }
+        // One Time doesn't need additional fields
+    });
+
+    // Update the save button click handler to include payment data with Fee array
+    $('#saveClassBtn').on('click', async function() {
+        if (!validateForm('#addClassForm')) return;
+
+        const classId = $('#addClassModal').data('classId');
+        const isEdit = !!classId;
+        const className = $('#className').val();
+        const newInstructorId = $('#instructor').val();
+
+        try {
+            const studioId = localStorage.getItem('currentStudioId');
+            const db = firebase.firestore();
+
+            // If editing, get the old instructor ID
+            let oldInstructorId;
+            if (isEdit) {
+                const oldClassDoc = await db.collection('Studios')
+                    .doc(studioId)
+                    .collection('Classes')
+                    .doc(classId)
+                    .get();
+                oldInstructorId = oldClassDoc.data().InstructorId;
+            }
+
+            // Calculate duration
+            const start = new Date(`1970-01-01T${$('#startTime').val()}`);
+            const end = new Date(`1970-01-01T${$('#endTime').val()}`);
+            const durationMinutes = (end - start) / 60000;
+
+            // Get the enforce age limit value
+            const enforceAgeLimit = $('#enforceAgeLimit').prop('checked');
+            
+            // Get payment information
+            const paymentType = $('#paymentType').val();
+            
+            // Create the base class data object
+            const classData = {
+                ClassName: $('#className').val(),
+                SeasonId: $('#season').val(),
+                Days: Array.from($('input[name="days"]:checked')).map(cb => cb.id),
+                StartTime: $('#startTime').val(),
+                EndTime: $('#endTime').val(),
+                Duration: durationMinutes,
+                RoomId: $('#location').val(),
+                InstructorId: $('#instructor').val(),
+                ClassType: $('#classType').val(),
+                ClassStyleId: $('#classStyle').val(),
+                MaxSize: parseInt($('#maxSize').val()),
+                MinAge: parseInt($('#minAge').val()),
+                MaxAge: parseInt($('#maxAge').val()),
+                EnforceAgeLimit: enforceAgeLimit,
+                Description: $('#description').val() || "",
+                ClassNotes: $('#classNotes').val() || "",
+                UpdatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                PaymentType: paymentType
+            };
+            
+            // Add Pay Rate data if applicable
+            if (paymentType === 'PayRate' || paymentType === 'Both') {
+                classData.RatePlanId = $('#ratePlan').val();
+            } else {
+                // Include empty RatePlanId for consistency
+                classData.RatePlanId = '';
+            }
+            
+            // Add Fee array if applicable
+            if (paymentType === 'ClassFee' || paymentType === 'Both') {
+                const feeType = $('#feeType').val();
+                const feeAmount = parseFloat($('#feeAmount').val());
+                
+                // Create the fee object with properly capitalized fields
+                const feeData = {
+                    FeeType: feeType,
+                    FeeAmount: feeAmount
+                };
+                
+                // Add specific fee type data
+                if (feeType === 'Recurring') {
+                    feeData.RecurringFrequency = $('#recurringFrequency').val();
+                    feeData.RecurringDuration = parseInt($('#recurringDuration').val());
+                } else if (feeType === 'BrokenUp') {
+                    // Use proper PascalCase for database fields
+                    feeData.BreakUpFrequency = $('#breakupFrequency').val();
+                    feeData.BreakUpDuration = parseInt($('#breakupDuration').val());
+                    
+                    // Log to verify these fields are being set
+                    console.log('Setting BrokenUp fee fields:', {
+                        frequency: feeData.BreakUpFrequency,
+                        duration: feeData.BreakUpDuration
+                    });
+                }
+                
+                // Add to an array of fees and log it
+                classData.Fee = [feeData];
+                console.log('Fee array being saved:', classData.Fee);
+            } else {
+                // Include empty Fee array for consistency
+                classData.Fee = [];
+            }
+
+            if (isEdit) {
+                console.log(`Updating class: "${className}" (ID: ${classId}), PaymentType: ${paymentType}`);
+                console.log('Class data to update:', classData);
+                
+                // Update existing class
+                await db.collection('Studios')
+                    .doc(studioId)
+                    .collection('Classes')
+                    .doc(classId)
+                    .update(classData);
+
+                // Update instructor associations
+                if (oldInstructorId !== newInstructorId) {
+                    await updateInstructorClasses(studioId, classId, newInstructorId, oldInstructorId);
+                }
+
+                // Get updated data with related info
+                const updatedData = await getClassWithRelatedData(studioId, classId);
+                console.log('Updated data:', updatedData);
+
+                // Update the specific row in the table
+                const rowIndex = window.table.rows().indexes().filter(idx => {
+                    const rowData = window.table.row(idx).data();
+                    return rowData.Id === classId;
+                })[0];
+
+                if (rowIndex !== undefined) {
+                    window.table.row(rowIndex).data(updatedData).draw(false);
+                    console.log('Successfully updated row in table');
+                } else {
+                    console.error('Could not find row to update');
+                }
+            } else {
+                // Add CreatedAt for new classes
+                classData.CreatedAt = firebase.firestore.FieldValue.serverTimestamp();
+                
+                console.log(`Creating new class: "${className}", PaymentType: ${paymentType}`);
+                console.log('New class data:', classData);
+                
+                // Create new class
+                const docRef = await db.collection('Studios')
+                    .doc(studioId)
+                    .collection('Classes')
+                    .add(classData);
+
+                // Update instructor associations
+                await updateInstructorClasses(studioId, docRef.id, newInstructorId);
+
+                // Get the new class data with related info
+                const newData = await getClassWithRelatedData(studioId, docRef.id);
+                
+                // Add new row to table
+                window.table.row.add(newData).draw(false);
+            }
+
+            // Reset modal
+            $('#addClassModal').modal('hide');
+            $('#addClassForm')[0].reset();
+            $('#addClassModal').removeData('classId');
+            $('#addClassModalLabel').text('New Class');
+            $('#saveClassBtn').text('Save Class');
+
+        } catch (error) {
+            console.error('Error saving class:', error);
+            console.error('Error details:', error.stack);
+            alert('Error saving class. Please try again.');
+        }
+    });
+    </script>
+
+    <!-- Add this script to handle the registration link copying -->
+    <script>
+    // Add click handler for the copy registration link button
+    $(document).on('click', '#copyRegistrationLink', async function() {
+        try {
+            const classId = $('#classDetailsModal').data('classId');
+            const studioId = localStorage.getItem('currentStudioId');
+            const studioData = JSON.parse(localStorage.getItem('currentStudioData'));
+            
+            if (!classId || !studioId || !studioData) {
+                throw new Error('Missing required data');
+            }
+            
+            // Format the studio name for the URL (remove spaces and special characters)
+            const studioNameForUrl = studioData.StudioName.replace(/[^a-zA-Z0-9]/g, '');
+            
+            // Create the registration link with the simplified format
+            const registrationLink = `https://studiosyncdance.com/studentregister?studio=${studioNameForUrl}=${studioId}=${classId}`;
+            
+            // Copy to clipboard
+            await navigator.clipboard.writeText(registrationLink);
+            
+            // Show success feedback
+            const $btn = $(this);
+            const originalHtml = $btn.html();
+            
+            $btn.html('<i class="fas fa-check me-1"></i> Copied!');
+            $btn.removeClass('btn-outline-primary').addClass('btn-success');
+            
+            // Reset button after 2 seconds
+            setTimeout(() => {
+                $btn.html(originalHtml);
+                $btn.removeClass('btn-success').addClass('btn-outline-primary');
+            }, 2000);
+            
+            console.log('Registration link copied:', registrationLink);
+            
+        } catch (error) {
+            console.error('Error copying registration link:', error);
+            alert('Failed to copy registration link. Please try again.');
+        }
+    });
+    
+    // Reset the button when modal is closed
+    $('#classDetailsModal').on('hidden.bs.modal', function() {
+        $('#copyRegistrationLink').html('<i class="fas fa-link me-1"></i> Copy Registration Link')
+            .removeClass('btn-success').addClass('btn-outline-primary');
+    });
+    </script>
+
+</body>
+</html>

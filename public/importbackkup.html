@@ -1,0 +1,1678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Import Data - Studio Sync</title>
+    <!-- Favicon -->
+    <link rel="icon" href="assets/ssdancer.svg" type="image/svg+xml">
+
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="css/styles.css" rel="stylesheet" />
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-...+..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        :root {
+            --primary-color: #3DCED7;
+            --primary-hover: #36B8C0;
+            --secondary-color: #3A506B;
+        }
+
+        /* Loading Overlay Styles */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .loading-content {
+            text-align: center;
+        }
+
+        .loading-text {
+            margin-top: 20px;
+        }
+
+        .loading-text h2 {
+            color: #ffffff;
+            margin-bottom: 10px;
+            transition: color 0.5s ease;
+        }
+
+        .loading-text p {
+            color: #ffffff;
+            font-size: 1.1em;
+            transition: color 0.5s ease;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #ffffff;
+            border-radius: 50%;
+            margin: 0 auto;
+            animation: spin 1s linear infinite;
+            transition: border-top-color 0.5s ease;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-overlay.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background-color: #fff;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .back-button {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-button:hover {
+            color: var(--primary-hover);
+        }
+
+        .profile-dropdown {
+            position: relative;
+        }
+
+        .profile-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--secondary-color);
+        }
+
+        .profile-button img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 0.5rem 0;
+            min-width: 200px;
+            display: none;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 0.5rem 1rem;
+            color: var(--secondary-color);
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background-color: #dee2e6;
+            margin: 0.5rem 0;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-top: 1rem;
+        }
+
+        .import-type-selector {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .import-type-btn {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid var(--primary-color);
+            border-radius: 10px;
+            background: none;
+            color: var(--primary-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .import-type-btn:hover, .import-type-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .import-type-btn i {
+            font-size: 2rem;
+        }
+
+        .drop-zone {
+            border: 2px dashed var(--primary-color);
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            background: #f8f9fa;
+            cursor: pointer;
+            margin: 2rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .drop-zone:hover {
+            background: #e9ecef;
+            border-color: var(--primary-hover);
+        }
+
+        .drop-zone i {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .preview-table {
+            margin-top: 2rem;
+            border-radius: 10px;
+            overflow: hidden;
+            width: 100%;
+            min-width: 1000px; /* Ensure minimum width to show all columns */
+        }
+
+        .preview-table th {
+            background-color: var(--primary-color);
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .preview-table td {
+            white-space: nowrap; /* Prevent text wrapping */
+            padding: 0.75rem;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 1rem 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-responsive::-webkit-scrollbar {
+            height: 8px;
+            width: 8px;
+        }
+
+        .table-responsive::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .table-responsive::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
+        }
+
+        .table-responsive::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-hover);
+        }
+
+        .instructions {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            border-color: var(--primary-hover);
+        }
+
+        .progress {
+            height: 1.5rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+        }
+
+        .progress-bar {
+            background-color: var(--primary-color);
+        }
+
+        .required-field {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        /* Import Summary Card Styles */
+        .import-summary-card {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1rem;
+            padding: 1rem;
+        }
+
+        .import-summary-card.success {
+            border-left: 4px solid #28a745;
+        }
+
+        .import-summary-card.failed {
+            border-left: 4px solid #dc3545;
+        }
+
+        .import-summary-card .name {
+            font-weight: 600;
+            color: #212529;
+        }
+
+        .import-summary-card .email {
+            color: #6c757d;
+            font-size: 0.875rem;
+        }
+
+        .import-summary-card .error {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .import-summary-card .status-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        .import-summary-card .status-badge.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .import-summary-card .status-badge.failed {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <div class="loading-text">
+                <h2>Loading</h2>
+                <p id="loadingStatus">Loading studio branding...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="header">
+        <a href="dashboard.html" class="back-button">
+            <i class="fas fa-arrow-left"></i>
+            Back to Dashboard
+        </a>
+        <div class="profile-dropdown">
+            <button class="profile-button" id="profileButton">
+                <span id="userName">Loading...</span>
+            </button>
+            <div class="dropdown-menu" id="profileDropdown">
+                <a href="#" class="dropdown-item">
+                    <i class="fas fa-user"></i> Profile
+                </a>
+                <a href="#" class="dropdown-item">
+                    <i class="fas fa-cog"></i> Settings
+                </a>
+                <div class="dropdown-divider"></div>
+                <a href="#" class="dropdown-item" id="logoutButton">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2 class="mb-4">Import Data</h2>
+        
+        <div class="import-type-selector">
+            <button class="import-type-btn active" data-type="families">
+                <i class="fas fa-users"></i>
+                Families
+            </button>
+            <button class="import-type-btn" data-type="students">
+                <i class="fas fa-child"></i>
+                Students
+            </button>
+            <button class="import-type-btn" data-type="classes">
+                <i class="fas fa-calendar-alt"></i>
+                Classes
+            </button>
+            <button class="import-type-btn" data-type="teachers">
+                <i class="fas fa-chalkboard-teacher"></i>
+                Teachers
+            </button>
+        </div>
+
+        <div id="families-instructions" class="instructions">
+            <h5><i class="fas fa-info-circle"></i> Families CSV Format:</h5>
+            <p>Required fields are marked with <span class="required-field">*</span></p>
+            <ul>
+                <li>FirstName <span class="required-field">*</span> - Family's first name</li>
+                <li>LastName <span class="required-field">*</span> - Family's last name</li>
+                <li>Email <span class="required-field">*</span> - Primary email</li>
+                <li>Phone <span class="required-field">*</span> - Primary phone number</li>
+                <li>Address1 - Street address</li>
+                <li>Address2 - Additional address</li>
+                <li>City - City</li>
+                <li>State - State</li>
+                <li>ZipCode - ZIP code</li>
+                <li>EmergencyContactName - Emergency contact name</li>
+                <li>EmergencyContactPhone - Emergency contact phone</li>
+                <li>HowDidYouHearAboutUs - How they heard about the studio</li>
+                <li>ReferredBy - Who referred them</li>
+            </ul>
+        </div>
+
+        <div id="students-instructions" class="instructions d-none">
+            <h5><i class="fas fa-info-circle"></i> Students CSV Format:</h5>
+            <p>Required fields are marked with <span class="required-field">*</span></p>
+            <ul>
+                <li>FirstName <span class="required-field">*</span> - Student's first name</li>
+                <li>LastName <span class="required-field">*</span> - Student's last name</li>
+                <li>DateOfBirth <span class="required-field">*</span> - Birth date (YYYY-MM-DD)</li>
+                <li>Gender <span class="required-field">*</span> - Student's gender</li>
+                <li>SkillLevel - Student's skill level</li>
+                <li>MedicalConditions - Medical conditions</li>
+                <li>FamilyId <span class="required-field">*</span> - Family's document ID (required if FamilyEmail not provided)</li>
+                <li>FamilyEmail <span class="required-field">*</span> - Family's email address (required if FamilyId not provided)</li>
+                <li>ClassId1 - First class ID</li>
+                <li>ClassName1 - First class name (alternative to ClassId1)</li>
+                <li>ClassId2 - Second class ID</li>
+                <li>ClassName2 - Second class name (alternative to ClassId2)</li>
+                <li>ClassId3 - Third class ID</li>
+                <li>ClassName3 - Third class name (alternative to ClassId3)</li>
+                <li>ClassId4 - Fourth class ID</li>
+                <li>ClassName4 - Fourth class name (alternative to ClassId4)</li>
+                <li>ClassId5 - Fifth class ID</li>
+                <li>ClassName5 - Fifth class name (alternative to ClassId5)</li>
+            </ul>
+            <p class="text-muted"><small>Note: You must provide either FamilyId or FamilyEmail, but not both.</small></p>
+            <p class="text-muted"><small>Note: For each class, you can provide either the ClassId or ClassName, but not both. If using ClassName, the class must exist in the system.</small></p>
+        </div>
+
+        <div id="classes-instructions" class="instructions d-none">
+            <h5><i class="fas fa-info-circle"></i> Classes CSV Format:</h5>
+            <p>Required fields are marked with <span class="required-field">*</span></p>
+            <ul>
+                <li>ClassName <span class="required-field">*</span> - Class name</li>
+                <li>StartTime <span class="required-field">*</span> - Start time (HH:MM)</li>
+                <li>EndTime <span class="required-field">*</span> - End time (HH:MM)</li>
+                <li>Days <span class="required-field">*</span> - Days of the week (comma-separated, e.g., "Mon,Wed,Fri" or "Monday,Wednesday,Friday")</li>
+                <li>ClassType - Type of class (e.g., "Recreational", "Competitive")</li>
+                <li>ClassStyleId - Style ID</li>
+                <li>Duration - Duration in minutes</li>
+                <li>RoomId - Room ID</li>
+                <li>SeasonId - Season ID</li>
+                <li>InstructorId - Instructor ID</li>
+                <li>RatePlanId - Rate Plan ID</li>
+                <li>MaxSize - Maximum class size</li>
+                <li>MinAge - Minimum age</li>
+                <li>MaxAge - Maximum age</li>
+                <li>EnforceAgeLimit - Enforce age limits (true/false)</li>
+                <li>FeeAmount - Fee amount</li>
+                <li>FeeType - Type of fee</li>
+                <li>RecurringDuration - Duration of recurring fee</li>
+                <li>RecurringFrequency - Frequency of recurring fee</li>
+            </ul>
+            <div class="mt-3">
+                <h6>Days Format Examples:</h6>
+                <ul>
+                    <li>Single day: "Mon" or "Monday"</li>
+                    <li>Multiple days: "Mon,Wed,Fri" or "Monday,Wednesday,Friday"</li>
+                    <li>Weekend: "Sat,Sun" or "Saturday,Sunday"</li>
+                </ul>
+                <p class="text-muted"><small>Note: Days can be specified using either full names (Monday) or abbreviations (Mon). The system will automatically convert them to the standard format.</small></p>
+            </div>
+        </div>
+
+        <div id="teachers-instructions" class="instructions d-none">
+            <h5><i class="fas fa-info-circle"></i> Teachers CSV Format:</h5>
+            <p>Required fields are marked with <span class="required-field">*</span></p>
+            <ul>
+                <li>FirstName <span class="required-field">*</span> - Teacher's first name</li>
+                <li>LastName <span class="required-field">*</span> - Teacher's last name</li>
+                <li>Email <span class="required-field">*</span> - Teacher's email</li>
+                <li>Phone - Teacher's phone number</li>
+                <li>PayRate - Teacher's pay rate (in dollars)</li>
+                <li>Bio - Teacher's bio</li>
+                <li>PhotoURL - URL of teacher's photo</li>
+            </ul>
+        </div>
+        
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-file-import"></i> Upload CSV File</h5>
+                <p class="card-text">Drag and drop a CSV file or click to select one.</p>
+                
+                <div class="drop-zone" id="dropZone">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Drop your CSV file here or click to select</p>
+                    <input type="file" id="fileInput" accept=".csv" class="d-none">
+                </div>
+
+                <div id="preview" class="d-none">
+                    <h5><i class="fas fa-table"></i> Preview</h5>
+                    <div class="table-responsive">
+                        <table class="table table-bordered preview-table">
+                            <thead id="previewHeader"></thead>
+                            <tbody id="previewBody"></tbody>
+                        </table>
+                    </div>
+                    <button id="importBtn" class="btn btn-primary">
+                        <i class="fas fa-upload"></i> Import Data
+                    </button>
+                </div>
+
+                <div id="progress" class="d-none">
+                    <div class="progress">
+                        <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                    </div>
+                    <p class="mt-2" id="progressText">Processing...</p>
+                    
+                    <!-- Add import summary section -->
+                    <div id="importSummary" class="mt-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Import Summary</h5>
+                                <div id="successfulImports" class="mb-3">
+                                    <h6 class="text-success">Successful Imports (0)</h6>
+                                    <div class="list-group"></div>
+                                </div>
+                                <div id="failedImports">
+                                    <h6 class="text-danger">Failed Imports (0)</h6>
+                                    <div class="list-group"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDRSW3u6gJSs98Z2Mkp5DYSC__ibDXXHAE",
+            authDomain: "studiosync-af73d.firebaseapp.com",
+            projectId: "studiosync-af73d",
+            storageBucket: "studiosync-af73d.appspot.com",
+            messagingSenderId: "172555302276",
+            appId: "1:172555302276:web:55b661f9849441e2de59d1",
+            measurementId: "G-EK7EFQGMSG"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // Function to apply studio branding colors
+        function applyStudioBranding(studioData) {
+            console.log('🎨 Applying studio branding colors:', {
+                PrimaryColor: studioData.PrimaryColor,
+                SecondaryColor: studioData.SecondaryColor
+            });
+
+            const primaryColor = studioData.PrimaryColor || '#3DCED7';
+            const secondaryColor = studioData.SecondaryColor || '#3A506B';
+
+            // Update CSS variables for the sidebar and related elements
+            document.documentElement.style.setProperty('--primary-color', primaryColor);
+            document.documentElement.style.setProperty('--primary-hover', adjustColor(primaryColor, -10));
+            document.documentElement.style.setProperty('--secondary-color', secondaryColor);
+
+            // Update loading overlay elements with branded colors
+            const loadingTitle = document.querySelector('.loading-text h2');
+            const loadingText = document.querySelector('.loading-text p');
+            const spinner = document.querySelector('.spinner');
+
+            if (loadingTitle) loadingTitle.style.color = primaryColor;
+            if (loadingText) loadingText.style.color = secondaryColor;
+            if (spinner) spinner.style.borderTopColor = primaryColor;
+        }
+
+        // Helper function to adjust color brightness
+        function adjustColor(color, percent) {
+            const num = parseInt(color.replace('#', ''), 16);
+            const amt = Math.round(2.55 * percent);
+            const R = (num >> 16) + amt;
+            const G = (num >> 8 & 0x00FF) + amt;
+            const B = (num & 0x0000FF) + amt;
+            return '#' + (
+                0x1000000 +
+                (R < 255 ? (R < 1 ? 0 : R) : 255) * 0x10000 +
+                (G < 255 ? (G < 1 ? 0 : G) : 255) * 0x100 +
+                (B < 255 ? (B < 1 ? 0 : B) : 255)
+            ).toString(16).slice(1);
+        }
+
+        // Function to get studio name for URL
+        function getStudioNameForUrl(studioName) {
+            return studioName.replace(/[^a-zA-Z0-9]/g, '');
+        }
+
+        // Function to update page URL
+        function updatePageUrl(studioName) {
+            if (studioName) {
+                const studioNameParam = getStudioNameForUrl(studioName);
+                const currentUrl = new URL(window.location.href);
+                
+                if (currentUrl.pathname.endsWith('.html') && !currentUrl.searchParams.has('studio')) {
+                    const newUrl = `${currentUrl.pathname}?studio=${studioNameParam}`;
+                    window.history.replaceState({}, '', newUrl);
+                }
+            }
+        }
+
+        // Function to get current user data
+        async function getCurrentUserData() {
+            const loadingStatus = document.getElementById('loadingStatus');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+
+            try {
+                const user = await new Promise((resolve) => {
+                    firebase.auth().onAuthStateChanged((user) => {
+                        if (user) {
+                            loadingStatus.textContent = "Authenticating user...";
+                            resolve(user);
+                        } else {
+                            console.log('No user signed in');
+                            window.location.href = '/studiologin.html';
+                        }
+                    });
+                });
+
+                const studioId = localStorage.getItem('currentStudioId');
+                const studioData = JSON.parse(localStorage.getItem('currentStudioData'));
+                const userDocId = localStorage.getItem('userDocId');
+
+                loadingStatus.textContent = "Loading studio branding...";
+                
+                if (studioData) {
+                    applyStudioBranding(studioData);
+                }
+
+                loadingStatus.textContent = "Fetching user data...";
+
+                try {
+                    const userDoc = await firebase.firestore()
+                        .collection('Studios')
+                        .doc(studioId)
+                        .collection('Users')
+                        .doc(userDocId)
+                        .get();
+
+                    const instructorDoc = !userDoc.exists ? await firebase.firestore()
+                        .collection('Studios')
+                        .doc(studioId)
+                        .collection('Instructors')
+                        .doc(user.uid)
+                        .get() : null;
+
+                    let userData;
+                    let collectionType;
+
+                    if (userDoc.exists) {
+                        userData = userDoc.data();
+                        collectionType = 'Users';
+                    } else if (instructorDoc?.exists) {
+                        userData = instructorDoc.data();
+                        collectionType = 'Instructors';
+                    }
+
+                    if (userData) {
+                        loadingStatus.textContent = "Loading...";
+                        
+                        // Only update elements that exist in import.html
+                        const userNameElement = document.getElementById('userName');
+                        if (userNameElement) {
+                            userNameElement.textContent = `${userData.FirstName} ${userData.LastName}`;
+                        }
+
+                        // Update studio branding if data exists
+                        if (studioData) {
+                            applyStudioBranding(studioData);
+                            updatePageUrl(studioData.StudioName);
+                        }
+
+                        // Hide loading overlay with fade effect
+                        loadingOverlay.classList.add('fade-out');
+                        setTimeout(() => {
+                            loadingOverlay.style.display = 'none';
+                        }, 500);
+                    }
+                } catch (error) {
+                    console.error('Error getting user document:', error);
+                    loadingStatus.textContent = "Error loading. Please refresh...";
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                loadingStatus.textContent = "Error loading. Please refresh...";
+            }
+        }
+
+        // Function to load and display the studio logo
+        function loadStudioLogo(logoUrl, studioName) {
+            return new Promise((resolve) => {
+                const logoElement = document.getElementById('studio-logo');
+                const nameElement = document.getElementById('studio-name');
+                
+                if (logoUrl) {
+                    logoElement.onload = () => resolve();
+                    logoElement.src = logoUrl;
+                    logoElement.alt = studioName || 'Studio Logo';
+                    logoElement.style.display = 'block';
+                    nameElement.style.display = 'none';
+                } else {
+                    logoElement.style.display = 'none';
+                    nameElement.textContent = studioName || 'Studio Sync';
+                    nameElement.style.display = 'block';
+                    resolve();
+                }
+            });
+        }
+
+        // Call the function when the page loads
+        getCurrentUserData();
+
+        // Logout functionality
+        document.getElementById('logoutButton').addEventListener('click', function() {
+            firebase.auth().signOut().then(() => {
+                // Clear studio context from localStorage
+                localStorage.removeItem('currentStudioId');
+                localStorage.removeItem('currentStudioData');
+                // Redirect to studio login
+                window.location.href = '/studiologin.html';
+            }).catch((error) => {
+                console.error('Logout Error:', error);
+            });
+        });
+
+        let currentImportType = 'families';
+        const importTypeBtns = document.querySelectorAll('.import-type-btn');
+        const instructionSections = document.querySelectorAll('.instructions');
+
+        importTypeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                importTypeBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentImportType = btn.dataset.type;
+                
+                instructionSections.forEach(section => {
+                    section.classList.add('d-none');
+                });
+                document.getElementById(`${currentImportType}-instructions`).classList.remove('d-none');
+
+                // Reset file input and preview area
+                fileInput.value = ''; // Clear file input
+                preview.classList.add('d-none'); // Hide preview
+                progress.classList.add('d-none'); // Hide progress
+                
+                // Clear file name display if exists
+                const fileNameDisplay = dropZone.querySelector('.file-name-display');
+                if (fileNameDisplay) {
+                    fileNameDisplay.remove();
+                }
+                
+                // Clear import summary
+                document.getElementById('successfulImports').querySelector('.list-group').innerHTML = '';
+                document.getElementById('failedImports').querySelector('.list-group').innerHTML = '';
+                document.getElementById('successfulImports').querySelector('h6').textContent = 'Successful Imports (0)';
+                document.getElementById('failedImports').querySelector('h6').textContent = 'Failed Imports (0)';
+            });
+        });
+
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const preview = document.getElementById('preview');
+        const previewHeader = document.getElementById('previewHeader');
+        const previewBody = document.getElementById('previewBody');
+        const importBtn = document.getElementById('importBtn');
+        const progress = document.getElementById('progress');
+        const progressBar = progress.querySelector('.progress-bar');
+        const progressText = document.getElementById('progressText');
+
+        // Handle drag and drop
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-hover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.style.borderColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type === 'text/csv') {
+                // Update file input
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                fileInput.files = dataTransfer.files;
+                
+                // Show file name
+                const fileNameDisplay = document.createElement('p');
+                fileNameDisplay.className = 'mt-2';
+                fileNameDisplay.innerHTML = `<i class="fas fa-file-csv"></i> Selected file: ${file.name}`;
+                
+                // Remove any existing file name display
+                const existingDisplay = dropZone.querySelector('.file-name-display');
+                if (existingDisplay) {
+                    existingDisplay.remove();
+                }
+                
+                fileNameDisplay.classList.add('file-name-display');
+                dropZone.appendChild(fileNameDisplay);
+                
+                handleFile(file);
+            }
+        });
+
+        // Handle click to select file
+        dropZone.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file && file.type === 'text/csv') {
+                // Show file name
+                const fileNameDisplay = document.createElement('p');
+                fileNameDisplay.className = 'mt-2';
+                fileNameDisplay.innerHTML = `<i class="fas fa-file-csv"></i> Selected file: ${file.name}`;
+                
+                // Remove any existing file name display
+                const existingDisplay = dropZone.querySelector('.file-name-display');
+                if (existingDisplay) {
+                    existingDisplay.remove();
+                }
+                
+                fileNameDisplay.classList.add('file-name-display');
+                dropZone.appendChild(fileNameDisplay);
+                
+                handleFile(file);
+            }
+        });
+
+        function handleFile(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const csv = e.target.result;
+                const rows = csv.split('\n')
+                    .map(row => row.trim()) // Trim whitespace from each row
+                    .filter(row => row.length > 0); // Remove empty rows
+                
+                // Parse the CSV with proper handling of quoted fields and tabs
+                const parseRow = (row) => {
+                    const result = [];
+                    let current = '';
+                    let inQuotes = false;
+                    
+                    for (let i = 0; i < row.length; i++) {
+                        const char = row[i];
+                        
+                        if (char === '"') {
+                            inQuotes = !inQuotes;
+                        } else if ((char === '\t' || char === ',') && !inQuotes) {
+                            result.push(current.trim());
+                            current = '';
+                        } else {
+                            current += char;
+                        }
+                    }
+                    result.push(current.trim());
+                    return result;
+                };
+
+                const headers = parseRow(rows[0]).map(h => h.replace(/^"|"$/g, '')); // Remove quotes from headers
+                
+                // Clear previous preview
+                previewHeader.innerHTML = '';
+                previewBody.innerHTML = '';
+                
+                // Add headers
+                const headerRow = document.createElement('tr');
+                headers.forEach(header => {
+                    const th = document.createElement('th');
+                    th.textContent = header;
+                    headerRow.appendChild(th);
+                });
+                previewHeader.appendChild(headerRow);
+                
+                // Add first 5 rows as preview
+                for (let i = 1; i < Math.min(6, rows.length); i++) {
+                    const rowData = parseRow(rows[i]).map(cell => cell.replace(/^"|"$/g, '')); // Remove quotes from cells
+                    const tr = document.createElement('tr');
+                    
+                    rowData.forEach((cell, index) => {
+                        const td = document.createElement('td');
+                        td.textContent = cell;
+                        tr.appendChild(td);
+                    });
+                    
+                    previewBody.appendChild(tr);
+                }
+                
+                preview.classList.remove('d-none');
+            };
+            reader.readAsText(file);
+        }
+
+        function validateRequiredFields(data, requiredFields) {
+            for (const field of requiredFields) {
+                const value = data[field];
+                if (!value || value.trim() === '' || value === '""') {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        async function importFamilies(data) {
+            const requiredFields = ['FirstName', 'LastName', 'Email', 'Phone'];
+            if (!validateRequiredFields(data, requiredFields)) {
+                throw new Error('Missing required fields');
+            }
+
+            const studioId = localStorage.getItem('currentStudioId');
+
+            // Create family document in Families subcollection
+            const familyRef = await db.collection('Studios')
+                .doc(studioId)
+                .collection('Families')
+                .add({
+                    FirstName: data.FirstName,
+                    LastName: data.LastName,
+                    Email: data.Email,
+                    Phone: data.Phone,
+                    Address1: data.Address1 || "",
+                    Address2: data.Address2 || "",
+                    City: data.City || "",
+                    State: data.State || "",
+                    ZipCode: data.ZipCode || "",
+                    AdditionalDetails: "",
+                    Balance: 0,
+                    IsOnAutoPay: true,
+                    LastChargeAmount: 0,
+                    LastChargeDate: null,
+                    LastPayment: {
+                        Amount: 0,
+                        Date: null,
+                        IsPartialPayment: false,
+                        Method: ""
+                    },
+                    EmergencyContacts: data.EmergencyContactName ? [{
+                        Name: data.EmergencyContactName,
+                        Phone: data.EmergencyContactPhone || ""
+                    }] : [],
+                    HowDidYouHearAboutUs: data.HowDidYouHearAboutUs || "",
+                    ReferredBy: data.ReferredBy || "",
+                    CardDetails: [],
+                    CreatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    LastUpdated: firebase.firestore.FieldValue.serverTimestamp(),
+                    PolicyAgreements: [],
+                    SignatureInfo: {
+                        AgreedToTerms: false,
+                        AgreedToWaiver: false,
+                        SignedBy: "",
+                        SignatureDate: "",
+                        SignatureTime: "",
+                        SignatureText: "",
+                        SignatureIp: "",
+                        SignatureTimestamp: ""
+                    }
+                });
+
+            try {
+                // Create Firebase user for authentication
+                const userCredential = await firebase.auth().createUserWithEmailAndPassword(
+                    data.Email,
+                    Math.random().toString(36).slice(-8) // Generate a random temporary password
+                );
+
+                // Send password reset email
+                await firebase.auth().sendPasswordResetEmail(data.Email);
+            } catch (error) {
+                // If Firebase user creation fails, we still want to keep the family document
+                console.error('Error creating Firebase user:', error);
+            }
+
+            return familyRef.id;
+        }
+
+        // Helper function to find class ID by name
+        async function findClassIdByName(studioId, className) {
+            const classesRef = db.collection('Studios').doc(studioId).collection('Classes');
+            const querySnapshot = await classesRef.where('ClassName', '==', className).get();
+            
+            if (querySnapshot.empty) {
+                throw new Error(`No class found with name: ${className}`);
+            }
+            
+            // Return the first matching class ID
+            return querySnapshot.docs[0].id;
+        }
+
+        // Helper function to calculate age from date of birth
+        function calculateAge(dateOfBirth) {
+            const today = new Date();
+            const birthDate = new Date(dateOfBirth);
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            
+            return age;
+        }
+
+        // Helper function to check if student meets class age requirements
+        async function checkClassAgeRequirements(studioId, classId, studentAge) {
+            const classDoc = await db.collection('Studios')
+                .doc(studioId)
+                .collection('Classes')
+                .doc(classId)
+                .get();
+
+            if (!classDoc.exists) {
+                throw new Error(`Class not found: ${classId}`);
+            }
+
+            const classData = classDoc.data();
+            
+            // If age limits are not enforced, return true
+            if (!classData.EnforceAgeLimit) {
+                return true;
+            }
+
+            // Check if student's age is within the allowed range
+            return studentAge >= classData.MinAge && studentAge <= classData.MaxAge;
+        }
+
+        async function importStudents(data) {
+            const requiredFields = ['FirstName', 'LastName', 'DateOfBirth', 'Gender'];
+            if (!validateRequiredFields(data, requiredFields)) {
+                throw new Error('Missing required fields');
+            }
+
+            const studioId = localStorage.getItem('currentStudioId');
+            const familiesRef = db.collection('Studios').doc(studioId).collection('Families');
+
+            // Calculate student's age
+            const studentAge = calculateAge(data.DateOfBirth);
+
+            // Find family by ID or Email
+            let familyDoc;
+            if (data.FamilyId) {
+                // Try to find family by ID
+                familyDoc = await familiesRef.doc(data.FamilyId).get();
+            } else if (data.FamilyEmail) {
+                // Try to find family by Email
+                const familyQuery = await familiesRef.where('Email', '==', data.FamilyEmail).get();
+                if (!familyQuery.empty) {
+                    familyDoc = familyQuery.docs[0];
+                }
+            }
+
+            if (!familyDoc || !familyDoc.exists) {
+                throw new Error(`Family not found. Please provide a valid Family ID or Family Email.`);
+            }
+
+            const familyId = familyDoc.id;
+
+            // Get unique class IDs from Class1 through Class5, handling both ClassId and ClassName
+            const classes = new Set();
+            const ageValidationErrors = [];
+            
+            for (let i = 1; i <= 5; i++) {
+                const classId = data[`ClassId${i}`];
+                const className = data[`ClassName${i}`];
+                
+                if (classId) {
+                    // If ClassId is provided, check age requirements
+                    try {
+                        const meetsAgeRequirements = await checkClassAgeRequirements(studioId, classId, studentAge);
+                        if (meetsAgeRequirements) {
+                            classes.add(classId);
+                        } else {
+                            const classDoc = await db.collection('Studios')
+                                .doc(studioId)
+                                .collection('Classes')
+                                .doc(classId)
+                                .get();
+                            ageValidationErrors.push(`Class "${classDoc.data().ClassName}": Student's age (${studentAge}) is outside the allowed range (${classDoc.data().MinAge}-${classDoc.data().MaxAge})`);
+                        }
+                    } catch (error) {
+                        console.error(`Error checking age requirements for class ${classId}:`, error);
+                        ageValidationErrors.push(`Error checking age requirements for class ${classId}: ${error.message}`);
+                    }
+                } else if (className) {
+                    // If ClassName is provided, search for the class and check age requirements
+                    try {
+                        const foundClassId = await findClassIdByName(studioId, className);
+                        const meetsAgeRequirements = await checkClassAgeRequirements(studioId, foundClassId, studentAge);
+                        if (meetsAgeRequirements) {
+                            classes.add(foundClassId);
+                        } else {
+                            ageValidationErrors.push(`Class "${className}": Student's age (${studentAge}) is outside the allowed range`);
+                        }
+                    } catch (error) {
+                        console.error(`Error finding class with name "${className}":`, error);
+                        ageValidationErrors.push(`Error with class "${className}": ${error.message}`);
+                    }
+                }
+            }
+
+            // Create student document in Students subcollection
+            const studentRef = await db.collection('Studios')
+                .doc(studioId)
+                .collection('Students')
+                .add({
+                    FirstName: data.FirstName,
+                    LastName: data.LastName,
+                    DateOfBirth: data.DateOfBirth,
+                    Gender: data.Gender,
+                    SkillLevel: data.SkillLevel || "",
+                    MedicalConditions: data.MedicalConditions || "",
+                    Classes: Array.from(classes),
+                    FamilyId: familyId,
+                    CreatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    LastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+            // Update the family document to include this student's ID
+            await familiesRef.doc(familyId).update({
+                Students: firebase.firestore.FieldValue.arrayUnion(studentRef.id),
+                LastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            // Update each class to include this student's ID
+            const classesRef = db.collection('Studios').doc(studioId).collection('Classes');
+            for (const classId of classes) {
+                try {
+                    await classesRef.doc(classId).update({
+                        Students: firebase.firestore.FieldValue.arrayUnion(studentRef.id),
+                        UpdatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                } catch (error) {
+                    console.error(`Error updating class ${classId} with student ${studentRef.id}:`, error);
+                    ageValidationErrors.push(`Error adding student to class ${classId}: ${error.message}`);
+                }
+            }
+
+            // If there were any age validation errors, add them to the student document
+            if (ageValidationErrors.length > 0) {
+                await studentRef.update({
+                    ImportWarnings: ageValidationErrors,
+                    LastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            }
+
+            return {
+                studentId: studentRef.id,
+                warnings: ageValidationErrors
+            };
+        }
+
+        async function importClasses(data) {
+            const requiredFields = ['ClassName', 'StartTime', 'EndTime', 'Days'];
+            if (!validateRequiredFields(data, requiredFields)) {
+                throw new Error('Missing required fields: ClassName, StartTime, EndTime, and Days are required');
+            }
+
+            const studioId = localStorage.getItem('currentStudioId');
+
+            // Helper function to format day names
+            const formatDay = (day) => {
+                // Convert to lowercase and remove any quotes, tabs, or whitespace
+                day = day.toLowerCase().replace(/["'\t\s]+/g, ' ').trim();
+                
+                // Map of full names to abbreviations
+                const dayMap = {
+                    'monday': 'mon',
+                    'tuesday': 'tue',
+                    'wednesday': 'wed',
+                    'thursday': 'thu',
+                    'friday': 'fri',
+                    'saturday': 'sat',
+                    'sunday': 'sun'
+                };
+
+                // If it's a full name, convert to abbreviation
+                if (dayMap[day]) {
+                    return dayMap[day];
+                }
+
+                // If it's already an abbreviation, validate it
+                const validAbbreviations = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+                if (validAbbreviations.includes(day)) {
+                    return day;
+                }
+
+                throw new Error(`Invalid day format: ${day}. Use either full names (Monday) or abbreviations (Mon).`);
+            };
+
+            // Split and format days
+            let formattedDays;
+            try {
+                // Split by any combination of commas, tabs, or spaces
+                formattedDays = data.Days
+                    .split(/[,\t\s]+/) // Split by commas, tabs, or spaces
+                    .map(day => formatDay(day))
+                    .filter(day => day) // Remove empty strings
+                    .filter((day, index, self) => self.indexOf(day) === index); // Remove duplicates
+            } catch (error) {
+                throw new Error(`Error processing days: ${error.message}`);
+            }
+
+            if (formattedDays.length === 0) {
+                throw new Error('No valid days provided');
+            }
+
+            // Create class document in Classes subcollection
+            const classRef = await db.collection('Studios')
+                .doc(studioId)
+                .collection('Classes')
+                .add({
+                    ClassName: data.ClassName.replace(/^"|"$/g, ''), // Remove quotes if present
+                    ClassNotes: "",
+                    ClassStyleId: data.ClassStyleId || "",
+                    ClassType: data.ClassType || "Recreational",
+                    CreatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    Days: formattedDays,
+                    Description: "",
+                    Duration: data.Duration ? parseInt(data.Duration) : 60,
+                    EndTime: data.EndTime.replace(/^"|"$/g, ''), // Remove quotes if present
+                    EnforceAgeLimit: data.EnforceAgeLimit === 'true',
+                    Fee: data.FeeAmount ? [{
+                        FeeAmount: parseFloat(data.FeeAmount),
+                        FeeType: data.FeeType || "Recurring",
+                        RecurringDuration: parseInt(data.RecurringDuration) || 2,
+                        RecurringFrequency: data.RecurringFrequency || "Monthly"
+                    }] : [],
+                    InstructorId: data.InstructorId || "",
+                    MaxAge: data.MaxAge ? parseInt(data.MaxAge) : 99,
+                    MaxSize: data.MaxSize ? parseInt(data.MaxSize) : 28,
+                    MinAge: data.MinAge ? parseInt(data.MinAge) : 1,
+                    PaymentType: data.PaymentType || "Both",
+                    RatePlanId: data.RatePlanId || "",
+                    RoomId: data.RoomId || "",
+                    SeasonId: data.SeasonId || "",
+                    StartTime: data.StartTime.replace(/^"|"$/g, ''), // Remove quotes if present
+                    Students: [],
+                    UpdatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+            return classRef.id;
+        }
+
+        async function importTeachers(data) {
+            const requiredFields = ['FirstName', 'LastName', 'Email'];
+            if (!validateRequiredFields(data, requiredFields)) {
+                throw new Error('Missing required fields');
+            }
+
+            const studioId = localStorage.getItem('currentStudioId');
+
+            // Helper function to clean and parse dollar amount
+            const parseDollarAmount = (amount) => {
+                // Remove any dollar signs and whitespace
+                const cleanAmount = amount.toString().replace(/[$\s]/g, '');
+                // Convert to number
+                return parseFloat(cleanAmount);
+            };
+
+            try {
+                // Create Firebase user for authentication first
+                const userCredential = await firebase.auth().createUserWithEmailAndPassword(
+                    data.Email,
+                    Math.random().toString(36).slice(-8) // Generate a random temporary password
+                );
+
+                // Send password reset email
+                await firebase.auth().sendPasswordResetEmail(data.Email);
+
+                // Handle profile image upload if provided
+                let photoURL = "";
+                if (data.PhotoURL) {
+                    try {
+                        // Fetch the image from the provided URL
+                        const response = await fetch(data.PhotoURL);
+                        const blob = await response.blob();
+                        
+                        // Create a unique filename
+                        const fileName = `ProfileImages/${studioId}/${userCredential.user.uid}_${Date.now()}.${blob.type.split('/')[1]}`;
+                        
+                        // Upload to Firebase Storage
+                        const storageRef = firebase.storage().ref();
+                        const imageRef = storageRef.child(fileName);
+                        await imageRef.put(blob);
+                        
+                        // Get the download URL
+                        photoURL = await imageRef.getDownloadURL();
+                    } catch (error) {
+                        console.error('Error uploading profile image:', error);
+                        // If image upload fails, use the original URL
+                        photoURL = data.PhotoURL;
+                    }
+                }
+
+                // Create user document in Users subcollection
+                const userDocRef = await db.collection('Studios')
+                    .doc(studioId)
+                    .collection('Users')
+                    .add({
+                        FirstName: data.FirstName,
+                        LastName: data.LastName,
+                        Email: data.Email,
+                        Phone: data.Phone || "",
+                        FirebaseUserId: userCredential.user.uid,
+                        IsActive: true,
+                        Role: ["Instructor"],
+                        CreatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        UpdatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+
+                // Create teacher document in Instructors subcollection with both IDs
+                const teacherRef = await db.collection('Studios')
+                    .doc(studioId)
+                    .collection('Instructors')
+                    .add({
+                        FirstName: data.FirstName,
+                        LastName: data.LastName,
+                        Email: data.Email,
+                        Phone: data.Phone || "",
+                        Bio: data.Bio || "",
+                        PhotoURL: photoURL,
+                        PayRate: data.PayRate ? parseDollarAmount(data.PayRate) : 0,
+                        IsActive: true,
+                        Classes: [],
+                        FirebaseUserId: userCredential.user.uid,
+                        UserId: userDocRef.id,
+                        CreatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        UpdatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+
+                return teacherRef.id;
+            } catch (error) {
+                console.error('Error creating teacher:', error);
+                throw error;
+            }
+        }
+
+        // Function to create a log document in FunctionLogs subcollection
+        async function createImportLog(type, subType, startedAt, details) {
+            const studioId = localStorage.getItem('currentStudioId');
+            try {
+                await db.collection('Studios')
+                    .doc(studioId)
+                    .collection('FunctionLogs')
+                    .add({
+                        Type: type,
+                        SubType: subType,
+                        StartedAt: startedAt,
+                        CompletedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        Details: {
+                            FileName: details.fileName,
+                            TotalRows: details.totalRows,
+                            SuccessCount: details.successCount,
+                            ErrorCount: details.errorCount,
+                            Logs: details.logs,
+                            Error: details.error
+                        }
+                    });
+            } catch (error) {
+                console.error('Error creating import log:', error);
+            }
+        }
+
+        // Function to capture console logs
+        function captureConsoleLogs() {
+            const logs = [];
+            const originalConsoleLog = console.log;
+            const originalConsoleError = console.error;
+            const originalConsoleWarn = console.warn;
+
+            console.log = function() {
+                logs.push({
+                    type: 'log',
+                    timestamp: new Date().toISOString(),
+                    message: Array.from(arguments).join(' ')
+                });
+                originalConsoleLog.apply(console, arguments);
+            };
+
+            console.error = function() {
+                logs.push({
+                    type: 'error',
+                    timestamp: new Date().toISOString(),
+                    message: Array.from(arguments).join(' ')
+                });
+                originalConsoleError.apply(console, arguments);
+            };
+
+            console.warn = function() {
+                logs.push({
+                    type: 'warn',
+                    timestamp: new Date().toISOString(),
+                    message: Array.from(arguments).join(' ')
+                });
+                originalConsoleWarn.apply(console, arguments);
+            };
+
+            return logs;
+        }
+
+        importBtn.addEventListener('click', async () => {
+            console.log('Import Data button clicked');
+            const file = fileInput.files[0];
+            if (!file) {
+                console.log('No file selected');
+                return;
+            }
+            console.log('File selected:', file.name);
+
+            // Start capturing console logs
+            const logs = captureConsoleLogs();
+            const startedAt = new Date().toISOString();
+
+            // Show loading overlay
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const loadingStatus = document.getElementById('loadingStatus');
+            console.log('Showing loading overlay');
+            loadingOverlay.style.display = 'flex';
+            loadingOverlay.classList.remove('fade-out');
+            loadingStatus.textContent = "Importing data...";
+
+            // Hide preview and show progress
+            preview.classList.add('d-none');
+            progress.classList.remove('d-none');
+            progressBar.style.width = '0%';
+            progressText.textContent = "Starting import...";
+            
+            // Clear previous import summary
+            document.getElementById('successfulImports').querySelector('.list-group').innerHTML = '';
+            document.getElementById('failedImports').querySelector('.list-group').innerHTML = '';
+            
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                try {
+                    console.log('Starting to read CSV file');
+                    const csv = e.target.result;
+                    const rows = csv.split('\n')
+                        .map(row => row.trim()) // Trim whitespace from each row
+                        .filter(row => row.length > 0); // Remove empty rows
+
+                    // Parse the CSV with proper handling of quoted fields and tabs
+                    const parseRow = (row) => {
+                        const result = [];
+                        let current = '';
+                        let inQuotes = false;
+                        
+                        for (let i = 0; i < row.length; i++) {
+                            const char = row[i];
+                            
+                            if (char === '"') {
+                                inQuotes = !inQuotes;
+                            } else if ((char === '\t' || char === ',') && !inQuotes) {
+                                result.push(current.trim());
+                                current = '';
+                            } else {
+                                current += char;
+                            }
+                        }
+                        result.push(current.trim());
+                        return result;
+                    };
+
+                    const headers = parseRow(rows[0]).map(h => h.replace(/^"|"$/g, ''));
+                    console.log('CSV headers:', headers);
+                    console.log('Total rows to process:', rows.length - 1);
+                    
+                    let successCount = 0;
+                    let errorCount = 0;
+                    const totalRows = rows.length - 1; // Subtract header row
+                    
+                    for (let i = 1; i < rows.length; i++) {
+                        const rowData = parseRow(rows[i]).map(cell => cell.replace(/^"|"$/g, ''));
+                        const data = {};
+                        
+                        headers.forEach((header, index) => {
+                            data[header] = rowData[index];
+                        });
+                        
+                        console.log(`Processing row ${i}:`, data);
+                        
+                        try {
+                            let result;
+                            switch (currentImportType) {
+                                case 'families':
+                                    console.log('Importing family data');
+                                    result = await importFamilies(data);
+                                    break;
+                                case 'students':
+                                    console.log('Importing student data');
+                                    result = await importStudents(data);
+                                    break;
+                                case 'classes':
+                                    console.log('Importing class data');
+                                    result = await importClasses(data);
+                                    break;
+                                case 'teachers':
+                                    console.log('Importing teacher data');
+                                    result = await importTeachers(data);
+                                    break;
+                            }
+                            
+                            console.log(`Successfully imported row ${i}`);
+                            successCount++;
+                            
+                            // Add to successful imports list
+                            const successList = document.getElementById('successfulImports').querySelector('.list-group');
+                            const successItem = document.createElement('div');
+                            successItem.className = 'import-summary-card success';
+                            
+                            // Only show email for records that have it
+                            const emailDisplay = data.Email ? `<div class="email">${data.Email}</div>` : '';
+                            
+                            successItem.innerHTML = `
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div class="name">${data.FirstName || data.ClassName || ''} ${data.LastName || ''}</div>
+                                        ${emailDisplay}
+                                    </div>
+                                    <span class="status-badge success">Success</span>
+                                </div>
+                            `;
+                            successList.appendChild(successItem);
+                            
+                            // Update successful count
+                            document.getElementById('successfulImports').querySelector('h6').textContent = 
+                                `Successful Imports (${successCount})`;
+                            
+                        } catch (error) {
+                            console.error(`Error importing row ${i}:`, error);
+                            errorCount++;
+                            
+                            // Add to failed imports list
+                            const failedList = document.getElementById('failedImports').querySelector('.list-group');
+                            const failedItem = document.createElement('div');
+                            failedItem.className = 'import-summary-card failed';
+                            
+                            // Only show email for records that have it
+                            const failedEmailDisplay = data.Email ? `<div class="email">${data.Email}</div>` : '';
+                            
+                            failedItem.innerHTML = `
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div class="name">${data.FirstName || data.ClassName || ''} ${data.LastName || ''}</div>
+                                        ${failedEmailDisplay}
+                                        <div class="error">${error.message}</div>
+                                    </div>
+                                    <span class="status-badge failed">Failed</span>
+                                </div>
+                            `;
+                            failedList.appendChild(failedItem);
+                            
+                            // Update failed count
+                            document.getElementById('failedImports').querySelector('h6').textContent = 
+                                `Failed Imports (${errorCount})`;
+                        }
+                        
+                        // Update progress based on successful imports
+                        const progress = (successCount / totalRows) * 100;
+                        progressBar.style.width = `${progress}%`;
+                        progressText.textContent = `Processed ${i} of ${totalRows} rows (${successCount} successful, ${errorCount} failed)`;
+                    }
+                    
+                    // After import is complete, create log document
+                    await createImportLog(
+                        'Import',
+                        currentImportType.charAt(0).toUpperCase() + currentImportType.slice(1),
+                        startedAt,
+                        {
+                            fileName: file.name,
+                            totalRows: totalRows,
+                            successCount: successCount,
+                            errorCount: errorCount,
+                            logs: logs
+                        }
+                    );
+
+                    console.log('Import complete:', { successCount, errorCount });
+                    progressText.textContent = `Import complete! ${successCount} successful, ${errorCount} failed`;
+                    
+                    // Hide loading overlay with fade effect
+                    loadingOverlay.classList.add('fade-out');
+                    setTimeout(() => {
+                        loadingOverlay.style.display = 'none';
+                    }, 500);
+
+                } catch (error) {
+                    console.error('Error during import:', error);
+                    loadingStatus.textContent = "Error during import. Please try again.";
+                    progressText.textContent = "Import failed. Please check the console for details.";
+                    
+                    // Create error log document
+                    await createImportLog(
+                        'Import',
+                        currentImportType.charAt(0).toUpperCase() + currentImportType.slice(1),
+                        startedAt,
+                        {
+                            fileName: file.name,
+                            error: error.message,
+                            logs: logs
+                        }
+                    );
+                    
+                    // Hide loading overlay with fade effect
+                    loadingOverlay.classList.add('fade-out');
+                    setTimeout(() => {
+                        loadingOverlay.style.display = 'none';
+                    }, 500);
+                }
+            };
+
+            reader.onerror = async (error) => {
+                console.error('Error reading file:', error);
+                loadingStatus.textContent = "Error reading file. Please try again.";
+                progressText.textContent = "File read failed. Please check the console for details.";
+                
+                // Create error log document
+                await createImportLog(
+                    'Import',
+                    currentImportType.charAt(0).toUpperCase() + currentImportType.slice(1),
+                    startedAt,
+                    {
+                        fileName: file.name,
+                        error: 'File read error',
+                        logs: logs
+                    }
+                );
+                
+                // Hide loading overlay with fade effect
+                loadingOverlay.classList.add('fade-out');
+                setTimeout(() => {
+                    loadingOverlay.style.display = 'none';
+                }, 500);
+            };
+            
+            console.log('Starting file read');
+            reader.readAsText(file);
+        });
+    </script>
+</body>
+</html> 
+</html> 

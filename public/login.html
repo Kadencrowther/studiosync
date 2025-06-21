@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio Sync - Login</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" type="image/svg+xml" href="assets/ssdancerfav.svg">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f8f9fa;
+        }
+        .login-container {
+            max-width: 400px;
+            width: 90%;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .login-container input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #00C2CB;
+            background-color: #ffffff;
+            color: #333333;
+            box-sizing: border-box;
+        }
+        .login-container button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: none;
+            background-color: #00C2CB;
+            color: white;
+            cursor: pointer;
+        }
+        .login-container button:hover {
+            background-color: #00A3AB;
+        }
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .logo-container img {
+            width: 200px;
+            height: auto;
+        }
+        a {
+            color: #00C2CB;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo-container">
+            <img src="assets/Studio Sync.svg" alt="Studio Sync logo">
+        </div>
+        <h2>Login to Studio Sync</h2>
+        <form id="loginForm">
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+        <p id="message" style="color: red;"></p>
+        <p>Don't have an account? <a href="register.html">Register here</a></p>
+        <p><a href="#" id="resetPassword">Forgot your password?</a></p>
+    </div>
+
+    <!-- Firebase SDK scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+    <script>
+    // Updated Firebase configuration for StudioSync project
+    const firebaseConfig = {
+      apiKey: "AIzaSyDRSW3u6gJSs98Z2Mkp5DYSC__ibDXXHAE",
+      authDomain: "studiosync-af73d.firebaseapp.com",
+      projectId: "studiosync-af73d",
+      storageBucket: "studiosync-af73d.appspot.com",
+      messagingSenderId: "172555302276",
+      appId: "1:172555302276:web:YOUR_WEB_APP_ID_HERE"
+    };
+  
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+  
+    // Handle Form Submission
+    document.getElementById('loginForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        firebase.auth().signInWithEmailAndPassword(email, password)
+            .then((userCredential) => {
+                // Signed in 
+                const user = userCredential.user;
+                document.getElementById('message').innerHTML = '<span style="color: green;">Login successful! Redirecting...</span>';
+                
+                // Store authentication state and user info
+                sessionStorage.setItem('isAuthenticated', 'true');
+                sessionStorage.setItem('userName', user.email.split('@')[0]); // Using email username as display name
+                
+                // Redirect directly to dashboard.html after successful login
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1500); // Redirect after 1.5 seconds
+            })
+            .catch((error) => {
+                const errorMessage = error.message;
+                document.getElementById('message').textContent = errorMessage;
+            });
+    });
+
+    // Handle Password Reset
+    document.getElementById('resetPassword').addEventListener('click', function(event) {
+        event.preventDefault();
+        const email = document.getElementById('email').value;
+        if (email) {
+            firebase.auth().sendPasswordResetEmail(email)
+                .then(() => {
+                    document.getElementById('message').innerHTML = '<span style="color: green;">Password reset email sent. Please check your inbox.</span>';
+                })
+                .catch((error) => {
+                    const errorMessage = error.message;
+                    document.getElementById('message').textContent = errorMessage;
+                });
+        } else {
+            document.getElementById('message').textContent = 'Please enter your email address to reset your password.';
+        }
+    });
+    </script>
+</body>
+</html>

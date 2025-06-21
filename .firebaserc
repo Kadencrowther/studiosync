@@ -1,0 +1,24 @@
+{
+  "projects": {
+    "default": "studiosync-af73d"
+  },
+  "targets": {
+    "studiosync-af73d": {
+      "hosting": {
+        "portal": [
+          "studiosyncportal"
+        ],
+        "public": [
+          "studiosync-af73d"
+        ],
+        "dev1": [
+          "studiosync-dev1"
+        ],
+        "dev2": [
+          "studiosync-dev2"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

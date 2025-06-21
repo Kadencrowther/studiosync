@@ -1,0 +1,2704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Dashboard - Studio Sync</title>
+    <!-- Favicon -->
+    <link rel="icon" href="assets/ssdancer.svg" type="image/svg+xml">
+
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="css/styles.css" rel="stylesheet" />
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-...+..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Custom CSS for Modern Styling -->
+    <style>
+        :root {
+            --primary-color: #3DCED7;
+            --primary-hover: #36B8C0;
+            --secondary-color: #3A506B;
+            --primary-color-rgb: 61, 206, 215;  /* Default fallback */
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        #sidebar-wrapper {
+            background-color: var(--primary-color);
+            min-height: 100vh;
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-heading {
+            color: white;
+            background-color: var(--primary-color);
+            padding: 1.5rem 1rem;
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .list-group-item {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, padding 0.3s ease, transform 0.3s ease;
+            padding: 1rem 1.5rem;
+        }
+
+        .list-group-item:hover,
+        .list-group-item-action:focus {
+            background-color: var(--primary-hover);
+            color: white;
+            transform: translateX(5px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar {
+            background-color: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1rem 1.5rem;
+        }
+
+        .navbar .navbar-nav .nav-link {
+            color: #333;
+            transition: color 0.3s ease;
+        }
+
+        .navbar .navbar-nav .nav-link:hover {
+            color: var(--primary-color);
+        }
+
+        .container-fluid {
+            background-color: #fff;
+            color: #525f7f;
+            padding: 2rem;
+        }
+
+        /* Modernized Dashboard Content */
+        .dashboard-insights {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .dashboard-insights .insight-box {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .insight-box h3 {
+            font-size: 1.2rem;
+            color: #525f7f;
+            margin-bottom: 0.5rem;
+        }
+
+        .insight-box p:not(.loading-value) {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin: 0;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .progress-ring {
+            margin-top: 20px;
+        }
+
+        /* Schedule Table */
+        .schedule-table {
+            margin-top: 2rem;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .schedule-table th,
+        .schedule-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .schedule-table th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .schedule-table td {
+            background-color: #f9f9f9;
+        }
+
+        /* New styles for the pie chart and layout */
+        .dashboard-container {
+            display: flex;
+            gap: 1.5rem; /* Match the gap of dashboard-insights */
+        }
+
+        .pie-chart-container {
+            flex: 0.7;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: calc(100% - 3rem);
+            min-height: 400px;
+            transition: box-shadow 0.3s ease;
+            min-width: 250px;
+        }
+
+        .pie-chart-container:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .chart-wrapper {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            max-height: 350px;
+            min-height: 200px;
+            width: 100%;
+            aspect-ratio: 1;
+        }
+
+        .kpi-container {
+            flex: 2;
+        }
+
+        .dashboard-insights {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            height: 100%;
+        }
+
+        .insight-box {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* Payment form styles */
+        #payment-form {
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        #card-element {
+            margin-bottom: 20px;
+        }
+
+        #submit-payment {
+            background-color: #3DCED7;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #submit-payment:hover {
+            background-color: #36B8C0;
+        }
+
+        #submit-payment:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        /* Subscription form styles */
+        .subscription-form {
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .subscription-form input, .subscription-form select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .subscription-form button {
+            background-color: #3DCED7;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .subscription-form button:hover {
+            background-color: #36B8C0;
+        }
+
+        .navbar-nav .dropdown-menu {
+            min-width: 250px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            padding: 0;
+        }
+
+        .navbar-nav .dropdown-item {
+            padding: 12px 20px;
+            color: #333;
+            transition: background-color 0.3s ease;
+        }
+
+        .navbar-nav .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .navbar-nav .dropdown-divider {
+            margin: 0;
+            border-top-color: #e9ecef;
+        }
+
+        .navbar-nav .dropdown-header {
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #6c757d;
+            background-color: #f8f9fa;
+        }
+
+        .navbar-nav .dropdown-item-text {
+            padding: 12px 20px;
+            color: #6c757d;
+        }
+
+        .fa-user-circle {
+            font-size: 1.8em; /* Slightly smaller profile icon */
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            padding: 0.5rem 0.5rem;
+        }
+
+        .fa-bell {
+            font-size: 1.2em;
+            position: relative;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            font-size: 0.6em;
+            background-color: #dc3545;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 5px;
+            font-weight: bold;
+            min-width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+        }
+
+        .notification-icon {
+            margin-right: 15px;
+            font-size: 1.2em;
+            color: #3DCED7;
+        }
+
+        .notification-content {
+            flex-grow: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .notification-subtitle {
+            font-size: 0.85em;
+            color: #6c757d;
+        }
+
+        .navbar-nav .dropdown-toggle::after {
+            display: none;
+        }
+
+        @media (max-width: 991.98px) {
+            .navbar-brand-center {
+                position: static;
+                transform: none;
+            }
+
+            .navbar-nav {
+                flex-direction: row;
+            }
+
+            .nav-item.dropdown {
+                position: static;
+            }
+
+            .dropdown-menu {
+                left: 0;
+                right: 0;
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 575.98px) {
+            .navbar-brand-center {
+                max-width: 200px;
+                margin: 0 auto;
+            }
+
+            #studio-logo, #studio-name {
+                max-width: 100%;
+            }
+
+            .navbar-nav {
+                justify-content: center;
+            }
+        }
+
+        /* Add styles for the page content wrapper */
+        #page-content-wrapper {
+            flex: 1;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        /* Update the wrapper styles */
+        #wrapper {
+            display: flex;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* Sidebar overlay styles */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1045;
+            transition: opacity 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            #sidebar-wrapper {
+                margin-left: -250px;
+                transition: margin 0.3s ease-out;
+                position: fixed;
+                z-index: 1050;
+                height: 100vh;
+            }
+
+            .sidebar-overlay.show {
+                display: block;
+            }
+
+            #wrapper.toggled #sidebar-wrapper {
+                margin-left: 0;
+            }
+        }
+
+        /* Wrapper transitions */
+        #wrapper.toggled #sidebar-wrapper {
+            margin-left: -250px;
+        }
+
+        #wrapper.toggled #page-content-wrapper {
+            margin-left: 0;
+        }
+
+        /* Update the toggle button styles */
+        #sidebarToggle {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        #sidebarToggle:hover {
+            background-color: var(--primary-hover);
+            border-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Update other elements that use the primary color */
+        .navbar .navbar-nav .nav-link:hover {
+            color: var(--primary-color);
+        }
+
+        .insight-box p {
+            color: var(--primary-color);
+        }
+
+        .schedule-table th {
+            background-color: var(--primary-color);
+        }
+
+        /* Loading Overlay Styles */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .loading-content {
+            text-align: center;
+        }
+
+        .loading-text {
+            margin-top: 20px;
+        }
+
+        .loading-text h2 {
+            color: #ffffff;
+            margin-bottom: 10px;
+            transition: color 0.5s ease;
+        }
+
+        .loading-text p {
+            color: #ffffff;
+            font-size: 1.1em;
+            transition: color 0.5s ease;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #ffffff;
+            border-radius: 50%;
+            margin: 0 auto;
+            animation: spin 1s linear infinite;
+            transition: border-top-color 0.5s ease;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-overlay.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* User Avatar Styles */
+        .user-avatar {
+            width: 38px;
+            height: 38px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .initials {
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Profile Dropdown Styles */
+        .dropdown-menu .dropdown-item-text#studioNameDisplay {
+            padding: 0.3rem 1.5rem;
+            margin: 0;
+            color: #333333;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .dropdown-menu .dropdown-item-text#userRole {
+            padding: 0.2rem 1.5rem;
+            margin: 0;
+            color: #666;
+            font-size: 0.85rem;
+            font-weight: 400;
+        }
+
+        /* User Profile Styles */
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 0.75rem);
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+            min-width: 280px;
+            display: none;
+            z-index: 1000;
+            border: 1px solid rgba(0,0,0,0.08);
+            position: fixed;
+            margin-right: 1rem;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 1200px) {
+            .pie-chart-container {
+                flex: 0.5;
+            }
+            .chart-wrapper {
+                max-height: 250px;
+            }
+        }
+
+        @media (max-width: 991.98px) {
+            .dashboard-container {
+                flex-direction: column;
+            }
+            .pie-chart-container {
+                width: 100%;
+                flex: none;
+            }
+            .chart-wrapper {
+                max-height: 300px;
+                margin: 0 auto;
+                width: 80%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .chart-wrapper {
+                width: 100%;
+                max-height: 250px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .chart-wrapper {
+                max-height: 200px;
+            }
+        }
+
+        /* Ensure content doesn't overflow on very small devices */
+        @media (max-width: 360px) {
+            .container-fluid {
+                padding: 0.75rem;
+            }
+
+            .insight-box {
+                padding: 0.75rem;
+            }
+
+            .insight-box h3 {
+                font-size: 0.9rem;
+            }
+
+            .insight-box p {
+                font-size: 1.75rem;
+            }
+
+            .navbar-brand-center {
+                max-width: 120px;
+            }
+
+            #studio-name {
+                font-size: 1rem;
+            }
+        }
+
+        /* Replace the shimmer animation styles with spinner styles */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-value {
+            position: relative;
+            color: transparent !important;
+            font-size: 2.5rem;
+            margin: 0;
+        }
+
+        .loading-value::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 24px;
+            height: 24px;
+            margin: -12px 0 0 -12px;
+            border: 3px solid #a0a0a0;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .schedule-table tr {
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .schedule-table tr:hover {
+            background-color: rgba(var(--primary-color-rgb), 0.12) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Schedule Table Responsive Styles */
+        .schedule-table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 2rem;
+            -webkit-overflow-scrolling: touch;
+            position: relative;
+            background: linear-gradient(to right, white 30%, rgba(255, 255, 255, 0)),
+                        linear-gradient(to left, white 30%, rgba(255, 255, 255, 0)) 100% 0;
+            background-size: 50px 100%, 50px 100%;
+            background-repeat: no-repeat;
+            background-attachment: local, local;
+        }
+
+        .schedule-table {
+            min-width: 900px; /* Minimum width to ensure all columns are visible */
+            margin: 0;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .schedule-table th,
+        .schedule-table td {
+            white-space: nowrap;
+            padding: 12px 15px;
+            font-size: 14px;
+        }
+
+        .schedule-table th {
+            position: sticky;
+            top: 0;
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            z-index: 1;
+        }
+
+        .schedule-table td {
+            background-color: #f9f9f9;
+            border-bottom: 1px solid #eee;
+        }
+
+        /* Mobile-specific styles */
+        @media (max-width: 768px) {
+            .schedule-table th,
+            .schedule-table td {
+                padding: 8px 12px;
+                font-size: 13px;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .schedule-table-wrapper {
+                margin-top: 1rem;
+                border: 1px solid #eee;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            }
+
+            /* Add subtle scroll indication */
+            .schedule-table-wrapper::after {
+                content: '→';
+                position: absolute;
+                right: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--primary-color);
+                font-size: 20px;
+                animation: scrollIndication 1.5s infinite;
+                pointer-events: none;
+            }
+        }
+
+        /* Scroll indication animation */
+        @keyframes scrollIndication {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        /* Priority-based column display for very small screens */
+        @media (max-width: 480px) {
+            .schedule-table th,
+            .schedule-table td {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+        }
+
+        /* Weekend Schedule Table Styles */
+        .weekend-schedule-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 2rem;
+            -webkit-overflow-scrolling: touch;
+            position: relative;
+            background: linear-gradient(to right, white 30%, rgba(255, 255, 255, 0)),
+                        linear-gradient(to left, white 30%, rgba(255, 255, 255, 0)) 100% 0;
+            background-size: 50px 100%, 50px 100%;
+            background-repeat: no-repeat;
+            background-attachment: local, local;
+        }
+
+        #weekendClassesTable {
+            width: 100%;
+            min-width: 900px;
+            margin: 0;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        #weekendClassesTable th,
+        #weekendClassesTable td {
+            white-space: nowrap;
+            padding: 12px 15px;
+            font-size: 14px;
+            border-bottom: 1px solid #eee;
+        }
+
+        #weekendClassesTable th {
+            position: sticky;
+            top: 0;
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            z-index: 1;
+        }
+
+        #weekendClassesTable td {
+            background-color: #f9f9f9;
+        }
+
+        /* Mobile-specific styles for weekend table */
+        @media (max-width: 768px) {
+            .weekend-schedule-wrapper {
+                margin-top: 1rem;
+                border: 1px solid #eee;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            }
+
+            #weekendClassesTable th,
+            #weekendClassesTable td {
+                padding: 8px 12px;
+                font-size: 13px;
+            }
+
+            /* Add subtle scroll indication */
+            .weekend-schedule-wrapper::after {
+                content: '→';
+                position: absolute;
+                right: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--primary-color);
+                font-size: 20px;
+                animation: scrollIndication 1.5s infinite;
+                pointer-events: none;
+                opacity: 0.7;
+            }
+
+            /* Optimize column headers for mobile */
+            #weekendClassesTable th {
+                font-size: 12px;
+                padding: 8px 10px;
+            }
+        }
+
+        /* Very small screens */
+        @media (max-width: 480px) {
+            #weekendClassesTable th,
+            #weekendClassesTable td {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+        }
+
+        /* Add modern styles for the Recital Manager section */
+        .recital-form {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 2rem;
+        }
+
+        .recital-form h2 {
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+        }
+
+        .recital-form input,
+        .recital-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .recital-form button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .recital-form button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        #recitalList {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-top: 2rem;
+        }
+
+        #recitalList h2 {
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        #recitalList table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        #recitalList th {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        #recitalList td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            background-color: #fff;
+            transition: background-color 0.3s ease;
+        }
+
+        #recitalList tr:last-child td {
+            border-bottom: none;
+        }
+
+        #recitalList tr:hover td {
+            background-color: rgba(var(--primary-color-rgb), 0.05);
+        }
+
+        #recitalList .btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        #recitalList .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        #recitalList .btn-primary:hover {
+            background-color: var(--primary-hover);
+            border-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        #recitalList .btn-outline-primary {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        #recitalList .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        #recitalList .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+
+        #recitalList .btn-danger:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Add these styles to your existing CSS */
+        .class-list {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 1rem;
+            min-height: 200px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .class-item {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .class-item:hover {
+            background: rgba(var(--primary-color-rgb), 0.1);
+            transform: translateX(5px);
+        }
+
+        .class-item.selected {
+            background: rgba(var(--primary-color-rgb), 0.2);
+            border-color: var(--primary-color);
+        }
+
+        /* Add styles for draggable schedule items */
+        .schedule-item {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: move;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .schedule-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .schedule-item.dragging {
+            opacity: 0.5;
+            background: #f8f9fa;
+        }
+
+        .schedule-item.drag-over {
+            border: 2px dashed var(--primary-color);
+        }
+
+        .schedule-content {
+            flex-grow: 1;
+        }
+
+        .schedule-time {
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .schedule-class {
+            font-weight: 600;
+            color: var(--secondary-color);
+            font-size: 1rem;
+        }
+
+        .schedule-actions {
+            color: #ccc;
+            font-size: 1.2rem;
+            padding-left: 1rem;
+            cursor: move;
+        }
+
+        .schedule-item:hover .schedule-actions {
+            color: var(--primary-color);
+        }
+
+        /* Add these styles to your existing CSS */
+        .search-container {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .search-container input {
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .search-container input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb), 0.1);
+            outline: none;
+        }
+
+        .class-item {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .class-item:hover {
+            background: rgba(var(--primary-color-rgb), 0.1);
+            transform: translateX(5px);
+        }
+
+        .class-details {
+            margin-bottom: 0.5rem;
+        }
+
+        .class-time {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .class-students {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        /* Add these styles to your existing CSS */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .schedule-loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .schedule-loading-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .schedule-loading-content {
+            text-align: center;
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .schedule-loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(var(--primary-color-rgb), 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+            margin: 0 auto 1rem;
+        }
+
+        .schedule-loading-text {
+            color: var(--secondary-color);
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        /* Update the export schedule button text color */
+        .btn-info {
+            color: white !important;
+        }
+
+        /* Update the class management section styling */
+        #recitalClasses {
+            margin-top: 2rem;
+            display: none;
+        }
+
+        #recitalClasses h2 {
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        #recitalClasses h3 {
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .search-container {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .search-container input {
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            width: 100%;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .search-container input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb), 0.1);
+            outline: none;
+        }
+
+        .class-list {
+            background-color: #fff;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 1rem;
+            min-height: 200px;
+            max-height: 400px;
+            overflow-y: auto;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .class-item {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .class-item:hover {
+            background: rgba(var(--primary-color-rgb), 0.05);
+            transform: translateX(5px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .class-details {
+            flex-grow: 1;
+        }
+
+        .class-details strong {
+            display: block;
+            font-size: 1.1rem;
+            color: var(--secondary-color);
+            margin-bottom: 0.25rem;
+        }
+
+        .class-type {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .class-time {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .class-students {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .class-item .btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            margin-left: 1rem;
+        }
+
+        .class-item .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .class-item .btn-primary:hover {
+            background-color: var(--primary-hover);
+            border-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .class-item .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+
+        .class-item .btn-danger:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+    <!-- Stripe JS -->
+    <script src="https://js.stripe.com/v3/"></script>
+    <!-- Payarc JS -->
+    <script>
+        function loadPayarcScript(src) {
+            var script = document.createElement('script');
+            script.src = src;
+            script.onerror = function() {
+                if (src === 'https://js.payarc.com/v1/payarc.js') {
+                    console.warn('CDN failed, falling back to local copy');
+                    loadPayarcScript('/path/to/local/payarc.js');
+                } else {
+                    console.error('Failed to load Payarc library');
+                }
+            };
+            document.head.appendChild(script);
+        }
+        loadPayarcScript('https://js.payarc.com/v1/payarc.js');
+    </script>
+</head>
+<body>
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <div class="loading-text">
+                <h2>Loading</h2>
+                <p id="loadingStatus">Loading studio branding...</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="scheduleLoadingOverlay" class="schedule-loading-overlay">
+        <div class="schedule-loading-content">
+            <div class="schedule-loading-spinner"></div>
+            <div class="schedule-loading-text">Generating Optimized Schedule...</div>
+        </div>
+    </div>
+
+    <div class="d-flex" id="wrapper">
+         <!-- Sidebar-->
+         <div class="border-end" id="sidebar-wrapper">
+            <div class="sidebar-heading">
+                <img src="assets/StudioSyncTransparent.svg" alt="Studio Sync Logo" style="width: 150px; height: auto;">
+            </div>
+            <div class="list-group list-group-flush">
+                <a class="list-group-item list-group-item-action p-3" href="dashboard.html">
+                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="class-calendar.html">
+                    <i class="fas fa-calendar-alt me-2"></i>Class Calendar
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="allclasses.html">
+                    <i class="fas fa-chalkboard-teacher me-2"></i>Classes
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="families.html">
+                    <i class="fas fa-home me-2"></i>Families
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="students.html">
+                    <i class="fas fa-user-graduate me-2"></i>Students
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="instructors.html">
+                    <i class="fas fa-chalkboard-teacher me-2"></i>Instructors
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="costumes.html">
+                    <i class="fas fa-tshirt me-2"></i>Costumes
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="recital.html">
+                    <i class="fas fa-theater-masks me-2"></i>Recital
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="communication.html">
+                    <i class="fas fa-comments me-2"></i>Communication
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="studiostore.html">
+                    <i class="fas fa-store me-2"></i>Studio Store
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="charges-payments.html">
+                    <i class="fas fa-dollar-sign me-2"></i>Charges/Payments
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="reports.html">
+                    <i class="fas fa-chart-bar me-2"></i>Reports
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="settings.html">
+                    <i class="fas fa-cog me-2"></i>Settings
+                </a>
+            </div>
+            
+            <!-- Bottom Margin -->
+            <div style="margin-bottom: 4rem;"></div>
+        </div>
+
+        <!-- Page content wrapper-->
+        <div id="page-content-wrapper">
+            <!-- Top navigation-->
+            <nav class="navbar navbar-expand-lg navbar-light border-bottom">
+                <div class="container-fluid">
+                    <button class="btn btn-primary" id="sidebarToggle" style="width: 100px;" data-bs-toggle="tooltip" data-bs-placement="right" title="Toggle Menu" data-bs-trigger="hover focus">
+                        <i class="fas fa-bars"></i>
+                    </button>
+
+                    <!-- Centered Logo -->
+                    <div class="navbar-brand-center">
+                        <img id="studio-logo" src="" alt="Studio Logo" style="max-height: 120px; max-width: 240px; display: none;">
+                        <span id="studio-name" style="font-size: 1.5rem; font-weight: bold; color: #3DCED7;"></span>
+                    </div>
+
+                    <!-- Notifications and Profile Icons -->
+                    <div class="navbar-nav ms-auto d-flex align-items-center">
+                        <!-- Profile Icon Dropdown -->
+                        <div class="nav-item dropdown">
+                            <a class="nav-link" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <div class="user-avatar">
+                                    <span class="initials"></span>
+                                </div>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                                <li><h6 class="dropdown-header" id="userName" style="font-size: 1.2rem; font-weight: 700; color: #333333;">User Name</h6></li>
+                                <li><p class="dropdown-item-text" id="userEmail" style="font-size: 0.95rem; font-weight: 400; color: #333333;">user@example.com</p></li>
+                                <li><p class="dropdown-item-text" id="studioNameDisplay" style="font-size: 1.1rem; font-weight: 600; color: #333333;">Studio Name</p></li>
+                                <li><p class="dropdown-item-text" id="userRole" style="font-size: 0.85rem; font-weight: 400; color: #333333;">Role</p></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="settings.html"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#" id="logoutButton"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Page content-->
+            <div class="container-fluid">
+                <!-- Recital Manager Content -->
+                <div class="container">
+                    <h1 class="section-title">Recital Manager</h1>
+
+                    <!-- Edit Recital Modal -->
+                    <div class="modal fade" id="editRecitalModal" tabindex="-1" aria-labelledby="editRecitalModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="editRecitalModalLabel">Edit Recital</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label for="editRecitalName" class="form-label">Recital Name</label>
+                                        <input type="text" id="editRecitalName" class="form-control">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="editRecitalDate" class="form-label">Date</label>
+                                        <input type="date" id="editRecitalDate" class="form-control">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="editStartTime" class="form-label">Start Time</label>
+                                        <input type="time" id="editStartTime" class="form-control">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="editPerformanceGap" class="form-label">Minutes Between Performances</label>
+                                        <input type="number" id="editPerformanceGap" class="form-control" min="1">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="editRecitalNotes" class="form-label">Notes</label>
+                                        <textarea id="editRecitalNotes" class="form-control" rows="4"></textarea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="button" class="btn btn-primary" onclick="updateRecital()">Save Changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="recital-form">
+                        <h2>Create New Recital</h2>
+                        <div class="mb-3">
+                            <label for="recitalName" class="form-label">Recital Name</label>
+                            <input type="text" id="recitalName" class="form-control" placeholder="Recital Name">
+                        </div>
+                        <div class="mb-3">
+                            <label for="recitalDate" class="form-label">Date</label>
+                            <input type="date" id="recitalDate" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label for="startTime" class="form-label">Start Time</label>
+                            <input type="time" id="startTime" class="form-control" value="17:00">
+                        </div>
+                        <div class="mb-3">
+                            <label for="performanceGap" class="form-label">Minutes Between Performances</label>
+                            <input type="number" id="performanceGap" class="form-control" value="4" min="1">
+                        </div>
+                        <div class="mb-3">
+                            <label for="recitalNotes" class="form-label">Notes</label>
+                            <textarea id="recitalNotes" class="form-control" rows="4" placeholder="Notes (optional)"></textarea>
+                        </div>
+                        <button class="btn btn-primary" onclick="createRecital()">Create Recital</button>
+                    </div>
+
+                    <div id="recitalList">
+                        <h2>Upcoming Recitals</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Date</th>
+                                    <th>Notes</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recitalTableBody">
+                                <!-- Recital rows will populate here -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Recital Class Management Section -->
+                    <div id="recitalClasses" style="margin-top: 2rem; display: none;">
+                        <h2>Manage Recital Classes</h2>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h3>Available Classes</h3>
+                                <div class="search-container mb-3">
+                                    <input type="text" id="classSearch" class="form-control" placeholder="Search classes..." onkeyup="filterClasses()">
+                                </div>
+                                <div id="availableClasses" class="class-list">
+                                    <!-- Available classes will be populated here -->
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h3>Selected Classes</h3>
+                                <div class="search-container mb-3">
+                                    <input type="text" id="selectedClassSearch" class="form-control" placeholder="Search selected classes..." onkeyup="filterSelectedClasses()">
+                                </div>
+                                <div id="selectedClasses" class="class-list">
+                                    <!-- Selected classes will be populated here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="scheduleOptimizer" style="margin-top: 4rem; display: none;">
+                        <h2>Optimize Performance Schedule</h2>
+                        <p>This feature will automatically arrange performances to reduce or eliminate back-to-back student performances.</p>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <button class="btn btn-primary" onclick="generateOptimizedSchedule()">Generate Schedule</button>
+                                <button class="btn btn-success ms-2" onclick="saveSchedule()">Save Schedule</button>
+                            </div>
+                            <button class="btn btn-info" onclick="exportScheduleToPDF()">Export Schedule</button>
+                        </div>
+                        <div id="scheduleResults" style="margin-top: 2rem;">
+                            <!-- Schedule results will be displayed here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap core JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Core theme JS-->
+    <script src="js/scripts.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const wrapper = document.getElementById('wrapper');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const overlay = document.querySelector('.sidebar-overlay');
+
+            function toggleSidebar(e) {
+                if (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                
+                wrapper.classList.toggle('toggled');
+                
+                if (window.innerWidth <= 768) {
+                    if (wrapper.classList.contains('toggled')) {
+                        overlay.classList.add('show');
+                    } else {
+                        overlay.classList.remove('show');
+                    }
+                }
+            }
+
+            // Toggle button click handler
+            sidebarToggle.addEventListener('click', toggleSidebar);
+
+            // Overlay click handler
+            overlay.addEventListener('click', toggleSidebar);
+
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 768) {
+                    overlay.classList.remove('show');
+                }
+            });
+        });
+    </script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+
+    <script>
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDRSW3u6gJSs98Z2Mkp5DYSC__ibDXXHAE",
+            authDomain: "studiosync-af73d.firebaseapp.com",
+            projectId: "studiosync-af73d",
+            storageBucket: "studiosync-af73d.appspot.com",
+            messagingSenderId: "172555302276",
+            appId: "1:172555302276:web:55b661f9849441e2de59d1",
+            measurementId: "G-EK7EFQGMSG"
+        };
+        firebase.initializeApp(firebaseConfig);
+
+        // Function to apply studio branding colors
+        function applyStudioBranding(studioData) {
+            console.log('🎨 Applying studio branding colors:', {
+                PrimaryColor: studioData.PrimaryColor,
+                SecondaryColor: studioData.SecondaryColor
+            });
+
+            const primaryColor = studioData.PrimaryColor || '#3DCED7';
+            const secondaryColor = studioData.SecondaryColor || '#3A506B';
+
+            // Update CSS variables for the sidebar and related elements
+            document.documentElement.style.setProperty('--primary-color', primaryColor);
+            document.documentElement.style.setProperty('--primary-hover', adjustColor(primaryColor, -10));
+            document.documentElement.style.setProperty('--secondary-color', secondaryColor);
+
+            // Update loading overlay elements with branded colors
+            const loadingTitle = document.querySelector('.loading-text h2');
+            const loadingText = document.querySelector('.loading-text p');
+            const spinner = document.querySelector('.spinner');
+
+            if (loadingTitle) loadingTitle.style.color = primaryColor;
+            if (loadingText) loadingText.style.color = secondaryColor;
+            if (spinner) spinner.style.borderTopColor = primaryColor;
+
+            // Add RGB values for hover effects
+            document.documentElement.style.setProperty('--primary-color-rgb', hexToRgb(primaryColor));
+        }
+
+        // Helper function to adjust color brightness
+        function adjustColor(color, percent) {
+            const num = parseInt(color.replace('#', ''), 16);
+            const amt = Math.round(2.55 * percent);
+            const R = (num >> 16) + amt;
+            const G = (num >> 8 & 0x00FF) + amt;
+            const B = (num & 0x0000FF) + amt;
+            return '#' + (
+                0x1000000 +
+                (R < 255 ? (R < 1 ? 0 : R) : 255) * 0x10000 +
+                (G < 255 ? (G < 1 ? 0 : G) : 255) * 0x100 +
+                (B < 255 ? (B < 1 ? 0 : B) : 255)
+            ).toString(16).slice(1);
+        }
+
+        // Function to get current user data
+        async function getCurrentUserData() {
+            const loadingStatus = document.getElementById('loadingStatus');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+
+            try {
+                const user = await new Promise((resolve) => {
+                    firebase.auth().onAuthStateChanged((user) => {
+                        if (user) {
+                            loadingStatus.textContent = "Authenticating user...";
+                            resolve(user);
+                        } else {
+                            console.log('No user signed in');
+                            window.location.href = '/studiologin.html';
+                        }
+                    });
+                });
+
+                const studioId = localStorage.getItem('currentStudioId');
+                const studioData = JSON.parse(localStorage.getItem('currentStudioData'));
+                const userDocId = localStorage.getItem('userDocId');
+
+                loadingStatus.textContent = "Loading studio branding...";
+                
+                if (studioData) {
+                    applyStudioBranding(studioData);
+                }
+
+                loadingStatus.textContent = "Fetching user data...";
+
+                try {
+                    const userDoc = await firebase.firestore()
+                        .collection('Studios')
+                        .doc(studioId)
+                        .collection('Users')
+                        .doc(userDocId)
+                        .get();
+
+                    const instructorDoc = !userDoc.exists ? await firebase.firestore()
+                        .collection('Studios')
+                        .doc(studioId)
+                        .collection('Instructors')
+                        .doc(user.uid)
+                        .get() : null;
+
+                    let userData;
+                    let collectionType;
+
+                    if (userDoc.exists) {
+                        userData = userDoc.data();
+                        collectionType = 'Users';
+                    } else if (instructorDoc?.exists) {
+                        userData = instructorDoc.data();
+                        collectionType = 'Instructors';
+                    }
+
+                    if (userData) {
+                        loadingStatus.textContent = "Loading...";
+                        
+                        const fullName = `${userData.FirstName} ${userData.LastName}`;
+                        document.getElementById('userName').textContent = fullName;
+                        document.getElementById('userEmail').textContent = userData.Email;
+                        
+                        // Set studio name in profile dropdown
+                        const studioNameElement = document.getElementById('studioNameDisplay');
+                        if (studioNameElement && studioData) {
+                            studioNameElement.textContent = studioData.StudioName || 'Studio Name';
+                        }
+                        
+                        // Set user initials in avatar
+                        const initials = `${userData.FirstName[0]}${userData.LastName[0]}`;
+                        const initialsElement = document.querySelector('.initials');
+                        if (initialsElement) {
+                            initialsElement.textContent = initials;
+                        }
+
+                        const roleElement = document.getElementById('userRole');
+                        if (userData.Role) {
+                            roleElement.textContent = userData.Role;
+                            roleElement.style.color = '#333333';
+                            roleElement.style.fontWeight = '700';
+                        } else {
+                            roleElement.textContent = 'No Role Assigned';
+                            roleElement.style.color = '#666';
+                        }
+
+                        if (studioData?.LogoUrl) {
+                            await loadStudioLogo(studioData.LogoUrl, studioData.StudioName);
+                        } else {
+                            await loadStudioLogo(null, studioData?.StudioName);
+                        }
+
+                        // Hide loading overlay with fade effect
+                        loadingOverlay.classList.add('fade-out');
+                        setTimeout(() => {
+                            loadingOverlay.style.display = 'none';
+                        }, 500);
+                    }
+                } catch (error) {
+                    console.error('Error getting user document:', error);
+                    loadingStatus.textContent = "Error loading dashboard. Please refresh...";
+                }
+                
+                if (studioData) {
+                    applyStudioBranding(studioData);
+                    updateSidebarLinks(studioData);
+                    updatePageUrl(studioData.StudioName);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                loadingStatus.textContent = "Error loading dashboard. Please refresh...";
+            }
+        }
+
+        // Function to load and display the studio logo
+        function loadStudioLogo(logoUrl, studioName) {
+            return new Promise((resolve) => {
+                const logoElement = document.getElementById('studio-logo');
+                const nameElement = document.getElementById('studio-name');
+                
+                if (logoUrl) {
+                    logoElement.onload = () => resolve();
+                    logoElement.src = logoUrl;
+                    logoElement.alt = studioName || 'Studio Logo';
+                    logoElement.style.display = 'block';
+                    nameElement.style.display = 'none';
+                } else {
+                    logoElement.style.display = 'none';
+                    nameElement.textContent = studioName || 'Studio Sync';
+                    nameElement.style.display = 'block';
+                    resolve();
+                }
+            });
+        }
+
+        // Call the function when the page loads
+        getCurrentUserData();
+
+        // Logout functionality
+        document.getElementById('logoutButton').addEventListener('click', function() {
+            firebase.auth().signOut().then(() => {
+                // Clear studio context from localStorage
+                localStorage.removeItem('currentStudioId');
+                localStorage.removeItem('currentStudioData');
+                // Redirect to studio login
+                window.location.href = '/studiologin.html';
+            }).catch((error) => {
+                console.error('Logout Error:', error);
+            });
+        });
+
+        // Add this function after the firebase initialization
+        function getStudioNameForUrl(studioName) {
+            // Remove spaces and special characters, keep alphanumeric only
+            return studioName.replace(/[^a-zA-Z0-9]/g, '');
+        }
+
+        function updateSidebarLinks(studioData) {
+            if (studioData?.StudioName) {
+                const studioNameParam = getStudioNameForUrl(studioData.StudioName);
+                
+                const sidebarLinks = document.querySelectorAll('#sidebar-wrapper .list-group-item');
+                sidebarLinks.forEach(link => {
+                    const currentHref = link.getAttribute('href');
+                    if (currentHref && currentHref.endsWith('.html')) {
+                        const newHref = currentHref.replace('.html', `?studio=${studioNameParam}`);
+                        link.setAttribute('href', newHref);
+                    }
+                });
+            }
+        }
+
+        function updatePageUrl(studioName) {
+            if (studioName) {
+                const studioNameParam = getStudioNameForUrl(studioName);
+                const currentUrl = new URL(window.location.href);
+                
+                // Only update if we're on a .html page and don't already have the studio parameter
+                if (currentUrl.pathname.endsWith('.html') && !currentUrl.searchParams.has('studio')) {
+                    const newUrl = `${currentUrl.pathname.replace('.html', '')}?studio=${studioNameParam}`;
+                    window.history.replaceState({}, '', newUrl);
+                }
+            }
+        }
+
+        // Add this after the applyStudioBranding function
+        function hexToRgb(hex) {
+            // Remove the # if present
+            hex = hex.replace('#', '');
+            
+            // Parse the hex values
+            const r = parseInt(hex.substring(0, 2), 16);
+            const g = parseInt(hex.substring(2, 4), 16);
+            const b = parseInt(hex.substring(4, 6), 16);
+            
+            return `${r}, ${g}, ${b}`;
+        }
+
+        let currentRecitalId = null;
+      
+        async function createRecital() {
+            const recitalName = document.getElementById('recitalName').value;
+            const recitalDate = document.getElementById('recitalDate').value;
+            const startTime = document.getElementById('startTime').value;
+            const performanceGap = parseInt(document.getElementById('performanceGap').value);
+            const recitalNotes = document.getElementById('recitalNotes').value;
+
+            if (!recitalName || !recitalDate || !startTime || !performanceGap) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+
+            try {
+                const studioId = localStorage.getItem('currentStudioId');
+                const db = firebase.firestore();
+                
+                const recitalRef = await db.collection('Studios').doc(studioId).collection('Recitals').add({
+                    Name: recitalName,
+                    Date: recitalDate,
+                    StartTime: startTime,
+                    PerformanceGap: performanceGap,
+                    Notes: recitalNotes,
+                    CreatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    Classes: []
+                });
+
+                // Clear form
+                document.getElementById('recitalName').value = '';
+                document.getElementById('recitalDate').value = '';
+                document.getElementById('startTime').value = '17:00';
+                document.getElementById('performanceGap').value = '4';
+                document.getElementById('recitalNotes').value = '';
+
+                // Load recitals
+                loadRecitals();
+                
+                alert('Recital created successfully!');
+            } catch (error) {
+                console.error('Error creating recital:', error);
+                alert('Failed to create recital. Please try again.');
+            }
+        }
+
+        async function loadRecitals() {
+            try {
+                const studioId = localStorage.getItem('currentStudioId');
+                const db = firebase.firestore();
+                
+                const recitalsSnapshot = await db.collection('Studios')
+                    .doc(studioId)
+                    .collection('Recitals')
+                    .orderBy('Date')
+                    .get();
+
+                const tableBody = document.getElementById('recitalTableBody');
+                tableBody.innerHTML = '';
+
+                recitalsSnapshot.forEach(doc => {
+                    const recital = doc.data();
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${recital.Name}</td>
+                        <td>${recital.Date}</td>
+                        <td>${recital.Notes || 'N/A'}</td>
+                        <td>
+                            <button onclick="manageRecitalClasses('${doc.id}')" class="btn btn-sm btn-primary me-2">Manage Recital</button>
+                            <button onclick="editRecital('${doc.id}')" class="btn btn-sm btn-outline-primary me-2">Edit</button>
+                            <button onclick="deleteRecital('${doc.id}')" class="btn btn-sm btn-danger">Delete</button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error loading recitals:', error);
+                alert('Failed to load recitals. Please try again.');
+            }
+        }
+
+        async function manageRecitalClasses(recitalId) {
+            currentRecitalId = recitalId;
+            document.getElementById('recitalClasses').style.display = 'block';
+            document.getElementById('scheduleOptimizer').style.display = 'block';
+            
+            // Auto-scroll to the recital classes section
+            document.getElementById('recitalClasses').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            // Load available classes
+            await loadAvailableClasses();
+            // Load selected classes for this recital
+            await loadSelectedClasses(recitalId);
+            // Load saved schedule if it exists
+            await loadSavedSchedule(recitalId);
+        }
+
+        async function loadAvailableClasses() {
+            try {
+                const studioId = localStorage.getItem('currentStudioId');
+                const db = firebase.firestore();
+                
+                const classesSnapshot = await db.collection('Studios')
+                    .doc(studioId)
+                    .collection('Classes')
+                    .get();
+
+                const availableClassesDiv = document.getElementById('availableClasses');
+                availableClassesDiv.innerHTML = '';
+
+                classesSnapshot.forEach(doc => {
+                    const classData = doc.data();
+                    const classItem = document.createElement('div');
+                    classItem.className = 'class-item';
+                    classItem.setAttribute('data-class-name', classData.ClassName || '');
+                    classItem.setAttribute('data-class-type', classData.ClassType || '');
+                    classItem.innerHTML = `
+                        <div class="class-details">
+                            <strong>${classData.ClassName || 'Unnamed Class'}</strong>
+                            <div class="class-type">${classData.ClassType || 'No Type'}</div>
+                            <div class="class-time">${classData.StartTime || ''} - ${classData.EndTime || ''}</div>
+                        </div>
+                        <button onclick="addClassToRecital('${doc.id}')" class="btn btn-sm btn-primary">Add</button>
+                    `;
+                    availableClassesDiv.appendChild(classItem);
+                });
+            } catch (error) {
+                console.error('Error loading available classes:', error);
+                alert('Failed to load available classes. Please try again.');
+            }
+        }
+
+        function filterClasses() {
+            const searchInput = document.getElementById('classSearch');
+            const searchTerm = searchInput.value.toLowerCase();
+            const classItems = document.querySelectorAll('.class-item');
+
+            classItems.forEach(item => {
+                const className = item.getAttribute('data-class-name').toLowerCase();
+                const classType = item.getAttribute('data-class-type').toLowerCase();
+                
+                if (className.includes(searchTerm) || classType.includes(searchTerm)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        async function loadSelectedClasses(recitalId) {
+            try {
+                const studioId = localStorage.getItem('currentStudioId');
+                const db = firebase.firestore();
+                
+                const recitalDoc = await db.collection('Studios')
+                    .doc(studioId)
+                    .collection('Recitals')
+                    .doc(recitalId)
+                    .get();
+
+                const selectedClasses = recitalDoc.data().Classes || [];
+                const selectedClassesDiv = document.getElementById('selectedClasses');
+                selectedClassesDiv.innerHTML = '';
+
+                for (const classId of selectedClasses) {
+                    const classDoc = await db.collection('Studios')
+                        .doc(studioId)
+                        .collection('Classes')
+                        .doc(classId)
+                        .get();
+
+                    if (classDoc.exists) {
+                        const classData = classDoc.data();
+                        const classItem = document.createElement('div');
+                        classItem.className = 'class-item';
+                        classItem.setAttribute('data-class-name', classData.ClassName || '');
+                        classItem.setAttribute('data-class-type', classData.ClassType || '');
+                        classItem.innerHTML = `
+                            <div class="class-details">
+                                <strong>${classData.ClassName || 'Unnamed Class'}</strong>
+                                <div class="class-type">${classData.ClassType || 'No Type'}</div>
+                                <div class="class-time">${classData.StartTime || ''} - ${classData.EndTime || ''}</div>
+                            </div>
+                            <button onclick="removeClassFromRecital('${classId}')" class="btn btn-sm btn-danger">Remove</button>
+                        `;
+                        selectedClassesDiv.appendChild(classItem);
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading selected classes:', error);
+                alert('Failed to load selected classes. Please try again.');
+            }
+        }
+
+        function filterSelectedClasses() {
+            const searchInput = document.getElementById('selectedClassSearch');
+            const searchTerm = searchInput.value.toLowerCase();
+            const classItems = document.querySelectorAll('#selectedClasses .class-item');
+
+            classItems.forEach(item => {
+                const className = item.getAttribute('data-class-name').toLowerCase();
+                const classType = item.getAttribute('data-class-type').toLowerCase();
+                
+                if (className.includes(searchTerm) || classType.includes(searchTerm)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        async function addClassToRecital(classId) {
+            try {
+                const studioId = localStorage.getItem('currentStudioId');
+                const db = firebase.firestore();
+                
+                const recitalRef = db.collection('Studios')
+                    .doc(studioId)
+                    .collection('Recitals')
+                    .doc(currentRecitalId);
+
+                await recitalRef.update({
+                    Classes: firebase.firestore.FieldValue.arrayUnion(classId)
+                });
+
+                // Reload selected classes
+                await loadSelectedClasses(currentRecitalId);
+            } catch (error) {
+                console.error('Error adding class to recital:', error);
+                alert('Failed to add class to recital. Please try again.');
+            }
+        }
+
+        async function removeClassFromRecital(classId) {
+            try {
+                const studioId = localStorage.getItem('currentStudioId');
+                const db = firebase.firestore();
+                
+                const recitalRef = db.collection('Studios')
+                    .doc(studioId)
+                    .collection('Recitals')
+                    .doc(currentRecitalId);
+
+                await recitalRef.update({
+                    Classes: firebase.firestore.FieldValue.arrayRemove(classId)
+                });
+
+                // Reload selected classes
+                await loadSelectedClasses(currentRecitalId);
+            } catch (error) {
+                console.error('Error removing class from recital:', error);
+                alert('Failed to remove class from recital. Please try again.');
+            }
+        }
+
+        async function generateOptimizedSchedule() {
+            const loadingOverlay = document.getElementById('scheduleLoadingOverlay');
+            loadingOverlay.classList.add('show');
+
+            try {
+                const studioId = localStorage.getItem('currentStudioId');
+                const db = firebase.firestore();
+                
+                // Get recital data
+                const recitalDoc = await db.collection('Studios')
+                    .doc(studioId)
+                    .collection('Recitals')
+                    .doc(currentRecitalId)
+                    .get();
+
+                const recitalData = recitalDoc.data();
+                const classIds = recitalData.Classes || [];
+
+                // Get all classes and their students
+                const classes = [];
+                for (const classId of classIds) {
+                    const classDoc = await db.collection('Studios')
+                        .doc(studioId)
+                        .collection('Classes')
+                        .doc(classId)
+                        .get();
+
+                    if (classDoc.exists) {
+                        const classData = classDoc.data();
+                        classes.push({
+                            id: classId,
+                            name: classData.ClassName,
+                            students: classData.Students || []
+                        });
+                    }
+                }
+
+                // Generate optimized schedule
+                const schedule = await optimizeSchedule(classes, recitalData);
+                
+                // Display schedule
+                displaySchedule(schedule);
+            } catch (error) {
+                console.error('Error generating schedule:', error);
+                alert('Failed to generate schedule. Please try again.');
+            } finally {
+                loadingOverlay.classList.remove('show');
+            }
+        }
+
+        async function optimizeSchedule(classes, recitalData) {
+            console.log('Starting schedule optimization with', classes.length, 'classes');
+            
+            // Create a map of student to their classes
+            const studentClassMap = new Map();
+            classes.forEach(classData => {
+                classData.students.forEach(studentId => {
+                    if (!studentClassMap.has(studentId)) {
+                        studentClassMap.set(studentId, []);
+                    }
+                    studentClassMap.get(studentId).push(classData);
+                });
+            });
+
+            // Sort classes by number of students (fewer students first)
+            classes.sort((a, b) => a.students.length - b.students.length);
+
+            // Try different permutations to find the best schedule
+            let bestSchedule = null;
+            let bestScore = Infinity;
+            let maxPermutations = 200; // Increased to 200 permutations
+            let permutationsTried = 0;
+            let startTime = Date.now();
+            const maxTime = 10000; // Maximum time to run in milliseconds (10 seconds)
+
+            console.log('Starting optimization loop...');
+            
+            // Try multiple permutations until we hit our limit or timeout
+            while (permutationsTried < maxPermutations && (Date.now() - startTime) < maxTime) {
+                const schedule = [];
+                let currentTime = new Date();
+                
+                // Set start time from recital settings
+                const [hours, minutes] = recitalData.StartTime.split(':');
+                currentTime.setHours(parseInt(hours), parseInt(minutes), 0);
+
+                // Get performance gap from recital settings
+                const performanceGap = recitalData.PerformanceGap || 4;
+
+                // Shuffle classes for this permutation
+                const shuffledClasses = [...classes].sort(() => Math.random() - 0.5);
+
+                // Create schedule for this permutation
+                shuffledClasses.forEach(classData => {
+                    schedule.push({
+                        time: new Date(currentTime),
+                        class: classData.name,
+                        students: classData.students,
+                        classId: classData.id
+                    });
+                    currentTime.setMinutes(currentTime.getMinutes() + performanceGap);
+                });
+
+                // Score this schedule
+                const score = calculateScheduleScore(schedule, studentClassMap);
+                
+                if (score < bestScore) {
+                    bestScore = score;
+                    bestSchedule = schedule;
+                    console.log(`Found better schedule with score ${score} after ${permutationsTried} permutations`);
+                }
+
+                permutationsTried++;
+                
+                // Log progress every 20 permutations
+                if (permutationsTried % 20 === 0) {
+                    console.log(`Progress: ${permutationsTried}/${maxPermutations} permutations, ${((Date.now() - startTime) / 1000).toFixed(2)}s elapsed`);
+                }
+            }
+
+            const totalTime = Date.now() - startTime;
+            console.log(`Optimization complete:
+            - Total permutations tried: ${permutationsTried}
+            - Total time: ${(totalTime / 1000).toFixed(2)}s
+            - Average time per permutation: ${(totalTime / permutationsTried).toFixed(2)}ms
+            - Best score achieved: ${bestScore}`);
+
+            return bestSchedule;
+        }
+
+        function calculateScheduleScore(schedule, studentClassMap) {
+            let score = 0;
+            
+            // For each student, check their performance gaps
+            for (const [studentId, studentClasses] of studentClassMap.entries()) {
+                const studentPerformances = schedule.filter(item => 
+                    item.students.includes(studentId)
+                );
+
+                // Check gaps between performances
+                for (let i = 1; i < studentPerformances.length; i++) {
+                    const gap = (studentPerformances[i].time - studentPerformances[i-1].time) / (1000 * 60); // gap in minutes
+                    if (gap < 30) { // Less than 2 performances gap
+                        score += (30 - gap) * 2; // Penalize based on how close the performances are
+                    }
+                }
+            }
+
+            return score;
+        }
+
+        function displaySchedule(schedule) {
+            const scheduleResults = document.getElementById('scheduleResults');
+            scheduleResults.innerHTML = '';
+
+            if (!schedule || schedule.length === 0) {
+                scheduleResults.innerHTML = '<div class="alert alert-info">No schedule generated. Please add classes to the recital first.</div>';
+                return;
+            }
+
+            schedule.forEach((item, index) => {
+                const scheduleItem = document.createElement('div');
+                scheduleItem.className = 'schedule-item';
+                scheduleItem.setAttribute('draggable', 'true');
+                scheduleItem.setAttribute('data-index', index);
+                scheduleItem.setAttribute('data-class-id', item.classId);
+                scheduleItem.innerHTML = `
+                    <div class="schedule-content">
+                        <div class="schedule-time">${item.time.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                        <div class="schedule-class">${item.class}</div>
+                    </div>
+                    <div class="schedule-actions">
+                        <i class="fas fa-grip-lines"></i>
+                    </div>
+                `;
+                scheduleResults.appendChild(scheduleItem);
+            });
+
+            // Add drag and drop event listeners
+            const items = scheduleResults.querySelectorAll('.schedule-item');
+            items.forEach(item => {
+                item.addEventListener('dragstart', handleDragStart);
+                item.addEventListener('dragend', handleDragEnd);
+                item.addEventListener('dragover', handleDragOver);
+                item.addEventListener('dragenter', handleDragEnter);
+                item.addEventListener('dragleave', handleDragLeave);
+                item.addEventListener('drop', handleDrop);
+            });
+        }
+
+        let draggedItem = null;
+
+        function handleDragStart(e) {
+            draggedItem = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', this.innerHTML);
+        }
+
+        function handleDragEnd() {
+            this.classList.remove('dragging');
+            draggedItem = null;
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            return false;
+        }
+
+        function handleDragEnter(e) {
+            this.classList.add('drag-over');
+        }
+
+        function handleDragLeave() {
+            this.classList.remove('drag-over');
+        }
+
+        function handleDrop(e) {
+            e.stopPropagation();
+            if (draggedItem !== this) {
+                const scheduleResults = document.getElementById('scheduleResults');
+                const items = Array.from(scheduleResults.querySelectorAll('.schedule-item'));
+                const draggedIndex = items.indexOf(draggedItem);
+                const dropIndex = items.indexOf(this);
+
+                if (draggedIndex < dropIndex) {
+                    this.parentNode.insertBefore(draggedItem, this.nextSibling);
+                } else {
+                    this.parentNode.insertBefore(draggedItem, this);
+                }
+            }
+            this.classList.remove('drag-over');
+            return false;
+        }
+
+        // Add jsPDF library and wait for it to load
+        const loadjsPDF = new Promise((resolve) => {
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+            script.onload = () => {
+                // Initialize jsPDF
+                window.jsPDF = window.jspdf.jsPDF;
+                resolve();
+            };
+            document.head.appendChild(script);
+        });
+
+        async function exportScheduleToPDF() {
+            try {
+                // Wait for jsPDF to load
+                await loadjsPDF;
+
+                const scheduleResults = document.getElementById('scheduleResults');
+                if (!scheduleResults.children.length) {
+                    alert('Please generate a schedule first.');
+                    return;
+                }
+
+                // Get recital data
+                const studioId = localStorage.getItem('currentStudioId');
+                const db = firebase.firestore();
+                const recitalDoc = await db.collection('Studios')
+                    .doc(studioId)
+                    .collection('Recitals')
+                    .doc(currentRecitalId)
+                    .get();
+
+                const recitalData = recitalDoc.data();
+                const recitalName = recitalData.Name;
+                const recitalDate = new Date(recitalData.Date).toLocaleDateString();
+                const startTime = recitalData.StartTime;
+                const performanceGap = recitalData.PerformanceGap;
+
+                // Create PDF
+                const doc = new jsPDF();
+                
+                // Add title
+                doc.setFontSize(20);
+                doc.setTextColor(40);
+                doc.text(`${recitalName} Schedule`, 105, 20, { align: 'center' });
+                
+                // Add subtitle with date and time
+                doc.setFontSize(12);
+                doc.setTextColor(100);
+                doc.text(`Date: ${recitalDate} | Start Time: ${startTime} | Performance Gap: ${performanceGap} minutes`, 105, 30, { align: 'center' });
+                
+                // Add a line separator
+                doc.setDrawColor(200);
+                doc.line(20, 35, 190, 35);
+                
+                // Set up table headers
+                doc.setFontSize(12);
+                doc.setTextColor(40);
+                doc.setFont(undefined, 'bold');
+                
+                // Table headers
+                const headers = ['Time', 'Class'];
+                const columnWidths = [30, 150];
+                const startX = 20;
+                let currentY = 45;
+                
+                // Draw headers
+                headers.forEach((header, i) => {
+                    doc.text(header, startX + columnWidths.slice(0, i).reduce((a, b) => a + b, 0), currentY);
+                });
+                
+                // Add a line under headers
+                doc.line(20, currentY + 5, 190, currentY + 5);
+                
+                // Set up for content
+                doc.setFont(undefined, 'normal');
+                currentY += 10;
+                
+                // Add schedule items
+                Array.from(scheduleResults.children).forEach(item => {
+                    const time = item.querySelector('.schedule-time').textContent;
+                    const className = item.querySelector('.schedule-class').textContent;
+                    
+                    // Check if we need a new page
+                    if (currentY > 250) {
+                        doc.addPage();
+                        currentY = 20;
+                        
+                        // Redraw headers on new page
+                        doc.setFont(undefined, 'bold');
+                        headers.forEach((header, i) => {
+                            doc.text(header, startX + columnWidths.slice(0, i).reduce((a, b) => a + b, 0), currentY);
+                        });
+                        doc.line(20, currentY + 5, 190, currentY + 5);
+                        doc.setFont(undefined, 'normal');
+                        currentY += 10;
+                    }
+                    
+                    // Draw row content
+                    doc.text(time, startX, currentY);
+                    doc.text(className, startX + columnWidths[0], currentY);
+                    
+                    currentY += 10;
+                });
+                
+                // Add footer
+                const pageCount = doc.internal.getNumberOfPages();
+                for (let i = 1; i <= pageCount; i++) {
+                    doc.setPage(i);
+                    doc.setFontSize(8);
+                    doc.setTextColor(150);
+                    doc.text(`Page ${i} of ${pageCount}`, 105, 285, { align: 'center' });
+                }
+                
+                // Save PDF with recital name
+                doc.save(`${recitalName.replace(/\s+/g, '_')}_Schedule.pdf`);
+            } catch (error) {
+                console.error('Error exporting PDF:', error);
+                alert('Failed to export schedule. Please try again.');
+            }
+        }
+
+        // Load recitals when page loads
+        document.addEventListener('DOMContentLoaded', loadRecitals);
+
+        let currentEditingRecitalId = null;
+
+        async function editRecital(recitalId) {
+            try {
+                const studioId = localStorage.getItem('currentStudioId');
+                const db = firebase.firestore();
+                
+                const recitalDoc = await db.collection('Studios')
+                    .doc(studioId)
+                    .collection('Recitals')
+                    .doc(recitalId)
+                    .get();
+
+                if (recitalDoc.exists) {
+                    const recital = recitalDoc.data();
+                    currentEditingRecitalId = recitalId;
+
+                    // Populate modal fields
+                    const editRecitalName = document.getElementById('editRecitalName');
+                    const editRecitalDate = document.getElementById('editRecitalDate');
+                    const editStartTime = document.getElementById('editStartTime');
+                    const editPerformanceGap = document.getElementById('editPerformanceGap');
+                    const editRecitalNotes = document.getElementById('editRecitalNotes');
+
+                    if (editRecitalName) editRecitalName.value = recital.Name || '';
+                    if (editRecitalDate) editRecitalDate.value = recital.Date || '';
+                    if (editStartTime) editStartTime.value = recital.StartTime || '17:00';
+                    if (editPerformanceGap) editPerformanceGap.value = recital.PerformanceGap || 4;
+                    if (editRecitalNotes) editRecitalNotes.value = recital.Notes || '';
+
+                    // Show modal
+                    const modal = new bootstrap.Modal(document.getElementById('editRecitalModal'));
+                    modal.show();
+                }
+            } catch (error) {
+                console.error('Error loading recital for edit:', error);
+                alert('Failed to load recital details. Please try again.');
+            }
+        }
+
+        async function updateRecital() {
+            const recitalName = document.getElementById('editRecitalName').value;
+            const recitalDate = document.getElementById('editRecitalDate').value;
+            const startTime = document.getElementById('editStartTime').value;
+            const performanceGap = parseInt(document.getElementById('editPerformanceGap').value);
+            const recitalNotes = document.getElementById('editRecitalNotes').value;
+
+            if (!recitalName || !recitalDate || !startTime || !performanceGap) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+
+            try {
+                const studioId = localStorage.getItem('currentStudioId');
+                const db = firebase.firestore();
+                
+                await db.collection('Studios')
+                    .doc(studioId)
+                    .collection('Recitals')
+                    .doc(currentEditingRecitalId)
+                    .update({
+                        Name: recitalName,
+                        Date: recitalDate,
+                        StartTime: startTime,
+                        PerformanceGap: performanceGap,
+                        Notes: recitalNotes,
+                        UpdatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+
+                // Hide modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('editRecitalModal'));
+                modal.hide();
+
+                // Reload recitals
+                loadRecitals();
+                
+                alert('Recital updated successfully!');
+            } catch (error) {
+                console.error('Error updating recital:', error);
+                alert('Failed to update recital. Please try again.');
+            }
+        }
+
+        async function deleteRecital(recitalId) {
+            if (!confirm('Are you sure you want to delete this recital? This action cannot be undone.')) {
+                return;
+            }
+
+            try {
+                const studioId = localStorage.getItem('currentStudioId');
+                const db = firebase.firestore();
+                
+                await db.collection('Studios')
+                    .doc(studioId)
+                    .collection('Recitals')
+                    .doc(recitalId)
+                    .delete();
+
+                // Reload recitals
+                loadRecitals();
+                
+                alert('Recital deleted successfully!');
+            } catch (error) {
+                console.error('Error deleting recital:', error);
+                alert('Failed to delete recital. Please try again.');
+            }
+        }
+
+        async function loadSavedSchedule(recitalId) {
+            try {
+                const studioId = localStorage.getItem('currentStudioId');
+                const db = firebase.firestore();
+                
+                const recitalDoc = await db.collection('Studios')
+                    .doc(studioId)
+                    .collection('Recitals')
+                    .doc(recitalId)
+                    .get();
+
+                const recitalData = recitalDoc.data();
+                if (recitalData.Schedule) {
+                    // Convert Firebase Timestamps back to Date objects
+                    const schedule = recitalData.Schedule.map(item => ({
+                        ...item,
+                        time: item.time.toDate()
+                    }));
+                    displaySchedule(schedule);
+                }
+            } catch (error) {
+                console.error('Error loading saved schedule:', error);
+            }
+        }
+
+        async function saveSchedule() {
+            try {
+                const scheduleResults = document.getElementById('scheduleResults');
+                if (!scheduleResults.children.length) {
+                    alert('Please generate a schedule first.');
+                    return;
+                }
+
+                const studioId = localStorage.getItem('currentStudioId');
+                const db = firebase.firestore();
+                
+                // Get the current schedule order
+                const schedule = Array.from(scheduleResults.children).map(item => {
+                    const timeText = item.querySelector('.schedule-time').textContent;
+                    const [hours, minutes] = timeText.split(':');
+                    const date = new Date();
+                    date.setHours(parseInt(hours), parseInt(minutes), 0);
+                    
+                    // Get the class ID from the data attribute
+                    const classId = item.getAttribute('data-class-id');
+                    
+                    return {
+                        time: firebase.firestore.Timestamp.fromDate(date),
+                        class: item.querySelector('.schedule-class').textContent,
+                        classId: classId
+                    };
+                });
+
+                // Save the schedule to Firebase
+                await db.collection('Studios')
+                    .doc(studioId)
+                    .collection('Recitals')
+                    .doc(currentRecitalId)
+                    .update({
+                        Schedule: schedule,
+                        ScheduleUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+
+                alert('Schedule saved successfully!');
+            } catch (error) {
+                console.error('Error saving schedule:', error);
+                alert('Failed to save schedule. Please try again.');
+            }
+        }
+    </script>
+</body>
+</html>

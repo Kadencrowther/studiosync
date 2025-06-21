@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio Sync - Dance Studio Management Made Simple</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" type="image/svg+xml" href="assets/ssdancerfav.svg">
+    <style>
+        :root {
+            --primary-color: #3DCED7;
+            --secondary-color: #3A506B;
+            --background-color: #F5F5F5;
+            --text-color: #333333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+
+        .header {
+            background-color: #ffffff;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-container img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+            content: url('assets/ssdancerblue.svg');
+        }
+
+        .logo-text {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        nav a {
+            color: var(--text-color);
+            text-decoration: none;
+            margin: 0 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        nav a:hover {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        nav a[href="#demo"] {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.7rem 1.2rem;
+            font-weight: bold;
+            transform: scale(1);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        nav a[href="#demo"]:hover {
+            background-color: #36B8C0;
+            color: #3A506B;
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(61, 206, 215, 0.4),
+                        0 0 20px rgba(61, 206, 215, 0.2);
+        }
+
+        .hero {
+            text-align: center;
+            padding: 12rem 2rem 6rem;
+            background: linear-gradient(135deg, #ffffff, rgba(248, 249, 250, 0.9));
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hero h1 {
+            font-size: 4.8rem;
+            margin-bottom: 2.5rem;
+            color: var(--primary-color);
+            animation: fadeInUp 1s ease;
+            line-height: 1.1;
+            max-width: 1200px;
+            padding: 0 20px;
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            color: #666;
+            animation: fadeInUp 1s ease 0.2s;
+        }
+
+        .cta-button {
+            padding: 1.5rem 3rem;
+            font-size: 1.5rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            margin: 0.7rem;
+        }
+
+        .primary-cta {
+            background-color: var(--primary-color);
+            color: white;
+            transform: scale(1);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .primary-cta:hover {
+            background-color: #36B8C0;
+            color: #3A506B;
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(61, 206, 215, 0.4),
+                        0 0 20px rgba(61, 206, 215, 0.2);
+        }
+
+        .secondary-cta {
+            background-color: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 4rem 2rem;
+            background-color: #f8f9fa;
+        }
+
+        .feature {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .feature i {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .demo-form {
+            background-color: #ffffff;
+            padding: 4rem 2rem;
+            border-radius: 10px;
+            margin: 2rem auto;
+            max-width: 600px;
+        }
+
+        .demo-form input,
+        .demo-form textarea {
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--primary-color);
+            border-radius: 25px;
+            background-color: #ffffff;
+            color: var(--text-color);
+        }
+
+        .demo-form button {
+            background-color: var(--primary-color);
+            color: white;
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform: scale(1);
+        }
+
+        .demo-form button:hover {
+            background-color: #36B8C0;
+            color: var(--secondary-color);
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(61, 206, 215, 0.4),
+                        0 0 20px rgba(61, 206, 215, 0.2);
+        }
+
+        footer {
+            background-color: var(--secondary-color);
+            text-align: center;
+            padding: 2rem;
+            margin-top: 2rem;
+            color: #ffffff;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                padding: 1rem 0;
+            }
+
+            nav {
+                margin-top: 1rem;
+            }
+
+            .hero h1 {
+                font-size: 3.5rem;
+            }
+
+            .hero p {
+                font-size: 1.2rem;
+            }
+        }
+
+        .feature h2 {
+            color: var(--secondary-color);
+            margin: 1rem 0;
+        }
+
+        .feature p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .video-section {
+            padding: 2rem 2rem 4rem;
+            background: linear-gradient(135deg, #ffffff, rgba(248, 249, 250, 0.9));
+            text-align: center;
+        }
+
+        .video-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 2rem;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), transparent);
+            color: white;
+            text-align: left;
+        }
+
+        .video-overlay h2 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+
+        .video-overlay p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .video-section {
+                padding: 2rem 1rem;
+            }
+            
+            .video-overlay h2 {
+                font-size: 1.5rem;
+            }
+            
+            .video-overlay p {
+                font-size: 1rem;
+            }
+        }
+
+        .trust-bar {
+            padding: 2rem 0;
+            background-color: #ffffff;
+            text-align: center;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .trust-bar h3 {
+            color: var(--secondary-color);
+            font-size: 1.6rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .logo-slider {
+            position: relative;
+            width: 100%;
+            height: 80px;
+            overflow: hidden;
+        }
+
+        .logo-slide-track {
+            display: flex;
+            animation: scroll 30s linear infinite;
+            width: calc(200px * 12); /* Adjust based on number of logos */
+        }
+
+        .logo-slide {
+            width: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-slide i {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
+
+        .logo-slide i:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        @keyframes scroll {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(calc(-200px * 6)); /* Half of total width */
+            }
+        }
+
+        /* Add hover pause effect */
+        .logo-slider:hover .logo-slide-track {
+            animation-play-state: paused;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 2rem;  /* Increased gap between buttons */
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Add this specific style for these two paragraphs */
+        .hero p.highlight-text {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            color: var(--secondary-color);
+            animation: fadeInUp 1s ease 0.2s;
+            line-height: 1.4;
+        }
+
+        /* Pricing Modal Styles */
+        .modal-plans {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .modal-plan {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 380px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 10px;
+            flex: 1;
+            min-width: 250px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 2px solid var(--primary-color);
+        }
+
+        .modal-plan:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-plan h2 {
+            margin-top: 0;
+            color: var(--primary-color);
+            font-size: 1.6rem;
+        }
+
+        .modal-plan-price {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--secondary-color);
+            margin: 0.5rem 0;
+        }
+
+        .modal-plan-features {
+            list-style-type: none;
+            padding: 0;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+
+        .modal-plan-features li {
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .modal-select-plan {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: auto;
+            font-size: 14px;
+        }
+
+        .modal-select-plan:hover {
+            background-color: #36B8C0;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo-container">
+            <img src="assets/ssdancerblue.svg" alt="Studio Sync logo">
+            <span class="logo-text">Studio Sync</span>
+        </div>
+        <nav>
+            <a href="login.html">Login</a>
+            <a href="register.html">Get Started</a>
+            <a href="#" id="pricingButton">Pricing</a>
+            <a href="#demo">Book a Demo</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h1>Studio Management Made Simple.</h1>
+            <p class="highlight-text">The all-in-one solution for class scheduling, student management, and studio operations.</p>
+            <p class="highlight-text">Created by Studio Owners for Studio Owners</p>
+            <div class="cta-buttons">
+                <a href="register.html" class="cta-button primary-cta">Free 30 Day Trial</a>
+                <a href="#demo" class="cta-button primary-cta">Book a Demo</a>
+            </div>
+        </section>
+
+        <section class="video-section">
+            <div class="video-container">
+                <iframe 
+                    width="100%" 
+                    height="600" 
+                    src="https://www.youtube.com/embed/djV11Xbc914?autoplay=1&mute=1&loop=1&playlist=djV11Xbc914" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+                <div class="video-overlay">
+                    <h2>See Studio Sync in Action</h2>
+                    <p>Watch how easy it is to manage your dance studio</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="features">
+            <div class="feature">
+                <i class="fas fa-calendar-alt"></i>
+                <h2>Smart Scheduling</h2>
+                <p>Effortlessly manage classes, instructors, and studio space.</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-users"></i>
+                <h2>Student Management</h2>
+                <p>Track attendance, progress, and payments in one place.</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-chart-line"></i>
+                <h2>Business Analytics</h2>
+                <p>Make data-driven decisions with comprehensive reporting.</p>
+            </div>
+        </section>
+
+        <section class="trust-bar">
+            <h3>Trusted by 100+ Dance Studios</h3>
+            <div class="logo-slider">
+                <div class="logo-slide-track">
+                    <!-- Duplicate logos for infinite scroll effect -->
+                    <div class="logo-slide">
+                        <i class="fas fa-ballet-shoes"></i>
+                    </div>
+                    <div class="logo-slide">
+                        <i class="fas fa-music"></i>
+                    </div>
+                    <div class="logo-slide">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="logo-slide">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <div class="logo-slide">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="logo-slide">
+                        <i class="fas fa-sparkles"></i>
+                    </div>
+                    <!-- Duplicate for smooth loop -->
+                    <div class="logo-slide">
+                        <i class="fas fa-ballet-shoes"></i>
+                    </div>
+                    <div class="logo-slide">
+                        <i class="fas fa-music"></i>
+                    </div>
+                    <div class="logo-slide">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="logo-slide">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <div class="logo-slide">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="logo-slide">
+                        <i class="fas fa-sparkles"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="demo" class="demo-form">
+            <h2>Book a Demo</h2>
+            <form>
+                <input type="text" placeholder="Studio Name" required>
+                <input type="text" placeholder="Your Name" required>
+                <input type="email" placeholder="Email Address" required>
+                <input type="tel" placeholder="Phone Number" required>
+                <textarea placeholder="Tell us about your studio..." rows="4"></textarea>
+                <button type="submit">Schedule Demo</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Studio Sync. All rights reserved.</p>
+    </footer>
+
+    <div id="pricingModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1001; overflow-y: auto;">
+        <div style="position: relative; background: white; max-width: 1200px; margin: 30px auto; padding: 60px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+            <button id="closePricingModal" style="position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 24px; cursor: pointer; color: var(--secondary-color);">&times;</button>
+            
+            <h2 style="text-align: center; color: var(--secondary-color); margin-bottom: 40px; font-size: 2.5rem;">Choose Your Plan</h2>
+            
+            <div class="billing-frequency" style="text-align: center; margin-bottom: 40px;">
+                <select id="modal-billing-frequency" style="padding: 12px 30px; border: 2px solid var(--primary-color); border-radius: 25px; font-size: 16px; color: var(--primary-color); cursor: pointer; background-color: white;">
+                    <option value="monthly">Monthly</option>
+                    <option value="quarterly">Quarterly (5% discount)</option>
+                    <option value="semi-annually">Semi-Annually (10% discount)</option>
+                    <option value="annually">Annually (15% discount)</option>
+                </select>
+            </div>
+            
+            <div class="modal-plans">
+                <div class="modal-plan">
+                    <div class="plan-content">
+                        <h2>Studio Pro</h2>
+                        <p class="modal-plan-price">$39<span style="font-size: 1rem;">/month</span></p>
+                        <p class="original-price"></p>
+                        <ul class="modal-plan-features">
+                            <li>✓ Up to 150 students</li>
+                            <li>✓ Class scheduling</li>
+                            <li>✓ Student management</li>
+                            <li>✓ Basic reporting</li>
+                            <li>✓ Email support</li>
+                        </ul>
+                    </div>
+                    <a href="register.html" class="modal-select-plan">Get Started For Free</a>
+                </div>
+                <div class="modal-plan">
+                    <div class="plan-content">
+                        <h2>Studio Advanced</h2>
+                        <p class="modal-plan-price">$69<span style="font-size: 1rem;">/month</span></p>
+                        <p class="original-price"></p>
+                        <ul class="modal-plan-features">
+                            <li>✓ Up to 300 students</li>
+                            <li>✓ Advanced scheduling</li>
+                            <li>✓ Enhanced management</li>
+                            <li>✓ Advanced reporting</li>
+                            <li>✓ Priority support</li>
+                        </ul>
+                    </div>
+                    <a href="register.html" class="modal-select-plan">Get Started For Free</a>
+                </div>
+                <div class="modal-plan">
+                    <div class="plan-content">
+                        <h2>Studio Enterprise</h2>
+                        <p class="modal-plan-price">$99<span style="font-size: 1rem;">/month</span></p>
+                        <p class="original-price"></p>
+                        <ul class="modal-plan-features">
+                            <li>✓ Unlimited students</li>
+                            <li>✓ Premium features</li>
+                            <li>✓ Custom solutions</li>
+                            <li>✓ Enterprise reporting</li>
+                            <li>✓ 24/7 dedicated support</li>
+                        </ul>
+                    </div>
+                    <a href="register.html" class="modal-select-plan">Get Started For Free</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Header scroll effect - keeping white background
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('.header');
+            if (window.scrollY > 50) {
+                header.style.backgroundColor = '#ffffff';
+                header.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+            } else {
+                header.style.backgroundColor = '#ffffff';
+                header.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+            }
+        });
+
+        const pricingButton = document.getElementById('pricingButton');
+        const pricingModal = document.getElementById('pricingModal');
+        const closePricingModal = document.getElementById('closePricingModal');
+        const modalBillingFrequency = document.getElementById('modal-billing-frequency');
+
+        pricingButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            pricingModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            updateModalPrices();
+        });
+
+        closePricingModal.addEventListener('click', function() {
+            pricingModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
+
+        pricingModal.addEventListener('click', function(e) {
+            if (e.target === pricingModal) {
+                pricingModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        modalBillingFrequency.addEventListener('change', updateModalPrices);
+
+        function updateModalPrices() {
+            const frequency = modalBillingFrequency.value;
+            const discounts = {
+                'monthly': 1,
+                'quarterly': 0.95,
+                'semi-annually': 0.90,
+                'annually': 0.85
+            };
+            const discount = discounts[frequency];
+            const billingPeriod = {
+                'monthly': '/month',
+                'quarterly': '/quarter',
+                'semi-annually': '/6 months',
+                'annually': '/year'
+            };
+
+            const plans = [
+                { selector: '.modal-plan:nth-child(1)', basePrice: 39 },
+                { selector: '.modal-plan:nth-child(2)', basePrice: 69 },
+                { selector: '.modal-plan:nth-child(3)', basePrice: 99 }
+            ];
+
+            plans.forEach(plan => {
+                const planElement = document.querySelector(plan.selector);
+                const priceElement = planElement.querySelector('.modal-plan-price');
+                const originalPriceElement = planElement.querySelector('.original-price');
+                
+                const discountedPrice = plan.basePrice * discount;
+                const totalPrice = discountedPrice * (
+                    frequency === 'monthly' ? 1 : 
+                    frequency === 'quarterly' ? 3 : 
+                    frequency === 'semi-annually' ? 6 : 12
+                );
+                
+                priceElement.innerHTML = `$${totalPrice.toFixed(2)}<span style="font-size: 1rem;">${billingPeriod[frequency]}</span>`;
+                
+                if (discount < 1) {
+                    const originalTotal = plan.basePrice * (
+                        frequency === 'monthly' ? 1 : 
+                        frequency === 'quarterly' ? 3 : 
+                        frequency === 'semi-annually' ? 6 : 12
+                    );
+                    originalPriceElement.textContent = `Original: $${originalTotal.toFixed(2)}${billingPeriod[frequency]}`;
+                } else {
+                    originalPriceElement.textContent = '';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

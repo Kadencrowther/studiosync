@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Login</title>
+    <link rel="icon" type="image/svg+xml" href="/assets/ssdancerfav.svg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3DCED7;
+            --primary-hover: #36b8c0;
+            --secondary-color: #3A506B;
+            --background-color: #f8f9fa;
+            --text-color: #333333;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: var(--background-color);
+            font-family: 'Arial', sans-serif;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 400px;
+            width: 90%;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .logo {
+            width: 120px;
+            height: auto;
+            margin-bottom: 30px;
+        }
+
+        .title {
+            color: var(--primary-color);
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+
+        .studio-selector {
+            margin-bottom: 30px;
+        }
+
+        .or-divider {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            color: #666;
+        }
+
+        .or-divider::before,
+        .or-divider::after {
+            content: '';
+            flex: 1;
+            border-top: 1px solid #ddd;
+            margin: 0 10px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(61, 206, 215, 0.1);
+            outline: none;
+        }
+
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%23666' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-color: white;
+        }
+
+        .login-container {
+            display: none;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .login-box {
+            background: white;
+            padding: 30px 40px 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .studio-logo {
+            width: auto;
+            max-width: 200px;
+            max-height: 120px;
+            margin: 0 auto 20px;
+            display: block;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px;
+            padding-right: 45px;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .login-button {
+            background: var(--primary-color);
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .login-button:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .reset-password {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-size: 14px;
+            margin-top: 15px;
+            display: inline-block;
+        }
+
+        .error-message {
+            color: #ff4444;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+
+        .back-arrow {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: var(--secondary-color);
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: none;
+        }
+
+        .back-arrow:hover {
+            color: var(--primary-color);
+        }
+
+        .studio-name-title {
+            color: var(--primary-color);
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #666;
+            padding: 5px;
+            z-index: 2;
+        }
+
+        .password-toggle:hover {
+            color: var(--primary-color);
+        }
+
+        .powered-by {
+            margin-top: 30px;
+            margin-bottom: 20px;
+            color: #666;
+            font-size: 0.9em;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .powered-by img {
+            width: 50px;
+            height: auto;
+            margin-bottom: 5px;
+        }
+
+        .register-container {
+            margin-top: 20px;
+            padding-top: 15px;
+            padding-bottom: 5px;
+            border-top: 1px solid #eee;
+            text-align: center;
+        }
+
+        .register-text {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+
+        .register-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 8px;
+        }
+
+        .register-link:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="back-arrow" id="backArrow">
+        <i class="fas fa-arrow-left"></i>
+    </div>
+
+    <!-- Studio Selection Container -->
+    <div class="container studio-selector" id="studioSelectorContainer">
+        <img src="/assets/ssdancerblue.svg" alt="Studio Sync Logo" class="logo">
+        <h1 class="title">Portal Login</h1>
+        
+        <input type="text" id="studioName" placeholder="Studio Name">
+        <div class="or-divider">or</div>
+        <input type="text" id="studioId" placeholder="Studio ID">
+        
+        <select id="studioSelect" disabled>
+            <option value="">Select Studio</option>
+        </select>
+    </div>
+
+    <!-- Studio-Specific Login Container -->
+    <div class="login-container" id="loginContainer">
+        <h1 class="studio-name-title" id="studioNameTitle"></h1>
+        <div class="login-box">
+            <img id="studioLogo" class="studio-logo" alt="Studio Logo">
+            <form id="loginForm" class="login-form">
+                <div class="input-group">
+                    <input type="email" id="email" placeholder="Email" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="password" placeholder="Password" required>
+                    <i class="fas fa-eye password-toggle" id="passwordToggle"></i>
+                </div>
+                <button type="submit" class="login-button">Sign In</button>
+                <a href="#" id="resetPassword" class="reset-password">Forgot your password?</a>
+                <div class="register-container">
+                    <div class="register-text">New to <span id="studioNameText"></span>?</div>
+                    <a href="#" id="registerLink" class="register-link">Register Here</a>
+                </div>
+            </form>
+            <p id="errorMessage" class="error-message"></p>
+        </div>
+    </div>
+
+    <div class="powered-by">
+        <img src="/assets/ssdancerblue.svg" alt="Studio Sync Logo">
+        Powered by Studio Sync
+    </div>
+
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        // Firebase initialization
+        const firebaseConfig = {
+            apiKey: "AIzaSyDRSW3u6gJSs98Z2Mkp5DYSC__ibDXXHAE",
+            authDomain: "studiosync-af73d.firebaseapp.com",
+            projectId: "studiosync-af73d",
+            storageBucket: "studiosync-af73d.appspot.com",
+            messagingSenderId: "172555302276",
+            appId: "1:172555302276:web:55b661f9849441e2de59d1",
+            measurementId: "G-EK7EFQGMSG"
+        };
+        firebase.initializeApp(firebaseConfig);
+
+        // Studio search functionality
+        let studiosList = [];
+        const studioNameInput = document.getElementById('studioName');
+        const studioIdInput = document.getElementById('studioId');
+        const studioSelect = document.getElementById('studioSelect');
+
+        async function loadStudios() {
+            try {
+                const studiosSnapshot = await firebase.firestore()
+                    .collection('Studios')
+                    .get();
+
+                studiosList = [];
+                studiosSnapshot.forEach(doc => {
+                    const data = doc.data();
+                    studiosList.push({
+                        Id: doc.id,
+                        Name: data.StudioName,
+                        SearchText: `${data.StudioName.toLowerCase()} ${doc.id.toLowerCase()}`
+                    });
+                });
+            } catch (error) {
+                console.error('Error loading studios:', error);
+            }
+        }
+
+        function updateStudioSelect(searchText) {
+            studioSelect.innerHTML = '<option value="">Select Studio</option>';
+            
+            if (searchText.length < 2) {
+                studioSelect.disabled = true;
+                return;
+            }
+
+            const matches = studiosList.filter(studio => 
+                studio.SearchText.includes(searchText.toLowerCase())
+            );
+
+            if (matches.length > 0) {
+                matches.forEach(studio => {
+                    const option = document.createElement('option');
+                    option.value = studio.Id;
+                    option.textContent = `${studio.Name} • ${studio.Id}`;
+                    studioSelect.appendChild(option);
+                });
+                studioSelect.disabled = false;
+            } else {
+                studioSelect.disabled = true;
+            }
+        }
+
+        studioNameInput.addEventListener('input', () => {
+            updateStudioSelect(studioNameInput.value);
+            studioIdInput.value = '';
+        });
+
+        studioIdInput.addEventListener('input', () => {
+            updateStudioSelect(studioIdInput.value);
+            studioNameInput.value = '';
+        });
+
+        // Handle studio selection
+        studioSelect.addEventListener('change', async function(e) {
+            const studioId = e.target.value;
+            if (studioId) {
+                try {
+                    const studioDoc = await firebase.firestore()
+                        .collection('Studios')
+                        .doc(studioId)
+                        .get();
+
+                    if (studioDoc.exists) {
+                        const studioData = studioDoc.data();
+                        const urlFriendlyName = encodeURIComponent(studioData.StudioName.trim());
+                        // Set a flag to indicate we need to refresh
+                        sessionStorage.setItem('needsRefresh', 'true');
+                        // Use query parameters instead of path segments with = 
+                        window.location.href = `/portallogin.html?studio=${urlFriendlyName}&id=${studioId}`;
+                        console.log('Loading portal login for Studio ID:', studioId);
+                    }
+                } catch (error) {
+                    console.error('Error loading studio:', error);
+                }
+            }
+        });
+
+        // Add the adjustColor function that was missing
+        function adjustColor(color, percent) {
+            const num = parseInt(color.replace('#', ''), 16);
+            const amt = Math.round(2.55 * percent);
+            const R = (num >> 16) + amt;
+            const G = (num >> 8 & 0x00FF) + amt;
+            const B = (num & 0x0000FF) + amt;
+            return '#' + (
+                0x1000000 +
+                (R < 255 ? (R < 1 ? 0 : R) : 255) * 0x10000 +
+                (G < 255 ? (G < 1 ? 0 : G) : 255) * 0x100 +
+                (B < 255 ? (B < 1 ? 0 : B) : 255)
+            ).toString(16).slice(1);
+        }
+
+        function showLoginForm(studioData) {
+            // Log all studio document information
+            console.log('Studio Information:', {
+                name: studioData.StudioName,
+                id: studioData.StudioId,
+                logo: studioData.LogoUrl,
+                primaryColor: studioData.PrimaryColor,
+                secondaryColor: studioData.SecondaryColor,
+                owner: `${studioData.OwnerFirstName} ${studioData.OwnerLastName}`,
+                address: `${studioData.StudioAddress1} ${studioData.StudioAddress2}`,
+                city: studioData.StudioCity,
+                state: studioData.StudioState,
+                fullDoc: studioData
+            });
+
+            // Hide selector completely
+            document.getElementById('studioSelectorContainer').style.display = 'none';
+            document.getElementById('studioSelectorContainer').style.visibility = 'hidden';
+            // Show login container
+            document.getElementById('loginContainer').style.display = 'block';
+            
+            // Update studio name title
+            document.getElementById('studioNameTitle').textContent = `${studioData.StudioName} Portal Login`;
+            
+            // Apply studio branding colors
+            if (studioData.PrimaryColor) {
+                document.documentElement.style.setProperty('--primary-color', studioData.PrimaryColor);
+                document.documentElement.style.setProperty('--primary-hover', adjustColor(studioData.PrimaryColor, -10));
+            }
+            if (studioData.SecondaryColor) {
+                document.documentElement.style.setProperty('--secondary-color', studioData.SecondaryColor);
+            }
+
+            // Update logo
+            const studioLogo = document.getElementById('studioLogo');
+            
+            // Check for logo URL and ensure it's a valid URL
+            if (studioData.LogoUrl && studioData.LogoUrl.startsWith('http')) {
+                studioLogo.src = studioData.LogoUrl;
+                studioLogo.style.display = 'block';
+                console.log('Setting studio logo:', studioData.LogoUrl);
+                
+                // Add error handling for logo loading
+                studioLogo.onerror = () => {
+                    console.error('Failed to load studio logo');
+                    studioLogo.style.display = 'none';
+                };
+            } else {
+                studioLogo.style.display = 'none';
+                console.log('No valid logo URL found');
+            }
+            
+            document.getElementById('backArrow').style.display = 'block';
+            document.title = `${studioData.StudioName} - Portal Login`;
+
+            // Update studio name in the registration text
+            document.getElementById('studioNameText').textContent = studioData.StudioName;
+            
+            // Update register link
+            const registerLink = document.getElementById('registerLink');
+            
+            // Format studio name: remove spaces and special characters
+            const condensedStudioName = studioData.StudioName.trim()
+                .replace(/\s+/g, '') // Remove all spaces
+                .replace(/[^a-zA-Z0-9]/g, ''); // Remove special characters
+            
+            // Get the studio ID from the URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const studioId = urlParams.get('id');
+            
+            console.log('Studio Registration Link Data:', {
+                originalName: studioData.StudioName,
+                condensedName: condensedStudioName,
+                studioId: studioId,
+                urlParams: urlParams
+            });
+            
+            if (studioId) {
+                registerLink.href = `/studentregister.html?studio=${condensedStudioName}&id=${studioId}`;
+                console.log('Registration link set to:', registerLink.href);
+            } else {
+                console.error('Studio ID not found in URL:', window.location.search);
+            }
+        }
+
+        // Back button handler
+        document.getElementById('backArrow').addEventListener('click', () => {
+            window.location.href = '/portallogin.html';
+        });
+
+        // Load studios when page loads
+        loadStudios();
+
+        // Password visibility toggle
+        document.getElementById('passwordToggle').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+
+        // Login form handler
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value.toLowerCase();
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+            
+            try {
+                // First authenticate with Firebase
+                const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
+                
+                // Get the current studio ID from URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const studioId = urlParams.get('id');
+                
+                // Get studio data
+                const studioDoc = await firebase.firestore()
+                    .collection('Studios')
+                    .doc(studioId)
+                    .get();
+                    
+                if (!studioDoc.exists) {
+                    throw new Error('Studio not found');
+                }
+                
+                const studioData = studioDoc.data();
+                
+                // Query the Families subcollection
+                const familiesSnapshot = await firebase.firestore()
+                    .collection('Studios')
+                    .doc(studioId)
+                    .collection('Families')
+                    .get();
+                    
+                let matchingFamily = null;
+                let familyId = null;
+                
+                // Look for a family with matching email (case insensitive)
+                familiesSnapshot.forEach(doc => {
+                    const familyData = doc.data();
+                    // Match using the single email field
+                    if (familyData.Email?.toLowerCase() === email.toLowerCase()) {
+                        matchingFamily = familyData;
+                        familyId = doc.id;
+                    }
+                });
+                
+                if (!matchingFamily) {
+                    throw new Error('No family account found with this email');
+                }
+                
+                // Store necessary data in localStorage
+                localStorage.setItem('currentStudioId', studioId);
+                localStorage.setItem('currentStudioData', JSON.stringify(studioData));
+                localStorage.setItem('currentFamilyId', familyId);
+                localStorage.setItem('currentFamilyData', JSON.stringify(matchingFamily));
+                
+                // Construct the portal URL
+                const urlFriendlyName = encodeURIComponent(studioData.StudioName.trim());
+                window.location.href = `/portal.html?studio=${urlFriendlyName}&sid=${studioId}&fid=${familyId}`;
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                errorMessage.textContent = error.message;
+            }
+        });
+
+        // Password reset handler
+        document.getElementById('resetPassword').addEventListener('click', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const errorMessage = document.getElementById('errorMessage');
+
+            if (!email) {
+                errorMessage.textContent = 'Please enter your email address';
+                return;
+            }
+
+            try {
+                await firebase.auth().sendPasswordResetEmail(email);
+                errorMessage.textContent = 'Password reset email sent. Please check your inbox.';
+                errorMessage.style.color = '#4CAF50';
+            } catch (error) {
+                errorMessage.textContent = error.message;
+                errorMessage.style.color = '#ff4444';
+            }
+        });
+
+        // Update handleDirectAccess function to use query parameters
+        async function handleDirectAccess() {
+            // Check for query parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const hasQueryParams = urlParams.has('studio') && urlParams.has('id');
+            
+            // Force refresh on studio-specific URLs if needed
+            if ((hasQueryParams && !sessionStorage.getItem('justRefreshed')) || 
+                sessionStorage.getItem('needsRefresh')) {
+                sessionStorage.setItem('justRefreshed', 'true');
+                sessionStorage.removeItem('needsRefresh');
+                window.location.reload(true);
+                return;
+            }
+            
+            // Clear the refresh flag
+            sessionStorage.removeItem('justRefreshed');
+            
+            // Check if we're on a studio-specific URL with query parameters
+            if (hasQueryParams) {
+                const studioId = urlParams.get('id');
+                console.log('Direct access for Studio ID:', studioId);
+                
+                // Hide selector immediately to prevent flash
+                document.getElementById('studioSelectorContainer').style.display = 'none';
+                
+                try {
+                    const studioDoc = await firebase.firestore()
+                        .collection('Studios')
+                        .doc(studioId)
+                        .get();
+
+                    if (studioDoc.exists) {
+                        const studioData = studioDoc.data();
+                        // Log full studio document on direct access
+                        console.log('Loading Studio Document:', {
+                            id: studioId,
+                            name: studioData.StudioName,
+                            logo: studioData.LogoUrl,
+                            primaryColor: studioData.PrimaryColor,
+                            secondaryColor: studioData.SecondaryColor,
+                            owner: `${studioData.OwnerFirstName} ${studioData.OwnerLastName}`,
+                            address: `${studioData.StudioAddress1} ${studioData.StudioAddress2}`,
+                            city: studioData.StudioCity,
+                            state: studioData.StudioState,
+                            fullDoc: studioData
+                        });
+                        
+                        localStorage.setItem('currentStudioId', studioId);
+                        localStorage.setItem('currentStudioData', JSON.stringify(studioData));
+                        
+                        // Show login form with studio branding
+                        showLoginForm(studioData);
+                        document.getElementById('loginContainer').style.display = 'block';
+                        document.getElementById('backArrow').style.display = 'block';
+                        console.log('Studio login form shown for ID:', studioId);
+                        
+                        // No need to update URL, we're using query parameters
+                    }
+                } catch (error) {
+                    console.error('Error loading studio:', error);
+                }
+            } else {
+                // On base portallogin page
+                document.getElementById('studioSelectorContainer').style.display = 'block';
+                document.getElementById('loginContainer').style.display = 'none';
+                loadStudios();
+            }
+        }
+
+        // Also update the DOMContentLoaded listener to run only once
+        if (!window.handleDirectAccessRun) {
+            window.handleDirectAccessRun = true;
+            document.addEventListener('DOMContentLoaded', handleDirectAccess);
+        }
+    </script>
+
+    <!-- Add this HTML right before the closing </body> tag -->
+    <div id="resetPasswordModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+        <div style="position: relative; background: white; max-width: 400px; margin: 100px auto; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+            <button id="closeModal" style="position: absolute; right: 15px; top: 15px; background: none; border: none; font-size: 20px; cursor: pointer; color: #666;">&times;</button>
+            <h2 style="color: var(--primary-color); margin-bottom: 20px; text-align: center;">Reset Password</h2>
+            <form id="resetPasswordForm">
+                <p style="color: #666; margin-bottom: 20px; text-align: center;">Enter your email address and we'll send you a link to reset your password.</p>
+                <input type="email" id="resetEmail" placeholder="Email Address" required 
+                       style="width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 12px; margin-bottom: 20px; box-sizing: border-box;">
+                <button type="submit" 
+                        style="width: 100%; background: var(--primary-color); color: white; padding: 12px; border: none; border-radius: 12px; cursor: pointer; font-weight: bold;">
+                    Send Reset Link
+                </button>
+            </form>
+            <p id="resetMessage" style="margin-top: 15px; text-align: center; display: none;"></p>
+        </div>
+    </div>
+
+    <!-- Add this JavaScript right before the closing </body> tag -->
+    <script>
+        // Get modal elements
+        const resetPasswordModal = document.getElementById('resetPasswordModal');
+        const closeModal = document.getElementById('closeModal');
+        const resetPasswordForm = document.getElementById('resetPasswordForm');
+        const resetMessage = document.getElementById('resetMessage');
+
+        // Show modal when "Forgot your password?" is clicked
+        document.getElementById('resetPassword').addEventListener('click', (e) => {
+            e.preventDefault();
+            resetPasswordModal.style.display = 'block';
+            // Pre-fill email if it's already entered in the login form
+            const loginEmail = document.getElementById('email').value;
+            document.getElementById('resetEmail').value = loginEmail;
+        });
+
+        // Close modal when X is clicked
+        closeModal.addEventListener('click', () => {
+            resetPasswordModal.style.display = 'none';
+            resetMessage.style.display = 'none';
+            resetMessage.textContent = '';
+        });
+
+        // Close modal when clicking outside
+        resetPasswordModal.addEventListener('click', (e) => {
+            if (e.target === resetPasswordModal) {
+                resetPasswordModal.style.display = 'none';
+                resetMessage.style.display = 'none';
+                resetMessage.textContent = '';
+            }
+        });
+
+        // Handle password reset form submission
+        resetPasswordForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('resetEmail').value;
+            resetMessage.style.display = 'block';
+
+            try {
+                await firebase.auth().sendPasswordResetEmail(email);
+                resetMessage.style.color = '#4CAF50';
+                resetMessage.textContent = 'Password reset email sent! Please check your inbox.';
+                
+                // Close modal after 3 seconds
+                setTimeout(() => {
+                    resetPasswordModal.style.display = 'none';
+                    resetMessage.style.display = 'none';
+                    resetMessage.textContent = '';
+                }, 3000);
+
+            } catch (error) {
+                resetMessage.style.color = '#ff4444';
+                resetMessage.textContent = error.message;
+            }
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio Login</title>
+    <link rel="icon" type="image/svg+xml" href="assets/ssdancerfav.svg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3DCED7;
+            --primary-hover: #36b8c0;
+            --secondary-color: #3A506B;
+            --background-color: #f8f9fa;
+            --text-color: #333333;
+            --checkmark-color: #FFFFFF;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: var(--background-color);
+            font-family: 'Arial', sans-serif;
+            padding: 10px 0 40px 0;
+        }
+
+        .logo-header {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto 20px auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .logo-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            min-height: 80px;
+        }
+
+        .logo-header .icon {
+            height: 80px;
+            width: auto;
+            transition: all 0.3s ease;
+            object-fit: contain;
+        }
+
+        .logo-header .studio-text {
+            color: var(--primary-color);
+            font-size: 2.5em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            width: 100%;
+        }
+
+        .logo-content * {
+            transition: all 0.3s ease;
+        }
+
+        .studio-selector-container {
+            width: 90%;
+            max-width: 400px;
+            margin: 0 auto 30px auto;
+            background: white;
+            padding: 70px 25px 15px 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+            text-align: center;
+            transition: opacity 0.3s ease;
+        }
+
+        .search-box {
+            margin-bottom: 15px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(61, 206, 215, 0.1);
+            outline: none;
+        }
+
+        .studio-select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            font-size: 16px;
+            background-color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%23666' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            box-sizing: border-box;
+            pointer-events: none;
+            background-color: #f5f5f5;
+        }
+
+        .studio-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(61, 206, 215, 0.1);
+            outline: none;
+        }
+
+        .studio-select.active {
+            pointer-events: auto;
+            background-color: white;
+        }
+
+        .login-container {
+            display: none;
+            max-width: 400px;
+            width: 90%;
+            margin: 0 auto;
+            padding: 35px 25px 35px 25px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transform: translateY(-30px);
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            top: -30px;
+        }
+
+        .login-container.show {
+            display: block;
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .studio-name {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            color: var(--primary-color);
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            margin: 8px 0;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(61, 206, 215, 0.1);
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            max-width: 100%;
+            padding: 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(61, 206, 215, 0.2);
+        }
+
+        .reset-password {
+            margin-top: 25px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 1em;
+            cursor: pointer;
+            display: block;
+            transition: all 0.3s ease;
+        }
+
+        .reset-password:hover {
+            color: var(--primary-hover);
+            text-decoration: underline;
+        }
+
+        .error-message {
+            color: #ff4444;
+            margin-top: 10px;
+        }
+
+        .success-message {
+            color: #4CAF50;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .loading {
+            background: #f6f7f8;
+            background-image: linear-gradient(
+                to right,
+                #f6f7f8 0%,
+                #edeef1 20%,
+                #f6f7f8 40%,
+                #f6f7f8 100%
+            );
+            background-repeat: no-repeat;
+            background-size: 800px 104px;
+            animation-duration: 1s;
+            animation-fill-mode: forwards;
+            animation-iteration-count: infinite;
+            animation-name: shimmer;
+            animation-timing-function: linear;
+        }
+
+        .login-container.loading {
+            min-height: 400px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-container.loading::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to right,
+                transparent 0%,
+                rgba(255, 255, 255, 0.2) 50%,
+                transparent 100%
+            );
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        .login-container.loading .studio-logo,
+        .login-container.loading .studio-name,
+        .login-container.loading form,
+        .login-container.loading .reset-password {
+            opacity: 0;
+        }
+
+        .login-container.loading .loading-placeholder {
+            display: block;
+        }
+
+        .loading-placeholder {
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .loading-placeholder-logo {
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+            background: #f6f7f8;
+            border-radius: 10px;
+        }
+
+        .loading-placeholder-title {
+            width: 80%;
+            height: 40px;
+            margin: 20px auto;
+            background: #f6f7f8;
+            border-radius: 5px;
+        }
+
+        .loading-placeholder-input {
+            width: 90%;
+            height: 50px;
+            margin: 10px auto;
+            background: #f6f7f8;
+            border-radius: 5px;
+        }
+
+        .loading-placeholder-button {
+            width: 90%;
+            height: 50px;
+            margin: 20px auto;
+            background: #f6f7f8;
+            border-radius: 5px;
+        }
+
+        form {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 0;
+        }
+
+        .studio-id-display {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: var(--secondary-color);
+            font-size: 0.9em;
+            opacity: 0.7;
+            transition: opacity 0.15s ease;
+        }
+
+        .back-arrow {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: var(--secondary-color);
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: none; /* Hidden by default */
+        }
+
+        .back-arrow:hover {
+            color: var(--primary-color);
+            transform: translateX(-3px);
+        }
+
+        .studio-logo {
+            width: 300px;
+            height: auto;
+            max-height: 350px;
+            margin: 0 auto 15px auto;
+            display: block;
+            object-fit: contain;
+            transition: opacity 0.15s ease;
+        }
+
+        .register-link {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            text-align: center;
+            color: #666;
+        }
+
+        .register-link a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .register-link a:hover {
+            color: var(--primary-hover);
+            text-decoration: underline;
+        }
+
+        .login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .login-overlay.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .login-success-content {
+            text-align: center;
+        }
+
+        .checkmark {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: block;
+            stroke-width: 4;
+            stroke: var(--primary-color);
+            stroke-miterlimit: 10;
+            margin: 10% auto;
+            position: relative;
+            animation: none; /* Remove the fill animation */
+        }
+
+        .checkmark__circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            stroke-width: 4;
+            stroke-miterlimit: 10;
+            stroke: var(--primary-color);
+            fill: none;
+            animation: circle 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards,
+                       fadeOut 0.3s ease-out 0.8s forwards; /* Add fade out animation */
+        }
+
+        .checkmark__check {
+            transform-origin: 50% 50%;
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            stroke-width: 6;
+            stroke: var(--primary-color); /* Change stroke color to match circle */
+            animation: check 0.3s cubic-bezier(0.65, 0, 0.45, 1) 1.1s forwards, /* Delay check until after circle fades */
+                       fadeIn 0.3s ease-in 1.1s forwards; /* Fade in the checkmark */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            opacity: 0; /* Start hidden */
+        }
+
+        @keyframes circle {
+            0% {
+                stroke-dashoffset: 166;
+            }
+            100% {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        @keyframes check {
+            0% {
+                stroke-dashoffset: 48;
+            }
+            100% {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .login-success-message {
+            color: var(--primary-color);
+            font-size: 1.5em;
+            font-weight: 500;
+            margin: 20px 0 10px 0;
+            opacity: 0;
+            animation: fadeIn 0.3s ease-in 1s forwards;
+        }
+
+        .login-redirect-message {
+            color: #666;
+            font-size: 1em;
+            opacity: 0;
+            animation: fadeIn 0.3s ease-in 1.2s forwards;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .studio-select option {
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        .studio-select option:not(:first-child) {
+            border-bottom: 1px solid #eee;
+        }
+
+        .studio-select option span {
+            color: #888;
+            font-size: 0.9em;
+            margin-left: 5px;
+        }
+
+        .main-logo {
+            width: 200px;
+            height: auto;
+            margin-bottom: 30px;
+        }
+
+        .studio-login-title {
+            color: var(--primary-color);
+            font-size: 3.5em;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .password-recovery-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 35px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            color: #666;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--primary-color);
+        }
+
+        .modal-title {
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .modal-message {
+            margin: 15px 0;
+            color: #666;
+        }
+
+        .recovery-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .studio-text {
+            transition: opacity 0.15s ease;
+        }
+
+        .main-logo {
+            transition: opacity 0.15s ease;
+        }
+
+        #studioIdDisplay {
+            transition: opacity 0.15s ease;
+        }
+
+        .password-input-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #666;
+            transition: color 0.3s ease;
+        }
+
+        .password-toggle:hover {
+            color: var(--primary-color);
+        }
+
+        .password-toggle.show {
+            color: var(--primary-color);
+        }
+
+        .powered-by-container {
+            text-align: center;
+            margin-top: 40px;
+            color: #888;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-text-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+            width: 100%;
+            text-align: center;
+        }
+
+        .powered-by-logo {
+            width: 85px;
+            height: auto;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+            margin: 0 auto;
+        }
+
+        .powered-by-container:hover .powered-by-logo {
+            opacity: 1;
+        }
+
+        .powered-by-top {
+            font-size: 0.9em;
+            color: #999;
+            margin-bottom: 5px;
+        }
+
+        .studio-sync-text {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 5px;
+        }
+
+        .studio-text-part {
+            font-size: 1.4em;
+            color: #3DCED7;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="back-arrow" id="backArrow">
+        <i class="fas fa-arrow-left"></i>
+    </div>
+    <div id="studioIdDisplay" class="studio-id-display"></div>
+    <div class="logo-header">
+        <div class="logo-content">
+            <span class="studio-text" id="headerStudioName">Studio Sync Login</span>
+        </div>
+    </div>
+
+    <div class="studio-selector-container">
+        <img src="assets/ssdancerblue.svg" alt="Studio Sync Logo" class="main-logo">
+        <div class="search-box">
+            <input type="text" id="studioSearch" placeholder="Search for your studio...">
+        </div>
+        <select id="studioSelect" class="studio-select">
+            <option value="">Input studio name or Studio ID to login</option>
+        </select>
+        <div class="register-link">
+            Don't have an account? <a href="/register.html">Register here</a>
+        </div>
+    </div>
+
+    <div class="login-container">
+        <div class="loading-placeholder">
+            <div class="loading-placeholder-logo"></div>
+            <div class="loading-placeholder-title"></div>
+            <div class="loading-placeholder-input"></div>
+            <div class="loading-placeholder-input"></div>
+            <div class="loading-placeholder-button"></div>
+        </div>
+        <img id="studioLogo" class="studio-logo" alt="Studio Logo">
+        <div id="studioName" class="studio-name"></div>
+        
+        <form id="loginForm">
+            <input type="email" id="email" placeholder="Email" required>
+            <div class="password-input-container">
+                <input type="password" id="password" placeholder="Password" required>
+                <i class="fas fa-eye password-toggle" id="passwordToggle"></i>
+            </div>
+            <button type="submit">Login</button>
+        </form>
+        <p id="errorMessage" class="error-message"></p>
+        <p id="successMessage" class="success-message"></p>
+        <a href="#" id="resetPassword" class="reset-password">Forgot your password?</a>
+    </div>
+
+    <!-- Add this powered by section -->
+    <div class="powered-by-container">
+        <span class="powered-by-top">Powered by</span>
+        <div class="logo-text-container">
+            <img src="/assets/ssdancerblue.svg" alt="Studio Sync Logo" class="powered-by-logo">
+            <div class="studio-sync-text">
+                <span class="studio-text-part">Studio Sync</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDRSW3u6gJSs98Z2Mkp5DYSC__ibDXXHAE",
+            authDomain: "studiosync-af73d.firebaseapp.com",
+            projectId: "studiosync-af73d",
+            storageBucket: "studiosync-af73d.appspot.com",
+            messagingSenderId: "172555302276",
+            appId: "1:172555302276:web:55b661f9849441e2de59d1",
+            measurementId: "G-EK7EFQGMSG"
+        };
+        firebase.initializeApp(firebaseConfig);
+
+        // Add right after firebase.initializeApp(firebaseConfig);
+        console.log('Firebase initialized:', firebase.app().name);
+
+        // Also add this to test Firestore connection
+        firebase.firestore().collection('Studios').get()
+            .then(() => console.log('Firestore connection successful'))
+            .catch(error => console.error('Firestore connection failed:', error));
+
+        // Update the login handler
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value.toLowerCase();
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+
+            try {
+                console.log('🔐 Attempting login for email:', email);
+
+                // Get stored studio data
+                const studioId = localStorage.getItem('currentStudioId');
+                const studioData = JSON.parse(localStorage.getItem('currentStudioData'));
+                const studioUsers = JSON.parse(localStorage.getItem('studioUsers') || '[]');
+
+                if (!studioId || !studioData) {
+                    console.error('❌ No studio context found');
+                    throw new Error('Please select a studio before logging in');
+                }
+
+                console.log('Checking access for email:', email);
+                console.log('Available studio users:', studioUsers);
+
+                // First check if user exists in studio
+                const matchingUser = studioUsers.find(user => {
+                    const userEmail = user.email?.toLowerCase();
+                    const matches = userEmail === email.toLowerCase();
+                    console.log(`Comparing ${userEmail} with ${email}: ${matches}`);
+                    return matches;
+                });
+
+                if (!matchingUser) {
+                    console.error('❌ Email not found in studio users list');
+                    throw new Error('You do not have access to this studio. Please contact your studio administrator.');
+                }
+
+                console.log('✅ Found matching user:', matchingUser);
+
+                // Sign out current user if exists (to allow new login)
+                const currentUser = firebase.auth().currentUser;
+                if (currentUser) {
+                    console.log('📤 Signing out current user:', currentUser.email);
+                    await firebase.auth().signOut();
+                }
+
+                // Authenticate with Firebase
+                console.log('🔑 Authenticating with Firebase...');
+                const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
+                
+                // Get user document
+                const userDoc = await firebase.firestore()
+                    .collection('Studios')
+                    .doc(studioId)
+                    .collection('Users')
+                    .doc(matchingUser.docId) // Store docId in studioUsers array
+                    .get();
+
+                if (!userDoc.exists) {
+                    console.error('❌ User document not found in Firestore');
+                    await firebase.auth().signOut();
+                    throw new Error('Error accessing user data. Please contact support.');
+                }
+
+                const userData = userDoc.data();
+
+                console.log('🎉 Successfully authenticated user:', {
+                    name: `${userData.firstName} ${userData.lastName}`,
+                    email: userData.email,
+                    role: userData.Role || 'No Role'
+                });
+
+                // Update user's login status
+                await userDoc.ref.update({
+                    lastLoginAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    isLoggedIn: true,
+                    lastLoginBrowser: navigator.userAgent,
+                    [`loginHistory.${Date.now()}`]: {
+                        browser: navigator.userAgent,
+                        email: email.toLowerCase()
+                    }
+                });
+
+                // Store user data and show success
+                localStorage.setItem('userData', JSON.stringify(userData));
+                localStorage.setItem('currentUserEmail', email);
+                localStorage.setItem('isAuthenticated', 'true');
+                localStorage.setItem('lastLoginTime', Date.now().toString());
+                localStorage.setItem('userDocId', userDoc.id);
+
+                // Show success overlay and redirect
+                const loginOverlay = document.getElementById('loginOverlay');
+                loginOverlay.classList.add('show');
+
+                console.log('🚀 Redirecting to dashboard...');
+                setTimeout(() => {
+                    window.location.href = `/dashboard?studio=${encodeURIComponent(studioData.StudioName.trim())}`;
+                }, 1500);
+
+            } catch (error) {
+                console.error('❌ Login error:', error);
+                errorMessage.textContent = error.message;
+            }
+        });
+
+        // Handle password reset
+        document.getElementById('resetPassword').addEventListener('click', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+
+            if (!email) {
+                errorMessage.textContent = 'Please enter your email address';
+                successMessage.style.display = 'none';
+                return;
+            }
+
+            try {
+                // Use Firebase's password reset functionality
+                await firebase.auth().sendPasswordResetEmail(email, {
+                    url: window.location.href, // Redirect back to the same studio login page
+                    handleCodeInApp: true
+                });
+                
+                // Show success message
+                errorMessage.textContent = '';
+                successMessage.textContent = 'Password reset email sent. Please check your inbox.';
+                successMessage.style.display = 'block';
+                
+                // Hide success message after 5 seconds
+                setTimeout(() => {
+                    successMessage.style.display = 'none';
+                }, 5000);
+            } catch (error) {
+                errorMessage.textContent = error.message;
+                successMessage.style.display = 'none';
+            }
+        });
+
+        // Helper function to adjust color brightness
+        function adjustColor(color, percent) {
+            const num = parseInt(color.replace('#', ''), 16);
+            const amt = Math.round(2.55 * percent);
+            const R = (num >> 16) + amt;
+            const G = (num >> 8 & 0x00FF) + amt;
+            const B = (num & 0x0000FF) + amt;
+            return '#' + (
+                0x1000000 +
+                (R < 255 ? (R < 1 ? 0 : R) : 255) * 0x10000 +
+                (G < 255 ? (G < 1 ? 0 : G) : 255) * 0x100 +
+                (B < 255 ? (B < 1 ? 0 : B) : 255)
+            ).toString(16).slice(1);
+        }
+
+        // Update the loadStudios function with the correct collection name
+        async function loadStudios() {
+            try {
+                console.log('Starting to load studios...');
+                const studioSelect = document.getElementById('studioSelect');
+                studioSelect.classList.add('loading');
+                
+                // Get studios from Firestore
+                const studiosSnapshot = await firebase.firestore()
+                    .collection('Studios')
+                    .get();
+
+                console.log('Fetched studios from Firestore:', studiosSnapshot.size, 'studios found');
+
+                window.studiosList = [];
+
+                studiosSnapshot.forEach(doc => {
+                    const data = doc.data();
+                    window.studiosList.push({
+                        id: doc.id,
+                        name: data.StudioName,
+                        city: data.City || '',
+                        searchText: `${data.StudioName.toLowerCase()} ${doc.id.toLowerCase()} ${data.City || ''}`.toLowerCase()
+                    });
+                });
+
+                // Clear loading state
+                studioSelect.classList.remove('loading');
+                
+                // Set default state with new text
+                studioSelect.innerHTML = '<option value="">Input studio name or Studio ID to login</option>';
+                
+                console.log('Studio loading complete');
+
+            } catch (error) {
+                console.error('Error loading studios:', error);
+                document.getElementById('errorMessage').textContent = 'Error loading studios list';
+                studioSelect.classList.remove('loading');
+            }
+        }
+
+        // Update the search functionality
+        document.getElementById('studioSearch').addEventListener('input', function(e) {
+            const searchText = e.target.value.toLowerCase();
+            const studioSelect = document.getElementById('studioSelect');
+            const studios = window.studiosList || [];
+
+            // Clear current options
+            studioSelect.innerHTML = '<option value="">Input studio name or Studio ID to login</option>';
+
+            if (searchText.length < 2) {
+                studioSelect.classList.remove('active');
+                return;
+            }
+
+            // Filter and add matching studios
+            const matchingStudios = studios.filter(studio => 
+                studio.searchText.includes(searchText)
+            );
+
+            if (matchingStudios.length > 0) {
+                matchingStudios.forEach(studio => {
+                    const option = document.createElement('option');
+                    option.value = studio.id;
+                    
+                    // Create the option text with studio name and full ID
+                    option.innerHTML = `
+                        ${studio.name}
+                        <span style="color: #888; font-size: 0.9em;">
+                            • ${studio.id}
+                        </span>
+                    `;
+                    
+                    studioSelect.appendChild(option);
+                });
+                studioSelect.classList.add('active');
+            } else {
+                const option = document.createElement('option');
+                option.value = "";
+                option.textContent = "No matching studios found";
+                studioSelect.appendChild(option);
+                studioSelect.classList.remove('active');
+            }
+        });
+
+        // Add click handler for studio select to prevent direct clicking
+        document.getElementById('studioSelect').addEventListener('click', function(e) {
+            if (!this.classList.contains('active')) {
+                e.preventDefault();
+                document.getElementById('studioSearch').focus();
+                alert('Please search for a studio name or ID first');
+            }
+        });
+
+        // Update the studio selection handler to use query parameters
+        document.getElementById('studioSelect').addEventListener('change', async function(e) {
+            const studioId = e.target.value;
+            if (studioId) {
+                try {
+                    console.log('🏢 Loading studio data for ID:', studioId);
+                    
+                    const studioDoc = await firebase.firestore()
+                        .collection('Studios')
+                        .doc(studioId)
+                        .get();
+
+                    if (studioDoc.exists) {
+                        const studioData = studioDoc.data();
+                        
+                        // Store data in localStorage
+                        localStorage.setItem('currentStudioId', studioId);
+                        localStorage.setItem('currentStudioData', JSON.stringify(studioData));
+
+                        // Create the URL for the studio-specific page - use query parameters instead
+                        const urlFriendlyName = encodeURIComponent(studioData.StudioName.trim());
+                        const newUrl = `/studiologin.html?studio=${urlFriendlyName}&id=${studioId}`;
+                        
+                        // Update URL and force refresh
+                        console.log('🔄 Redirecting to studio page...');
+                        window.location.href = newUrl;
+                    }
+                } catch (error) {
+                    console.error('❌ Error loading studio:', error);
+                    document.getElementById('errorMessage').textContent = 'Error loading studio information';
+                }
+            }
+        });
+
+        // Add new function to handle studio branding
+        function applyStudioBranding(studioData) {
+            console.log('🎨 Applying studio branding');
+
+            // Update header text
+            const studioText = document.querySelector('.studio-text');
+            studioText.style.opacity = '0';
+            setTimeout(() => {
+                studioText.textContent = `${studioData.StudioName} Login`;
+                studioText.style.opacity = '1';
+            }, 150);
+
+            // Update studio name and logo
+            const studioNameElement = document.getElementById('studioName');
+            const loginLogo = document.getElementById('studioLogo');
+            
+            if (studioData.LogoUrl) {
+                loginLogo.src = studioData.LogoUrl;
+                loginLogo.style.display = 'block';
+                studioNameElement.style.display = 'none';
+            } else {
+                loginLogo.style.display = 'none';
+                studioNameElement.textContent = studioData.StudioName;
+                studioNameElement.style.display = 'block';
+            }
+
+            // Update colors with transition
+            if (studioData.PrimaryColor) {
+                document.documentElement.style.setProperty('--primary-color', studioData.PrimaryColor);
+                document.documentElement.style.setProperty('--primary-hover', adjustColor(studioData.PrimaryColor, -10));
+                document.documentElement.style.setProperty('--checkmark-color', studioData.SecondaryColor || '#3A506B');
+            }
+            if (studioData.SecondaryColor) {
+                document.documentElement.style.setProperty('--secondary-color', studioData.SecondaryColor);
+            }
+
+            // Show studio ID
+            const studioIdDisplay = document.getElementById('studioIdDisplay');
+            studioIdDisplay.style.opacity = '0';
+            setTimeout(() => {
+                studioIdDisplay.textContent = `Studio ID: ${studioData.StudioId || ''}`;
+                studioIdDisplay.style.opacity = '1';
+            }, 150);
+
+            // Show back arrow
+            document.getElementById('backArrow').style.display = 'block';
+
+            // Update page title
+            document.title = `${studioData.StudioName} - Login`;
+        }
+
+        // Call loadStudios instead of loadStudioInfo when page loads
+        loadStudios();
+
+        // Update the updateStudioUI function
+        async function updateStudioUI(studioData, studioId) {
+            console.log('Updating UI with studio data:', studioData);
+
+            // Add loading class to login container
+            const loginContainer = document.querySelector('.login-container');
+            loginContainer.classList.add('loading');
+
+            try {
+                console.log('👥 Loading users for studio:', studioData.StudioName);
+                const usersSnapshot = await firebase.firestore()
+                    .collection('Studios')
+                    .doc(studioId)
+                    .collection('Users')
+                    .get();
+
+                console.log(`Found ${usersSnapshot.size} users in studio`);
+
+                const studioUsers = [];
+                usersSnapshot.forEach(doc => {
+                    const userData = doc.data();
+                    console.log('Raw user data:', userData);
+                    
+                    studioUsers.push({
+                        email: userData.Email?.toLowerCase() || userData.email?.toLowerCase(),
+                        name: `${userData.FirstName || userData.firstName} ${userData.LastName || userData.lastName}`,
+                        role: userData.Role || 'No Role',
+                        docId: doc.id
+                    });
+                });
+
+                localStorage.setItem('studioUsers', JSON.stringify(studioUsers));
+                
+                // Remove loading class and show content
+                loginContainer.classList.remove('loading');
+
+                // Update UI elements
+                const studioIdDisplay = document.getElementById('studioIdDisplay');
+                studioIdDisplay.textContent = `Studio ID: ${studioId}`;
+
+                const studioText = document.querySelector('.studio-text');
+                studioText.textContent = `${studioData.StudioName} Login`;
+
+                const studioNameElement = document.getElementById('studioName');
+                const loginLogo = document.getElementById('studioLogo');
+                
+                if (studioData.LogoUrl) {
+                    loginLogo.src = studioData.LogoUrl;
+                    loginLogo.style.display = 'block';
+                    studioNameElement.style.display = 'none';
+                } else {
+                    loginLogo.style.display = 'none';
+                    studioNameElement.textContent = studioData.StudioName;
+                    studioNameElement.style.display = 'block';
+                }
+
+                document.title = `${studioData.StudioName} - Login`;
+
+                if (studioData.PrimaryColor) {
+                    document.documentElement.style.setProperty('--primary-color', studioData.PrimaryColor);
+                    document.documentElement.style.setProperty('--primary-hover', adjustColor(studioData.PrimaryColor, -10));
+                    document.documentElement.style.setProperty('--checkmark-color', studioData.SecondaryColor || '#3A506B');
+                }
+                if (studioData.SecondaryColor) {
+                    document.documentElement.style.setProperty('--secondary-color', studioData.SecondaryColor);
+                }
+
+                document.getElementById('backArrow').style.display = 'block';
+                document.querySelector('.studio-selector-container').style.display = 'none';
+                document.querySelector('.login-container').classList.add('show');
+
+            } catch (error) {
+                console.error('❌ Error loading users:', error);
+                loginContainer.classList.remove('loading');
+            }
+        }
+
+        // Update the handleDirectStudioAccess function to use query parameters
+        async function handleDirectStudioAccess() {
+            // Get studio info from query parameters instead of path
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedStudioName = urlParams.get('studio');
+            const studioId = urlParams.get('id');
+            
+            if (studioId && encodedStudioName) {
+                try {
+                    console.log('🏢 Loading studio data for ID:', studioId);
+                    
+                    const studioDoc = await firebase.firestore()
+                        .collection('Studios')
+                        .doc(studioId)
+                        .get();
+
+                    if (studioDoc.exists) {
+                        const studioData = studioDoc.data();
+                        console.log('📋 Studio Information:', {
+                            name: studioData.StudioName,
+                            address: `${studioData.StudioAddress1} ${studioData.StudioAddress2}`,
+                            city: studioData.StudioCity,
+                            state: studioData.StudioState,
+                            owner: `${studioData.OwnerFirstName} ${studioData.OwnerLastName}`
+                        });
+
+                        // Load users immediately after studio data
+                        console.log('👥 Loading users for studio:', studioData.StudioName);
+                        const usersSnapshot = await firebase.firestore()
+                            .collection('Studios')
+                            .doc(studioId)
+                            .collection('Users')
+                            .get();
+
+                        console.log('📋 Studio Users:');
+                        const studioUsers = [];
+                        usersSnapshot.forEach(doc => {
+                            const userData = doc.data();
+                            studioUsers.push({
+                                email: userData.email?.toLowerCase(),
+                                name: `${userData.firstName} ${userData.lastName}`,
+                                role: userData.Role || 'No Role'
+                            });
+                            console.log(`   👤 ${userData.firstName} ${userData.lastName}`);
+                            console.log(`      📧 Email: ${userData.email}`);
+                            console.log(`      👑 Role: ${userData.Role || 'No Role'}`);
+                        });
+
+                        // Store everything in localStorage
+                        localStorage.setItem('studioUsers', JSON.stringify(studioUsers));
+                        localStorage.setItem('currentStudioId', studioId);
+                        localStorage.setItem('currentStudioData', JSON.stringify(studioData));
+
+                        console.log('✅ Successfully loaded studio and users');
+
+                        // Update UI
+                        document.querySelector('.studio-selector-container').style.display = 'none';
+                        updateStudioUI(studioData, studioId);
+                        document.querySelector('.login-container').classList.add('show');
+                    }
+                } catch (error) {
+                    console.error('❌ Error loading studio from URL:', error);
+                }
+            }
+        }
+
+        // Update the DOMContentLoaded event listener
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                console.log('🚀 Initializing application...');
+                
+                // Load studios first
+                await loadStudios();
+                
+                // Check URL for direct studio access using query parameters
+                const urlParams = new URLSearchParams(window.location.search);
+                const hasDirectAccess = urlParams.has('studio') && urlParams.has('id');
+                
+                if (hasDirectAccess) {
+                    console.log('📂 Direct studio access detected via query parameters');
+                    await handleDirectStudioAccess();
+                } else {
+                    // Check for onboarding studioId
+                    const studioId = urlParams.get('studioId') || localStorage.getItem('onboardingStudioId');
+                    
+                    if (studioId) {
+                        console.log('✅ Retrieved Studio ID:', studioId);
+                        sessionStorage.setItem('studioId', studioId);
+                        localStorage.removeItem('onboardingStudioId');
+                    }
+                }
+            } catch (error) {
+                console.error('❌ Error during initialization:', error);
+            }
+        });
+
+        // Update the showStudioSelector function
+        function showStudioSelector() {
+            // Set refresh flag before redirecting
+            sessionStorage.setItem('needsStudioLoginRefresh', 'true');
+            
+            // Redirect to base studiologin URL without parameters
+            window.location.href = '/studiologin.html';
+        }
+
+        // Add click handler for back arrow
+        document.getElementById('backArrow').addEventListener('click', showStudioSelector);
+
+        function showRecoveryModal() {
+            const modal = document.getElementById('passwordRecoveryModal');
+            modal.style.display = 'flex';
+            
+            // Pre-fill email if it exists in the login form
+            const loginEmail = document.getElementById('email').value;
+            if (loginEmail) {
+                document.getElementById('recoveryEmail').value = loginEmail;
+            }
+        }
+
+        function closeRecoveryModal() {
+            const modal = document.getElementById('passwordRecoveryModal');
+            modal.style.display = 'none';
+            document.getElementById('recoveryMessage').textContent = '';
+            document.getElementById('recoveryMessage').className = 'error-message';
+        }
+
+        async function handlePasswordRecovery(event) {
+            event.preventDefault();
+            const email = document.getElementById('recoveryEmail').value;
+            const messageElement = document.getElementById('recoveryMessage');
+            
+            try {
+                await firebase.auth().sendPasswordResetEmail(email);
+                
+                // Show success message
+                messageElement.textContent = 'Password reset email sent! Please check your inbox.';
+                messageElement.className = 'success-message';
+                
+                // Close modal after 3 seconds
+                setTimeout(() => {
+                    closeRecoveryModal();
+                }, 3000);
+                
+            } catch (error) {
+                messageElement.textContent = error.message;
+                messageElement.className = 'error-message';
+            }
+        }
+
+        // Update the reset password link click handler
+        document.getElementById('resetPassword').addEventListener('click', function(e) {
+            e.preventDefault();
+            showRecoveryModal();
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('passwordRecoveryModal');
+            if (event.target === modal) {
+                closeRecoveryModal();
+            }
+        });
+
+        // Add this at the beginning of your scripts
+        window.addEventListener('load', function() {
+            // Check if we're on the exact /studiologin URL
+            if (window.location.pathname === '/studiologin' || 
+                window.location.pathname === '/studiologin.html') {
+                
+                // Check if we need to refresh (using a flag in sessionStorage)
+                const needsRefresh = sessionStorage.getItem('needsStudioLoginRefresh');
+                
+                if (needsRefresh) {
+                    // Clear the flag
+                    sessionStorage.removeItem('needsStudioLoginRefresh');
+                    // Reload the page
+                    window.location.reload();
+                } else {
+                    // Set the flag for next time
+                    sessionStorage.setItem('needsStudioLoginRefresh', 'true');
+                }
+            }
+        });
+
+        // Add this JavaScript code to handle password visibility
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordToggle = document.getElementById('passwordToggle');
+            const passwordInput = document.getElementById('password');
+
+            if (passwordToggle && passwordInput) {
+                passwordToggle.addEventListener('click', function() {
+                    // Toggle password visibility
+                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInput.setAttribute('type', type);
+                    
+                    // Toggle icon
+                    this.classList.toggle('show');
+                    this.classList.toggle('fa-eye');
+                    this.classList.toggle('fa-eye-slash');
+                });
+            }
+        });
+    </script>
+
+    <div class="login-overlay" id="loginOverlay">
+        <div class="login-success-content">
+            <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            </svg>
+            <div class="login-success-message">Login Successful!</div>
+            <div class="login-redirect-message">Redirecting to dashboard...</div>
+        </div>
+    </div>
+
+    <div class="password-recovery-modal" id="passwordRecoveryModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeRecoveryModal()">&times;</span>
+            <h2 class="modal-title">Password Recovery</h2>
+            <p class="modal-message">Enter your email address to receive password reset instructions.</p>
+            <form class="recovery-form" onsubmit="handlePasswordRecovery(event)">
+                <input 
+                    type="email" 
+                    id="recoveryEmail" 
+                    placeholder="Enter your email"
+                    required
+                >
+                <button type="submit">Send Recovery Email</button>
+            </form>
+            <p id="recoveryMessage" class="error-message"></p>
+        </div>
+    </div>
+</body>
+</html> 

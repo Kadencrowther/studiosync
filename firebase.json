@@ -1,0 +1,306 @@
+{
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "functions": {
+    "source": "functions",
+    "runtime": "nodejs20"
+  },
+  "hosting": [
+    {
+      "target": "production",
+      "public": "public",
+      "cleanUrls": true,
+      "trailingSlash": false,
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "/studentregister",
+          "destination": "/studentregister.html"
+        },
+        {
+          "source": "/studentregister/**",
+          "destination": "/studentregister.html"
+        },
+        {
+          "source": "/register{,/**}",
+          "destination": "/register.html"
+        },
+        {
+          "source": "/dashboard",
+          "destination": "/dashboard.html"
+        },
+        {
+          "source": "/:studioId/dashboard",
+          "destination": "/dashboard.html"
+        },
+        {
+          "source": "/settings{,/**}",
+          "destination": "/settings.html"
+        },
+        {
+          "source": "/studiologin{,/**}",
+          "destination": "/studiologin.html"
+        },
+        {
+          "source": "/portallogin{,/**}",
+          "destination": "/portallogin.html"
+        },
+        {
+          "source": "/portal/**",
+          "destination": "/portal.html"
+        },
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ],
+      "headers": [
+        {
+          "source": "**",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, no-store, must-revalidate"
+            },
+            {
+              "key": "Access-Control-Allow-Origin",
+              "value": "*"
+            },
+            {
+              "key": "Access-Control-Allow-Methods",
+              "value": "GET,POST,OPTIONS"
+            },
+            {
+              "key": "Access-Control-Allow-Headers",
+              "value": "Content-Type,Authorization,Accept"
+            },
+            {
+              "key": "X-Robots-Tag",
+              "value": "all"
+            },
+            {
+              "key": "Access-Control-Max-Age",
+              "value": "3600"
+            },
+            {
+              "key": "Access-Control-Allow-Credentials",
+              "value": "true"
+            }
+          ]
+        },
+        {
+          "source": "/studentregister/**",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, no-store, must-revalidate"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "target": "dev1",
+      "public": "public",
+      "cleanUrls": true,
+      "trailingSlash": false,
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "/studentregister",
+          "destination": "/studentregister.html"
+        },
+        {
+          "source": "/studentregister/**",
+          "destination": "/studentregister.html"
+        },
+        {
+          "source": "/register{,/**}",
+          "destination": "/register.html"
+        },
+        {
+          "source": "/dashboard",
+          "destination": "/dashboard.html"
+        },
+        {
+          "source": "/:studioId/dashboard",
+          "destination": "/dashboard.html"
+        },
+        {
+          "source": "/settings{,/**}",
+          "destination": "/settings.html"
+        },
+        {
+          "source": "/studiologin{,/**}",
+          "destination": "/studiologin.html"
+        },
+        {
+          "source": "/portallogin{,/**}",
+          "destination": "/portallogin.html"
+        },
+        {
+          "source": "/portal/**",
+          "destination": "/portal.html"
+        },
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ],
+      "headers": [
+        {
+          "source": "**",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, no-store, must-revalidate"
+            },
+            {
+              "key": "Access-Control-Allow-Origin",
+              "value": "*"
+            },
+            {
+              "key": "Access-Control-Allow-Methods",
+              "value": "GET,POST,OPTIONS"
+            },
+            {
+              "key": "Access-Control-Allow-Headers",
+              "value": "Content-Type,Authorization,Accept"
+            },
+            {
+              "key": "X-Robots-Tag",
+              "value": "all"
+            },
+            {
+              "key": "Access-Control-Max-Age",
+              "value": "3600"
+            },
+            {
+              "key": "Access-Control-Allow-Credentials",
+              "value": "true"
+            }
+          ]
+        },
+        {
+          "source": "/studentregister/**",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, no-store, must-revalidate"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "target": "dev2",
+      "public": "public",
+      "cleanUrls": true,
+      "trailingSlash": false,
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "/studentregister",
+          "destination": "/studentregister.html"
+        },
+        {
+          "source": "/studentregister/**",
+          "destination": "/studentregister.html"
+        },
+        {
+          "source": "/register{,/**}",
+          "destination": "/register.html"
+        },
+        {
+          "source": "/dashboard",
+          "destination": "/dashboard.html"
+        },
+        {
+          "source": "/:studioId/dashboard",
+          "destination": "/dashboard.html"
+        },
+        {
+          "source": "/settings{,/**}",
+          "destination": "/settings.html"
+        },
+        {
+          "source": "/studiologin{,/**}",
+          "destination": "/studiologin.html"
+        },
+        {
+          "source": "/portallogin{,/**}",
+          "destination": "/portallogin.html"
+        },
+        {
+          "source": "/portal/**",
+          "destination": "/portal.html"
+        },
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ],
+      "headers": [
+        {
+          "source": "**",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, no-store, must-revalidate"
+            },
+            {
+              "key": "Access-Control-Allow-Origin",
+              "value": "*"
+            },
+            {
+              "key": "Access-Control-Allow-Methods",
+              "value": "GET,POST,OPTIONS"
+            },
+            {
+              "key": "Access-Control-Allow-Headers",
+              "value": "Content-Type,Authorization,Accept"
+            },
+            {
+              "key": "X-Robots-Tag",
+              "value": "all"
+            },
+            {
+              "key": "Access-Control-Max-Age",
+              "value": "3600"
+            },
+            {
+              "key": "Access-Control-Allow-Credentials",
+              "value": "true"
+            }
+          ]
+        },
+        {
+          "source": "/studentregister/**",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, no-store, must-revalidate"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "storage": {
+    "rules": "storage.rules"
+  }
+}

@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Launch Chrome against localhost",
+            "url": "http://localhost:5500/public/${relativeFile}",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Launch Student Register with Studio ID",
+            "url": "http://localhost:5501/public/studentregister.html?studio=jstudio=dJOUEMpa59nyyabI6zSC",
+            "webRoot": "${workspaceFolder}"
+        }
+    ]
+}

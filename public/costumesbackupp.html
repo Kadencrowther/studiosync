@@ -1,0 +1,1547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Costumes - Studio Sync</title>
+    <!-- Favicon -->
+    <link rel="icon" href="assets/ssdancer.svg" type="image/svg+xml">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="css/styles.css" rel="stylesheet" />
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-...+..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Custom CSS for Modern Styling -->
+    <style>
+        /* Custom styles for a modern sidebar, navbar, and header */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        /* Sidebar shadow */
+        #sidebar-wrapper {
+            background-color: #3DCED7;
+            min-height: 100vh;
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1); /* Added shadow */
+            transition: all 0.3s ease;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        /* Sidebar heading */
+        .sidebar-heading {
+            color: white;
+            background-color: #3DCED7;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        /* Sidebar item */
+        .list-group-item {
+            background-color: #3DCED7;
+            color: white;
+            border: none;
+            border-radius: 5px; /* Rounded corners for a modern look */
+            transition: background-color 0.3s ease, padding 0.3s ease, transform 0.3s ease;
+            padding: 1rem 1.5rem;
+        }
+
+        /* Hover effect for sidebar items */
+        .list-group-item:hover,
+        .list-group-item-action:focus {
+            background-color: #36B8C0;
+            color: white;
+            transform: translateX(5px); /* Slight move to the right on hover */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Shadow on hover */
+        }
+
+        /* Navbar shadow */
+        .navbar {
+            background-color: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Added subtle shadow */
+            padding: 1rem 1.5rem;
+        }
+
+        /* Navbar link hover effect */
+        .navbar .navbar-nav .nav-link {
+            color: #333;
+            transition: color 0.3s ease;
+        }
+
+        .navbar .navbar-nav .nav-link:hover {
+            color: #3DCED7;
+        }
+
+        /* Center logo styling */
+        .navbar-brand-center {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* Button shadow */
+        .btn-primary {
+            background-color: #3DCED7;
+            border-color: #3DCED7;
+            border-radius: 30px;
+            padding: 0.5rem 1rem;
+            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Button shadow */
+        }
+
+        .btn-primary:hover,
+        .btn-primary:focus {
+            background-color: #36B8C0;
+            border-color: #36B8C0;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* More prominent shadow on hover */
+        }
+
+        #page-content-wrapper {
+            transition: margin-left 0.3s ease;
+            flex: 1;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        #wrapper.toggled #sidebar-wrapper {
+            margin-left: -250px;
+        }
+
+        #wrapper.toggled #page-content-wrapper {
+            margin-left: 0;
+        }
+
+        @media (max-width: 768px) {
+            #sidebar-wrapper {
+                margin-left: -250px;
+            }
+
+            #wrapper.toggled #sidebar-wrapper {
+                margin-left: 0;
+            }
+        }
+
+        .container-fluid {
+            background-color: #fff;
+            color: #525f7f;
+            padding: 2rem;
+        }
+
+        .list-group-item[aria-expanded="true"] .fa-chevron-down {
+            transform: rotate(180deg);
+            transition: transform 0.3s ease;
+        }
+
+        /* Added styles for the All Classes page */
+        .table-container {
+            margin-top: 20px;
+        }
+        .btn-create-class {
+            margin-bottom: 20px;
+        }
+
+        /* Reduced font size for tooltips */
+        .tooltip-inner.small {
+            font-size: 0.7rem;
+            padding: 0.15rem 0.3rem;
+        }
+
+        /* Reduced arrow size for tooltips */
+        .tooltip .arrow::before {
+            border-width: 0.3rem 0.3rem 0;
+        }
+
+        /* Add this to your existing styles or in a <style> tag in the head */
+        #classesTable tbody tr.selected {
+            background-color: #e6f2ff !important;
+        }
+        .btn-warning {
+            background-color: #ffe699;
+            border-color: #ffd966;
+            color: #000;
+        }
+        .btn-warning:hover {
+            background-color: #ffd966;
+            border-color: #ffc933;
+            color: #000;
+        }
+        .btn-warning.text-white {
+            color: white !important;
+        }
+        #editClassBtn, #deleteClassBtn {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            border-radius: 0.2rem;
+        }
+
+        #classSearch {
+            max-width: 300px;
+            margin-left: auto;
+        }
+
+        @media (max-width: 768px) {
+            .mb-3.d-flex {
+                flex-wrap: wrap;
+            }
+            #classSearch {
+                margin-top: 10px;
+                max-width: 100%;
+            }
+        }
+
+        /* Add these new styles for responsiveness */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        #classesTable {
+            width: 100% !important;
+        }
+
+        @media (max-width: 992px) {
+            #classesTable {
+                font-size: 0.85rem;
+            }
+
+            #classesTable th,
+            #classesTable td {
+                padding: 0.5rem 0.3rem;
+            }
+
+            #classesTable th {
+                white-space: nowrap;
+            }
+        }
+
+        @media (max-width: 768px) {
+            #classesTable {
+                font-size: 0.75rem;
+            }
+
+            #classesTable th,
+            #classesTable td {
+                padding: 0.3rem 0.2rem;
+            }
+        }
+
+        /* Full width container on larger screens */
+        @media (min-width: 992px) {
+            .container-fluid {
+                max-width: 100%;
+                padding-left: 30px;
+                padding-right: 30px;
+            }
+        }
+
+        /* Responsive styles for DataTables */
+        @media (max-width: 768px) {
+            .dataTables_wrapper .dataTables_length,
+            .dataTables_wrapper .dataTables_filter,
+            .dataTables_wrapper .dataTables_info,
+            .dataTables_wrapper .dataTables_paginate {
+                float: none;
+                text-align: center;
+                margin-bottom: 10px;
+            }
+        }
+
+        /* Styles for responsive table */
+        @media (max-width: 768px) {
+            #classesTable {
+                border-collapse: collapse;
+            }
+
+            #classesTable th,
+            #classesTable td {
+                border: 1px solid #ddd;
+                padding: 8px;
+                text-align: left;
+            }
+
+            #classesTable th {
+                background-color: #f2f2f2;
+            }
+
+            #classesTable tr {
+                border-bottom: 1px solid #ddd;
+            }
+
+            #classesTable tr:last-child {
+                border-bottom: none;
+            }
+
+            #classesTable td:before {
+                content: attr(data-label);
+                font-weight: bold;
+                display: inline-block;
+                width: 6.5em;
+            }
+        }
+
+        .is-invalid {
+            border-color: #dc3545;
+        }
+
+        .btn-group-sm.is-invalid {
+            outline: 2px solid #dc3545;
+            border-radius: 0.25rem;
+        }
+
+        /* Updated styles for the table */
+        #classesTable {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        #classesTable thead th {
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+            font-weight: 600;
+        }
+
+        #classesTable tbody td {
+            border-top: 1px solid #dee2e6;
+        }
+
+        #classesTable tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        #classesTable tbody tr.selected {
+            background-color: #e6f2ff !important;
+        }
+
+        /* Responsive styles for the table */
+        @media (max-width: 992px) {
+            #classesTable {
+                font-size: 0.85rem;
+            }
+
+            #classesTable th,
+            #classesTable td {
+                padding: 0.5rem 0.3rem;
+            }
+
+            #classesTable th {
+                white-space: nowrap;
+            }
+        }
+
+        @media (max-width: 768px) {
+            #classesTable {
+                font-size: 0.75rem;
+            }
+
+            #classesTable th,
+            #classesTable td {
+                padding: 0.3rem 0.2rem;
+            }
+        }
+
+        /* Style for the search input */
+        #classSearch {
+            border-radius: 20px;
+            border: 1px solid #ced4da;
+            padding: 0.5rem 1rem;
+            transition: box-shadow 0.15s ease-in-out;
+        }
+
+        #classSearch:focus {
+            box-shadow: 0 0 0 0.2rem rgba(61, 206, 215, 0.25);
+            border-color: #3DCED7;
+        }
+
+        /* Style for pagination */
+        .dataTables_paginate .paginate_button {
+            border: none !important;
+            background: none !important;
+            color: #495057 !important;
+        }
+
+        .dataTables_paginate .paginate_button:hover {
+            background: #e9ecef !important;
+            border-radius: 4px;
+        }
+
+        .dataTables_paginate .paginate_button.current {
+            background: #3DCED7 !important;
+            color: white !important;
+            border-radius: 4px;
+        }
+
+        .navbar-nav .dropdown-menu {
+            min-width: 250px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            padding: 0;
+        }
+
+        .navbar-nav .dropdown-item {
+            padding: 12px 20px;
+            color: #333;
+            transition: background-color 0.3s ease;
+        }
+
+        .navbar-nav .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .navbar-nav .dropdown-divider {
+            margin: 0;
+            border-top-color: #e9ecef;
+        }
+
+        .navbar-nav .dropdown-header {
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #6c757d;
+            background-color: #f8f9fa;
+        }
+
+        .navbar-nav .dropdown-item-text {
+            padding: 12px 20px;
+            color: #6c757d;
+        }
+
+        .fa-user-circle {
+            font-size: 1.8em;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            padding: 0.5rem 0.5rem;
+        }
+
+        .fa-bell {
+            font-size: 1.2em;
+            position: relative;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            font-size: 0.6em;
+            background-color: #dc3545;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 5px;
+            font-weight: bold;
+            min-width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+        }
+
+        .notification-icon {
+            margin-right: 15px;
+            font-size: 1.2em;
+            color: #3DCED7;
+        }
+
+        .notification-content {
+            flex-grow: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .notification-subtitle {
+            font-size: 0.85em;
+            color: #6c757d;
+        }
+
+        .navbar-nav .dropdown-toggle::after {
+            display: none;
+        }
+
+        @media (max-width: 991.98px) {
+            .navbar-brand-center {
+                position: static;
+                transform: none;
+            }
+
+            .navbar-nav {
+                flex-direction: row;
+            }
+
+            .nav-item.dropdown {
+                position: static;
+            }
+
+            .dropdown-menu {
+                left: 0;
+                right: 0;
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 575.98px) {
+            .navbar-brand-center {
+                max-width: 200px;
+                margin: 0 auto;
+            }
+
+            #studio-logo, #studio-name {
+                max-width: 100%;
+            }
+
+            .navbar-nav {
+                justify-content: center;
+            }
+        }
+
+        .navbar-brand-center {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        #studio-logo, #studio-name {
+            max-width: 100%;
+        }
+
+        @media (max-width: 991.98px) {
+            .navbar-brand-center {
+                position: static;
+                transform: none;
+            }
+        }
+
+        @media (max-width: 575.98px) {
+            .navbar-brand-center {
+                max-width: 200px;
+                margin: 0 auto;
+            }
+        }
+
+        /* Add the custom scrollbar styles */
+        #sidebar-wrapper::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #sidebar-wrapper::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        #sidebar-wrapper::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+        }
+
+        #sidebar-wrapper::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .form-select[multiple] {
+            height: 150px;
+        }
+
+        /* Update wrapper and page content styles */
+        #wrapper {
+            display: flex;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        #page-content-wrapper {
+            min-width: 100vw;
+            margin-left: -250px;
+            transition: margin 0.25s ease-out;
+        }
+
+        #wrapper.toggled #page-content-wrapper {
+            margin-left: 0;
+            width: 100%;
+        }
+
+        /* Update table container styles */
+        .table-responsive {
+            width: 100%;
+            transition: width 0.25s ease-out;
+        }
+
+        #costumesTable {
+            width: 100% !important;
+            transition: width 0.25s ease-out;
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        #costumesTable thead th {
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+            font-weight: 600;
+        }
+
+        #costumesTable tbody td {
+            border-top: 1px solid #dee2e6;
+        }
+
+        #costumesTable tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        #costumesTable tbody tr.selected {
+            background-color: #e6f2ff !important;
+        }
+
+        /* Media queries for responsive design */
+        @media (min-width: 768px) {
+            #page-content-wrapper {
+                min-width: 0;
+                width: 100%;
+                margin-left: 0;
+            }
+
+            #wrapper.toggled #sidebar-wrapper {
+                margin-left: -250px;
+            }
+
+            #wrapper.toggled #page-content-wrapper {
+                margin-left: 0;
+                width: 100%;
+            }
+        }
+
+        /* Responsive styles for the table */
+        @media (max-width: 992px) {
+            #costumesTable {
+                font-size: 0.85rem;
+            }
+
+            #costumesTable th,
+            #costumesTable td {
+                padding: 0.5rem 0.3rem;
+            }
+
+            #costumesTable th {
+                white-space: nowrap;
+            }
+        }
+
+        @media (max-width: 768px) {
+            #costumesTable {
+                font-size: 0.75rem;
+            }
+
+            #costumesTable th,
+            #costumesTable td {
+                padding: 0.3rem 0.2rem;
+            }
+        }
+
+        /* Style for pagination */
+        .dataTables_paginate .paginate_button {
+            border: none !important;
+            background: none !important;
+            color: #495057 !important;
+        }
+
+        .dataTables_paginate .paginate_button:hover {
+            background: #e9ecef !important;
+            border-radius: 4px;
+        }
+
+        .dataTables_paginate .paginate_button.current {
+            background: #3DCED7 !important;
+            color: white !important;
+            border-radius: 4px;
+        }
+    </style>
+
+    <!-- Add DataTables CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap5.min.css">
+</head>
+<body>
+    <div class="d-flex" id="wrapper">
+        <!-- Sidebar-->
+        <div class="border-end" id="sidebar-wrapper">
+            <div class="sidebar-heading">
+                <img src="assets/Studio Sync.svg" alt="Studio Sync Logo" style="width: 150px; height: auto;">
+            </div>
+            <div class="list-group list-group-flush">
+                <a class="list-group-item list-group-item-action p-3" href="dashboard.html">
+                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="class-calendar.html">
+                    <i class="fas fa-calendar-alt me-2"></i>Class Calendar
+                </a>
+                <a class="list-group-item list-group-item-action p-3 d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#classesDropdown" role="button" aria-expanded="false" aria-controls="classesDropdown">
+                    <span><i class="fas fa-chalkboard-teacher me-2"></i>Classes</span>
+                    <i class="fas fa-chevron-down"></i>
+                </a>
+                <div class="collapse" id="classesDropdown">
+                    <a class="list-group-item list-group-item-action ps-5" href="allclasses.html"><i class="fas fa-list me-2"></i>All Classes</a>
+                    <a class="list-group-item list-group-item-action ps-5" href="recreational.html"><i class="fas fa-dumbbell me-2"></i>Recreational</a>
+                    <a class="list-group-item list-group-item-action ps-5" href="team.html"><i class="fas fa-users me-2"></i>Team</a>
+                    <a class="list-group-item list-group-item-action ps-5" href="soloduettrio.html"><i class="fas fa-user-friends me-2"></i>Solo/Duet/Trio</a>
+                </div>
+                <a class="list-group-item list-group-item-action p-3" href="families.html">
+                    <i class="fas fa-home me-2"></i>Families
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="students.html">
+                    <i class="fas fa-user-graduate me-2"></i>Students
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="instructors.html">
+                    <i class="fas fa-chalkboard-teacher me-2"></i>Instructors
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="costumes.html">
+                    <i class="fas fa-tshirt me-2"></i>Costumes
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="communication.html">
+                    <i class="fas fa-comments me-2"></i>Communication
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="charges-payments.html">
+                    <i class="fas fa-dollar-sign me-2"></i>Charges/Payments
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="reports.html">
+                    <i class="fas fa-chart-bar me-2"></i>Reports
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="settings.html">
+                    <i class="fas fa-cog me-2"></i>Settings
+                </a>
+            </div>
+        </div>
+
+        <!-- Page content wrapper-->
+        <div id="page-content-wrapper">
+            <!-- Top navigation-->
+            <nav class="navbar navbar-expand-lg navbar-light border-bottom">
+                <div class="container-fluid">
+                    <button class="btn btn-primary" id="sidebarToggle" style="width: 100px;" data-bs-toggle="tooltip" data-bs-placement="right" title="Toggle Menu" data-bs-trigger="hover focus">
+                        <i class="fas fa-bars"></i>
+                    </button>
+
+                    <!-- Centered Logo -->
+                    <div class="navbar-brand-center">
+                        <img id="studio-logo" src="" alt="Studio Logo" style="max-height: 120px; max-width: 240px; display: none;">
+                        <span id="studio-name" style="font-size: 1.5rem; font-weight: bold; color: #3DCED7;"></span>
+                    </div>
+
+                    <!-- Notifications and Profile Icons -->
+                    <div class="navbar-nav ms-auto d-flex align-items-center">
+                        <!-- Notifications Dropdown -->
+                        <div class="nav-item dropdown me-2">
+                            <a class="nav-link" href="#" id="notificationsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-bell"></i>
+                                <span class="notification-badge">3</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationsDropdown">
+                                <li><h6 class="dropdown-header">Notifications</h6></li>
+                                <li>
+                                    <a class="dropdown-item notification-item" href="#">
+                                        <div class="notification-icon"><i class="fas fa-envelope"></i></div>
+                                        <div class="notification-content">
+                                            <div class="notification-title">New message from John</div>
+                                            <div class="notification-subtitle">5 minutes ago</div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item notification-item" href="#">
+                                        <div class="notification-icon"><i class="fas fa-user-plus"></i></div>
+                                        <div class="notification-content">
+                                            <div class="notification-title">New student enrolled</div>
+                                            <div class="notification-subtitle">2 hours ago</div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item notification-item" href="#">
+                                        <div class="notification-icon"><i class="fas fa-clock"></i></div>
+                                        <div class="notification-content">
+                                            <div class="notification-title">Class starts in 1 hour</div>
+                                            <div class="notification-subtitle">Hip Hop Beginners</div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-center" href="#">View all notifications</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Profile Icon Dropdown -->
+                        <div class="nav-item dropdown">
+                            <a class="nav-link" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                                <li><h6 class="dropdown-header" id="userName">User Name</h6></li>
+                                <li><p class="dropdown-item-text" id="userEmail">user@example.com</p></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="settings.html"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                                <li><a class="dropdown-item" href="account.html"><i class="fas fa-user-cog me-2"></i>Account</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#" id="logoutButton"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Page content-->
+            <div class="container-fluid">
+                <h1 class="mt-4">Costumes</h1>
+                <div class="mb-3 d-flex align-items-center">
+                    <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#addCostumeModal">
+                        <i class="fas fa-plus"></i> Create New Costume
+                    </button>
+                    <button id="editCostumeBtn" class="btn btn-sm btn-warning text-white me-2" disabled>
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button id="deleteCostumeBtn" class="btn btn-sm btn-danger me-2" disabled>
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                    <div class="flex-grow-1">
+                        <input type="text" id="classSearch" class="form-control" placeholder="Search costumes...">
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table id="costumesTable" class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAll"></th>
+                                <th>Costume Name</th>
+                                <th>Season</th>
+                                <th>Size</th>
+                                <th>Color</th>
+                                <th>Quantity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Table body will be populated by DataTables -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Costume Modal -->
+    <div class="modal fade" id="addCostumeModal" tabindex="-1" aria-labelledby="addCostumeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addCostumeModalLabel">Create New Costume</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addCostumeForm">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="costumeName" class="form-label">Costume Name</label>
+                                <input type="text" class="form-control" id="costumeName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="season" class="form-label">Season</label>
+                                <select class="form-select" id="season" required>
+                                    <option value="">Select Season</option>
+                                    <option value="2024-25">2024-25 Season</option>
+                                    <option value="2023-24">2023-24 Season</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="size" class="form-label">Size</label>
+                                <select class="form-select" id="size" required>
+                                    <option value="">Select Size</option>
+                                    <option value="Child XS">Child XS</option>
+                                    <option value="Child S">Child S</option>
+                                    <option value="Child M">Child M</option>
+                                    <option value="Child L">Child L</option>
+                                    <option value="Adult XS">Adult XS</option>
+                                    <option value="Adult S">Adult S</option>
+                                    <option value="Adult M">Adult M</option>
+                                    <option value="Adult L">Adult L</option>
+                                    <option value="Adult XL">Adult XL</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="color" class="form-label">Color</label>
+                                <input type="text" class="form-control" id="color" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="quantity" class="form-label">Quantity</label>
+                                <input type="number" class="form-control" id="quantity" min="0" required>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveCostumeBtn">Save Costume</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Costume Modal -->
+    <div class="modal fade" id="editCostumeModal" tabindex="-1" aria-labelledby="editCostumeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editCostumeModalLabel">Edit Costume</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editCostumeForm">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="costumeName" class="form-label">Costume Name</label>
+                                <input type="text" class="form-control" id="costumeName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="season" class="form-label">Season</label>
+                                <select class="form-select" id="season" required>
+                                    <option value="">Select Season</option>
+                                    <option value="2024-25">2024-25 Season</option>
+                                    <option value="2023-24">2023-24 Season</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="size" class="form-label">Size</label>
+                                <select class="form-select" id="size" required>
+                                    <option value="">Select Size</option>
+                                    <option value="Child XS">Child XS</option>
+                                    <option value="Child S">Child S</option>
+                                    <option value="Child M">Child M</option>
+                                    <option value="Child L">Child L</option>
+                                    <option value="Adult XS">Adult XS</option>
+                                    <option value="Adult S">Adult S</option>
+                                    <option value="Adult M">Adult M</option>
+                                    <option value="Adult L">Adult L</option>
+                                    <option value="Adult XL">Adult XL</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="color" class="form-label">Color</label>
+                                <input type="text" class="form-control" id="color" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="quantity" class="form-label">Quantity</label>
+                                <input type="number" class="form-control" id="quantity" min="0" required>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveEditBtn">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteConfirmModalLabel">Confirm Deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="deleteConfirmMessage"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Yes, Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Costume Details Modal -->
+    <div class="modal fade" id="costumeDetailsModal" tabindex="-1" aria-labelledby="costumeDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="costumeDetailsModalLabel">Costume Details</h5>
+                    <div class="ms-auto">
+                        <select class="form-select form-select-sm d-inline-block w-auto me-2" id="publishStatus">
+                            <option value="draft">Draft</option>
+                            <option value="publish">Publish</option>
+                        </select>
+                        <button type="button" class="btn btn-primary btn-sm me-2" id="saveCostumeDetails">Save</button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <strong>Costume Name:</strong> <span id="detailCostumeName"></span>
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Season:</strong> <span id="detailSeason"></span>
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Size:</strong> <span id="detailSize"></span>
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Color:</strong> <span id="detailColor"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <strong>Quantity:</strong> <span id="detailQuantity"></span>
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Address:</strong> <span id="detailAddress"></span>
+                        </div>
+                        <div class="col-md-3">
+                            <strong>City:</strong> <span id="detailCity"></span>
+                        </div>
+                        <div class="col-md-3">
+                            <strong>State:</strong> <span id="detailState"></span>
+                        </div>
+                    </div>
+                    <ul class="nav nav-tabs" id="costumeDetailsTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab" aria-controls="overview" aria-selected="true">Overview</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="instructors-tab" data-bs-toggle="tab" data-bs-target="#instructors" type="button" role="tab" aria-controls="instructors" aria-selected="false">Instructors</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="costumes-tab" data-bs-toggle="tab" data-bs-target="#costumes" type="button" role="tab" aria-controls="costumes" aria-selected="false">Costumes</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content mt-3" id="costumeDetailsTabContent">
+                        <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab">
+                            <h6>Notes</h6>
+                            <textarea class="form-control" id="overviewNotes" rows="5"></textarea>
+                            <button class="btn btn-primary mt-2" id="saveOverviewNotes">Save Notes</button>
+                        </div>
+                        <div class="tab-pane fade" id="instructors" role="tabpanel" aria-labelledby="instructors-tab">
+                            <h6>Instructors</h6>
+                            <ul id="instructorList" class="list-group mb-3">
+                                <!-- Instructors will be listed here -->
+                            </ul>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="newInstructor" placeholder="Enter instructor name">
+                                <button class="btn btn-primary" id="addInstructor">Add Instructor</button>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="costumes" role="tabpanel" aria-labelledby="costumes-tab">
+                            <h6>Costumes</h6>
+                            <ul id="costumeList" class="list-group mb-3">
+                                <!-- Costumes will be listed here -->
+                            </ul>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="newCostume" placeholder="Enter costume description">
+                                <button class="btn btn-primary" id="addCostume">Add Costume</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap core JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Core theme JS-->
+    <script src="js/scripts.js"></script>
+    <!-- Add DataTables JS -->
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap5.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap5.min.js"></script>
+    <script>
+        // Initialize DataTables
+        $(document).ready(function() {
+            var table = $('#costumesTable').DataTable({
+                responsive: true,
+                columns: [
+                    { 
+                        data: null,
+                        defaultContent: '',
+                        orderable: false,
+                        className: 'select-checkbox',
+                        render: function (data, type, row) {
+                            return '<input type="checkbox" class="row-select">';
+                        }
+                    },
+                    { data: 'costumeName' },
+                    { data: 'season' },
+                    { data: 'size' },
+                    { data: 'color' },
+                    { data: 'quantity' }
+                ],
+                columnDefs: [
+                    { responsivePriority: 1, targets: 0 },
+                    { responsivePriority: 2, targets: 1 },
+                    { responsivePriority: 3, targets: 2 },
+                    { responsivePriority: 4, targets: 3 },
+                    { responsivePriority: 5, targets: 4 },
+                    { responsivePriority: 6, targets: 5 }
+                ],
+                select: {
+                    style: 'multi',
+                    selector: 'td:first-child'
+                },
+                order: [[1, 'asc']],
+                dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6">><"row"<"col-sm-12"tr>><"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                language: {
+                    info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                    infoEmpty: "Showing 0 to 0 of 0 entries",
+                    infoFiltered: "(filtered from _MAX_ total entries)",
+                    lengthMenu: "Show _MENU_ entries"
+                },
+                lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
+                pageLength: 10
+            });
+
+            // Move the "show entries" dropdown below the table
+            $('.dataTables_length').appendTo('.dataTables_wrapper');
+
+            // Handle row selection
+            $('#costumesTable tbody').on('click', 'input.row-select', function(e) {
+                e.stopPropagation();
+                var $row = $(this).closest('tr');
+                $row.toggleClass('selected');
+                updateEditButtonState();
+            });
+
+            // Handle select all checkbox
+            $('#selectAll').on('click', function() {
+                var rows = table.rows({ 'search': 'applied' }).nodes();
+                $('input[type="checkbox"]', rows).prop('checked', this.checked);
+                if (this.checked) {
+                    $(rows).addClass('selected');
+                } else {
+                    $(rows).removeClass('selected');
+                }
+                updateEditButtonState();
+            });
+
+            // Handle edit button click
+            $('#editCostumeBtn').on('click', function() {
+                var selectedRow = table.row('.selected');
+                if (selectedRow.any()) {
+                    var selectedData = selectedRow.data();
+                    populateEditModal(selectedData);
+                    $('#editCostumeModal').modal('show');
+                }
+            });
+
+            // Handle save edit button click
+            $('#saveEditBtn').on('click', function() {
+                if (validateForm('#editCostumeForm')) {
+                    var editedCostume = getFormData('#editCostumeForm');
+                    var selectedRow = table.row('.selected');
+                    selectedRow.data(editedCostume).draw();
+                    $('#editCostumeModal').modal('hide');
+                    // Keep the row selected after editing
+                    $(selectedRow.node()).find('input.row-select').prop('checked', true);
+                    $(selectedRow.node()).addClass('selected');
+                    updateEditButtonState();
+                } else {
+                    alert('Please fill out all required fields.');
+                }
+            });
+
+            // Handle modal close events
+            $('#editCostumeModal').on('hidden.bs.modal', function () {
+                // Keep the row selected when the modal is closed
+                var selectedRow = table.row('.selected');
+                if (selectedRow.any()) {
+                    $(selectedRow.node()).find('input.row-select').prop('checked', true);
+                    $(selectedRow.node()).addClass('selected');
+                }
+                updateEditButtonState();
+            });
+
+            // Handle save costume button click
+            $('#saveCostumeBtn').on('click', function() {
+                if (validateForm('#addCostumeForm')) {
+                    var newCostume = getFormData('#addCostumeForm');
+                    table.row.add(newCostume).draw();
+                    $('#addCostumeModal').modal('hide');
+                    $('#addCostumeForm')[0].reset();
+                } else {
+                    alert('Please fill out all required fields.');
+                }
+            });
+
+            // Function to update the edit button state
+            function updateEditButtonState() {
+                var selectedRows = table.rows('.selected').data().length;
+                $('#editCostumeBtn').prop('disabled', selectedRows !== 1);
+                $('#deleteCostumeBtn').prop('disabled', selectedRows === 0);
+            }
+
+            // Function to populate the edit modal
+            function populateEditModal(data) {
+                $('#editCostumeForm #costumeName').val(data.costumeName);
+                $('#editCostumeForm #season').val(data.season);
+                $('#editCostumeForm #size').val(data.size);
+                $('#editCostumeForm #color').val(data.color);
+                $('#editCostumeForm #quantity').val(data.quantity);
+            }
+
+            // Function to get form data
+            function getFormData(formId) {
+                return {
+                    costumeName: $(formId + ' #costumeName').val().trim(),
+                    season: $(formId + ' #season').val(),
+                    size: $(formId + ' #size').val(),
+                    color: $(formId + ' #color').val().trim(),
+                    quantity: parseInt($(formId + ' #quantity').val())
+                };
+            }
+
+            // Function to validate the form
+            function validateForm(formId) {
+                var isValid = true;
+                $(formId + ' :input[required]').each(function() {
+                    if ($(this).val() === '') {
+                        isValid = false;
+                        $(this).addClass('is-invalid');
+                    } else {
+                        $(this).removeClass('is-invalid');
+                    }
+                });
+                return isValid;
+            }
+
+            // Handle delete button click
+            $('#deleteCostumeBtn').on('click', function() {
+                var selectedRows = table.rows('.selected').data().length;
+                var message = selectedRows === 1 
+                    ? 'Are you sure you want to delete this costume?' 
+                    : 'Are you sure you want to delete these ' + selectedRows + ' costumes?';
+                $('#deleteConfirmMessage').text(message);
+                $('#deleteConfirmModal').modal('show');
+            });
+
+            // Handle confirm delete button click
+            $('#confirmDeleteBtn').on('click', function() {
+                table.rows('.selected').remove().draw(false);
+                updateEditButtonState();
+                $('#deleteConfirmModal').modal('hide');
+            });
+
+            // Use the existing search input for DataTables search
+            $('#classSearch').on('keyup', function() {
+                table.search(this.value).draw();
+            });
+
+            // Handle row click to open Costume Details modal
+            $('#costumesTable tbody').on('click', 'tr', function(e) {
+                if (!$(e.target).is('input:checkbox')) {
+                    var data = table.row(this).data();
+                    populateCostumeDetailsModal(data);
+                    $('#costumeDetailsModal').modal('show');
+                }
+            });
+
+            // Function to populate the Costume Details modal
+            function populateCostumeDetailsModal(data) {
+                $('#detailCostumeName').text(data.costumeName);
+                $('#detailSeason').text(data.season);
+                $('#detailSize').text(data.size);
+                $('#detailColor').text(data.color);
+                $('#detailQuantity').text(data.quantity);
+                $('#detailAddress').text(data.address);
+                $('#detailCity').text(data.city);
+                $('#detailState').text(data.state);
+                $('#detailZipCode').text(data.zipCode);
+
+                // Clear existing lists
+                $('#instructorList, #costumeList').empty();
+
+                // Populate lists if data exists
+                if (data.instructors) {
+                    data.instructors.forEach(function(instructor) {
+                        $('#instructorList').append(`<li class="list-group-item">${instructor}</li>`);
+                    });
+                }
+                if (data.costumes) {
+                    data.costumes.forEach(function(costume) {
+                        $('#costumeList').append(`<li class="list-group-item">${costume}</li>`);
+                    });
+                }
+
+                // Set overview notes if they exist
+                $('#overviewNotes').val(data.overviewNotes || '');
+            }
+
+            // Handle adding instructors
+            $('#addInstructor').on('click', function() {
+                var newInstructor = $('#newInstructor').val().trim();
+                if (newInstructor) {
+                    $('#instructorList').append(`<li class="list-group-item">${newInstructor}</li>`);
+                    $('#newInstructor').val('');
+                    updateClassData('instructors');
+                }
+            });
+
+            // Handle adding costumes
+            $('#addCostume').on('click', function() {
+                var newCostume = $('#newCostume').val().trim();
+                if (newCostume) {
+                    $('#costumeList').append(`<li class="list-group-item">${newCostume}</li>`);
+                    $('#newCostume').val('');
+                    updateClassData('costumes');
+                }
+            });
+
+            // Handle saving overview notes
+            $('#saveOverviewNotes').on('click', function() {
+                updateClassData('overviewNotes');
+            });
+
+            // Function to update class data in the DataTable
+            function updateClassData(field) {
+                var rowIndex = table.row('.selected').index();
+                var data = table.row(rowIndex).data();
+
+                switch(field) {
+                    case 'instructors':
+                        data.instructors = [];
+                        $('#instructorList li').each(function() {
+                            data.instructors.push($(this).text());
+                        });
+                        break;
+                    case 'costumes':
+                        data.costumes = [];
+                        $('#costumeList li').each(function() {
+                            data.costumes.push($(this).text());
+                        });
+                        break;
+                    case 'overviewNotes':
+                        data.overviewNotes = $('#overviewNotes').val();
+                        break;
+                }
+
+                table.row(rowIndex).data(data).draw(false);
+            }
+
+            // Handle saving costume details
+            $('#saveCostumeDetails').on('click', function() {
+                var rowIndex = table.row('.selected').index();
+                var data = table.row(rowIndex).data();
+                
+                // Update the data with the values from the modal
+                data.costumeName = $('#detailCostumeName').text();
+                data.season = $('#detailSeason').text();
+                data.size = $('#detailSize').text();
+                data.color = $('#detailColor').text();
+                data.quantity = $('#detailQuantity').text();
+                data.address = $('#detailAddress').text();
+                data.city = $('#detailCity').text();
+                data.state = $('#detailState').text();
+                data.zipCode = $('#detailZipCode').text();
+                data.overviewNotes = $('#overviewNotes').val();
+                data.publishStatus = $('#publishStatus').val();
+
+                // Update the row data
+                table.row(rowIndex).data(data).draw(false);
+
+                // If status is 'publish', add to costume calendar
+                if (data.publishStatus === 'publish') {
+                    addToCostumeCalendar(data);
+                }
+
+                $('#costumeDetailsModal').modal('hide');
+            });
+
+            // Function to add costume to calendar
+            function addToCostumeCalendar(costumeData) {
+                // This is a placeholder function. In a real application, you would typically
+                // make an AJAX call to your server to update the database and then update the calendar.
+                console.log('Costume published to calendar:', costumeData);
+                
+                // For demonstration purposes, we'll store the published costume in localStorage
+                var publishedCostumes = JSON.parse(localStorage.getItem('publishedCostumes')) || [];
+                publishedCostumes.push(costumeData);
+                localStorage.setItem('publishedCostumes', JSON.stringify(publishedCostumes));
+            }
+
+            // Load families into select dropdown
+            function loadFamilies() {
+                // This would typically be an API call to get families
+                firebase.firestore().collection('families').get()
+                    .then((querySnapshot) => {
+                        const familySelect = $('#familyName');
+                        familySelect.empty().append('<option value="">Select Family</option>');
+                        
+                        querySnapshot.forEach((doc) => {
+                            const family = doc.data();
+                            familySelect.append(`<option value="${doc.id}">${family.lastName}, ${family.firstName}</option>`);
+                        });
+                    })
+                    .catch((error) => {
+                        console.error("Error loading families: ", error);
+                    });
+            }
+
+            // Call loadFamilies when the add/edit modals are opened
+            $('#addCostumeModal').on('show.bs.modal', loadFamilies);
+            $('#editCostumeModal').on('show.bs.modal', loadFamilies);
+
+            // Function to load available classes
+            function loadClasses() {
+                firebase.firestore().collection('classes').get()
+                    .then((querySnapshot) => {
+                        const classSelect = $('#registeredClasses');
+                        classSelect.empty();
+                        
+                        querySnapshot.forEach((doc) => {
+                            const classData = doc.data();
+                            classSelect.append(`<option value="${doc.id}">${classData.className}</option>`);
+                        });
+                    })
+                    .catch((error) => {
+                        console.error("Error loading classes: ", error);
+                    });
+            }
+
+            // Load classes when modals are opened
+            $('#addCostumeModal').on('show.bs.modal', function() {
+                loadClasses();
+                loadFamilies();
+            });
+            
+            $('#editCostumeModal').on('show.bs.modal', function() {
+                loadClasses();
+                loadFamilies();
+            });
+        });
+    </script>
+
+    <!-- Add these scripts at the end of the body, just before the closing </body> tag -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+
+    <script>
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDRSW3u6gJSs98Z2Mkp5DYSC__ibDXXHAE",
+            authDomain: "studiosync-af73d.firebaseapp.com",
+            projectId: "studiosync-af73d",
+            storageBucket: "studiosync-af73d.appspot.com",
+            messagingSenderId: "172555302276",
+            appId: "1:172555302276:web:55b661f9849441e2de59d1",
+            measurementId: "G-EK7EFQGMSG"
+        };
+        firebase.initializeApp(firebaseConfig);
+
+        // Function to get current user data
+        function getCurrentUserData() {
+            firebase.auth().onAuthStateChanged(function(user) {
+                if (user) {
+                    console.log("User Name:", user.displayName);
+                    console.log("User ID:", user.uid);
+                    console.log("User Email:", user.email);
+
+                    // Update the profile dropdown
+                    document.getElementById('userName').textContent = user.displayName || 'User Name';
+                    document.getElementById('userEmail').textContent = user.email || 'user@example.com';
+
+                    // Fetch additional user data from Firestore
+                    firebase.firestore().collection('users').doc(user.uid).get()
+                        .then((doc) => {
+                            if (doc.exists) {
+                                const userData = doc.data();
+                                if (userData.name) {
+                                    document.getElementById('userName').textContent = userData.name;
+                                }
+                                if (userData.studioLogoUrl) {
+                                    loadStudioLogo(userData.studioLogoUrl, userData.studioName);
+                                } else if (userData.studioName) {
+                                    loadStudioLogo(null, userData.studioName);
+                                }
+                            }
+                        })
+                        .catch((error) => {
+                            console.log("Error getting user document:", error);
+                        });
+                } else {
+                    console.log('No user signed in');
+                    window.location.href = '/login.html';
+                }
+            });
+        }
+
+        // Function to load and display the studio logo
+        function loadStudioLogo(logoUrl, studioName) {
+            const logoElement = document.getElementById('studio-logo');
+            const nameElement = document.getElementById('studio-name');
+            
+            if (logoUrl) {
+                logoElement.src = logoUrl;
+                logoElement.alt = studioName || 'Studio Logo';
+                logoElement.style.display = 'block';
+                nameElement.style.display = 'none';
+            } else {
+                logoElement.style.display = 'none';
+                nameElement.textContent = studioName || 'Studio Sync';
+                nameElement.style.display = 'block';
+            }
+        }
+
+        // Call the function when the page loads
+        getCurrentUserData();
+
+        // Logout functionality
+        document.getElementById('logoutButton').addEventListener('click', function() {
+            firebase.auth().signOut().then(() => {
+                // Sign-out successful.
+                window.location.href = '/login.html';
+            }).catch((error) => {
+                // An error happened.
+                console.error('Logout Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>
