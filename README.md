@@ -102,7 +102,7 @@ We have three environments:
 5. Save your changes to GitHub:
    ```bash
    git add .
-   git commit -m "Describe what you changed"
+   git commit -m "Add charges/payments modularization and sync updates"
    git push origin feature/what-you-are-working-on
    ```
 

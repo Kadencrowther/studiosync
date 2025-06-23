@@ -1,0 +1,95 @@
+// Compact Database Map for SyncSense AI Assistant
+const COMPACT_DATABASE_MAP = {
+  collections: {
+    Students: {
+      description: "All students enrolled in the studio",
+      commonQueries: ["How many students", "Active students", "New students", "Student list"],
+      keyFields: ["FirstName", "LastName", "Active", "DateOfBirth", "FamilyId", "CreatedAt"],
+      queryPatterns: {
+        activeStudents: { filters: [{"field": "Active", "operator": "==", "value": true}] },
+        newStudents: { filters: [{"field": "CreatedAt", "operator": ">=", "value": "DATE_RANGE"}] }
+      }
+    },
+    
+    Classes: {
+      description: "Class schedules and enrollment",
+      commonQueries: ["Class schedule", "Full classes", "Class capacity", "Today's classes"],
+      keyFields: ["ClassName", "Days", "StartTime", "MaxSize", "Students", "InstructorId"],
+      queryPatterns: {
+        todayClasses: { filters: [{"field": "Days", "operator": "array-contains", "value": "DAY"}] },
+        fullClasses: { description: "Classes where Students.length >= MaxSize" },
+        availableClasses: { description: "Classes where Students.length < MaxSize" }
+      }
+    },
+    
+    Families: {
+      description: "Family accounts and billing information",
+      commonQueries: ["Family balance", "Unpaid families", "Auto-pay families", "Contact info"],
+      keyFields: ["FirstName", "LastName", "Balance", "IsOnAutoPay", "Email", "Phone"],
+      queryPatterns: {
+        unpaidFamilies: { filters: [{"field": "Balance", "operator": ">", "value": 0}] },
+        autopayFamilies: { filters: [{"field": "IsOnAutoPay", "operator": "==", "value": true}] }
+      }
+    },
+    
+    Charges: {
+      description: "Billing charges and invoices",
+      commonQueries: ["Unpaid charges", "Monthly revenue", "Outstanding balances"],
+      keyFields: ["Amount", "Status", "FamilyId", "Month", "Year", "Description"],
+      queryPatterns: {
+        unpaidCharges: { filters: [{"field": "Status", "operator": "!=", "value": "Paid"}] },
+        monthlyCharges: { filters: [{"field": "Month", "operator": "==", "value": "MONTH"}, {"field": "Year", "operator": "==", "value": "YEAR"}] }
+      }
+    },
+    
+    Payments: {
+      description: "Payment records and transactions",
+      commonQueries: ["Recent payments", "Payment history", "Revenue totals"],
+      keyFields: ["Amount", "PaymentDate", "FamilyId", "Status", "Description"],
+      queryPatterns: {
+        recentPayments: { orderBy: {"field": "PaymentDate", "direction": "desc"} },
+        failedPayments: { filters: [{"field": "Status", "operator": "==", "value": "Failed"}] }
+      }
+    },
+    
+    Instructors: {
+      description: "Teaching staff information",
+      commonQueries: ["Active instructors", "Instructor list", "Who is teaching"],
+      keyFields: ["FirstName", "LastName", "Active", "Email", "Phone"],
+      queryPatterns: {
+        activeInstructors: { filters: [{"field": "Active", "operator": "==", "value": true}] }
+      }
+    }
+  },
+  
+  relationships: {
+    "Students": "Linked to Families via FamilyId, enrolled in Classes via Students array",
+    "Classes": "Taught by Instructors via InstructorId, contain Students via Students array",
+    "Families": "Have multiple Students, receive Charges, make Payments",
+    "Charges": "Belong to Families via FamilyId, paid through Payments",
+    "Payments": "Made by Families via FamilyId, pay down Charges"
+  },
+  
+  commonQueries: {
+    "Student Count": "Count documents in Students collection",
+    "Active Students": "Count Students where Active = true",
+    "Class Capacity": "Compare Classes.Students.length with Classes.MaxSize",
+    "Unpaid Charges": "Get Charges where Status != 'Paid'",
+    "Monthly Revenue": "Sum Amount in Payments for specific month",
+    "Family Balances": "Get Families where Balance > 0",
+    "Today's Schedule": "Get Classes where Days contains current day",
+    "Full Classes": "Get Classes where Students.length >= MaxSize",
+    "Available Spots": "Get Classes where Students.length < MaxSize",
+    "Auto-Pay Families": "Get Families where IsOnAutoPay = true"
+  },
+  
+  queryGuidance: {
+    "When user asks about numbers/counts": "Use type: 'count' queries",
+    "When user asks for lists": "Use type: 'list' queries with appropriate filters",
+    "When user asks for totals/sums": "Use type: 'sum' queries on Amount fields",
+    "When user asks about specific time periods": "Add date range filters",
+    "When user asks about relationships": "Query multiple collections and link via IDs"
+  }
+};
+
+module.exports = COMPACT_DATABASE_MAP; 

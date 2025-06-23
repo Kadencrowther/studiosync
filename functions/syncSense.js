@@ -3,7 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const axios = require("axios");
 const admin = require("firebase-admin");
-const DATABASE_MAP = require("./databaseMap");
+const { getRelevantDatabaseContext } = require("./collectionLoader");
 
 // Initialize Firebase Admin only if not already initialized
 if (!admin.apps.length) {
@@ -30,258 +30,118 @@ app.use((req, res, next) => {
   next();
 });
 
-// Create a formatted version of the database structure for the prompt
-const formatDatabaseStructure = () => {
-    const structure = {
-        collections: {},
-        fieldRelationships: DATABASE_MAP.fieldRelationships,
-        smartQueryTemplates: DATABASE_MAP.smartQueryTemplates,
-        relationships: DATABASE_MAP.relationships,
-        queryClassificationKeywords: DATABASE_MAP.queryClassificationKeywords
-    };
+// Enhanced system prompt with conversational priority and efficient database references
+const SYSTEM_PROMPT = `You are SyncSense, a Studio Management AI Assistant.
 
-    // Format collections with enhanced information
-    Object.entries(DATABASE_MAP.collections.Studios.subCollections).forEach(([collectionName, details]) => {
-        structure.collections[collectionName] = {
-            description: details.description,
-            queryKeywords: details.queryKeywords || [],
-            fields: details.fields || {},
-            commonFilters: details.commonFilters || {},
-            queryPatterns: details.queryPatterns || {},
-            subCollections: details.subCollections || {}
-        };
-    });
+**WHAT YOU ARE:**
+You are an intelligent conversational AI that serves as a Studio Management AI Assistant. You are knowledgeable about studio operations, dance education, business management, and can provide helpful advice and guidance.
 
-    return JSON.stringify(structure, null, 2);
-};
+**YOUR PURPOSE:**
+Respond to user prompts in a helpful, conversational way using your extensive knowledge base about studio management, dance education, business practices, and general assistance. You should be friendly, knowledgeable, and supportive.
 
-// Enhanced system prompt with conversational focus
-const SYSTEM_PROMPT = `I am SyncSense, a conversational AI studio management assistant. I help studio owners and staff with their daily operations through natural conversation.
+**YOUR APPROACH:**
+1. **PRIMARY**: Use your internal knowledge base to provide helpful answers about studio management, dance education, business advice, and general topics
+2. **SECONDARY**: Only access the studio database when the user specifically asks for current, real-time data about their studio (like current student counts, today's schedule, specific billing information, etc.)
 
-**WHO I AM:**
-- I'm a friendly, knowledgeable assistant specializing in studio management across all industries
-- I can have casual conversations and provide general advice
-- I have access to your studio's database when needed for specific questions
-- I understand various studio industries (dance, music, art, martial arts, fitness, etc.) and common challenges
+**WHEN TO USE DATABASE:**
+Only query the database when the user asks for specific, current information that requires real-time data, such as:
+- "How many students do we currently have?"
+- "What's today's class schedule?"
+- "Show me unpaid invoices"
+- "What's our current revenue this month?"
+- "List students in [specific class]"
 
-**WHEN I ACCESS THE DATABASE:**
-I only query the database for specific data requests like:
-- "How many students do we have?"
-- "Which classes are full?"
-- "Show me unpaid charges"
-- "What's our revenue this month?"
-- "List all active instructors"
-
-**WHEN I DON'T ACCESS THE DATABASE:**
-For casual conversation, introductions, general advice, or explanations:
-- "Hello" / "Who are you?" / "How are you?"
-- "How should I handle a difficult parent?"
-- "What's the best way to market classes?"
-- "Explain studio policies"
-- General business advice and industry knowledge
-
-**MY CONVERSATIONAL STYLE:**
-- Friendly and professional
-- Knowledgeable about studio operations across various industries
-- Helpful with both data and advice
-- I introduce myself when asked
-- I engage naturally in conversation
-- I adapt my advice based on your studio's industry type
+**WHEN TO USE KNOWLEDGE BASE:**
+Use your internal knowledge for questions like:
+- General studio management advice
+- Dance education best practices
+- Business guidance and recommendations
+- Scheduling tips and strategies
+- Communication advice
+- Industry standards and practices
+- Greeting and casual conversation
 
 **DATABASE ACCESS:**
-When I do need database information, I have access to comprehensive studio data including:
-${formatDatabaseStructure()}
+When you need to access current studio data, you will be provided with relevant collection information for the specific data you need to query. Use this focused information to create appropriate database queries.
 
-I provide natural, helpful responses whether drawing from data or general knowledge, tailored to your specific type of studio.`;
+**RESPONSE GUIDELINES:**
+- Be conversational, helpful, and knowledgeable
+- Provide practical advice and suggestions
+- Only mention database access when you actually need to query current studio data
+- Keep responses focused on studio management and related topics
+- Be supportive and understanding of studio management challenges
 
-// Improved query classification function
+Remember: You are primarily a knowledgeable assistant who happens to have database access when needed, not a database query tool.`;
+
+// Updated query classification function - prioritizing conversational responses
 function classifyQuery(query) {
     const queryLower = query.toLowerCase().trim();
     
-    // Strong casual indicators (these should NEVER be database queries)
-    const strongCasualIndicators = [
-        'hello', 'hi', 'hey', 'good morning', 'good afternoon', 'good evening',
-        'who are you', 'what are you', 'introduce yourself', 'tell me about yourself',
-        'how are you', 'what\'s up', 'how\'s it going',
-        'thank you', 'thanks', 'bye', 'goodbye', 'see you',
-        'help', 'what can you do', 'what do you do',
-        'how should i', 'what should i', 'advice', 'recommend', 'suggest',
-        'explain', 'what is', 'what does', 'define', 'meaning',
-        'how to', 'best way', 'tips', 'strategy'
+    // Strong database indicators - ONLY for specific current data requests
+    const databaseIndicators = [
+        'how many students do we have', 'current student count', 'today\'s schedule',
+        'show me unpaid', 'list unpaid', 'current revenue', 'this month\'s revenue',
+        'show me students in', 'list students in', 'who is in class',
+        'current balance', 'families owing', 'payment status',
+        'schedule for today', 'classes today', 'what classes are today',
+        'current enrollment', 'how many families', 'active instructors',
+        'unpaid invoices', 'outstanding charges', 'recent payments'
     ];
 
-    // Check for strong casual indicators first
-    for (const indicator of strongCasualIndicators) {
+    // Check for specific database requests
+    for (const indicator of databaseIndicators) {
         if (queryLower.includes(indicator)) {
-            return { type: 'casual', confidence: 10, reason: `Contains casual indicator: "${indicator}"` };
+            return { type: 'database', confidence: 10 };
         }
-    }
-
-    // Strong database indicators
-    const strongDatabaseIndicators = [
-        'how many', 'count', 'total', 'sum', 'list', 'show me', 'find', 'get',
-        'who owes', 'unpaid', 'balance', 'revenue', 'income', 'charges',
-        'which students', 'which classes', 'which families', 'which instructors',
-        'full classes', 'available', 'capacity', 'enrollment',
-        'this month', 'this week', 'today', 'yesterday', 'last month'
-    ];
-
-    // Check for strong database indicators
-    for (const indicator of strongDatabaseIndicators) {
-        if (queryLower.includes(indicator)) {
-            // Also check for collection matches
-            const collections = Object.entries(DATABASE_MAP.collections.Studios.subCollections);
-            const matchedCollections = [];
-            
-            collections.forEach(([collectionName, details]) => {
-                if (details.queryKeywords) {
-                    const matches = details.queryKeywords.filter(keyword => 
-                        queryLower.includes(keyword.toLowerCase()));
-                    if (matches.length > 0) {
-                        matchedCollections.push({
-                            collection: collectionName,
-                            matches: matches.length,
-                            keywords: matches
-                        });
-                    }
-                }
-            });
-
-            return { 
-                type: 'database', 
-                collections: matchedCollections,
-                confidence: 10,
-                reason: `Contains database indicator: "${indicator}"`
-            };
-        }
-    }
-
-    // Check for collection-specific keywords (medium confidence)
-    const collections = Object.entries(DATABASE_MAP.collections.Studios.subCollections);
-    const matchedCollections = [];
-    
-    collections.forEach(([collectionName, details]) => {
-        if (details.queryKeywords) {
-            const matches = details.queryKeywords.filter(keyword => 
-                queryLower.includes(keyword.toLowerCase()));
-            if (matches.length > 0) {
-                matchedCollections.push({
-                    collection: collectionName,
-                    matches: matches.length,
-                    keywords: matches
-                });
-            }
-        }
-    });
-
-    // If we found collection matches, it might be a database query
-    if (matchedCollections.length > 0) {
-        // But check if it's actually asking for advice about these topics
-        const adviceIndicators = ['how to', 'should i', 'best way', 'advice', 'help with', 'tips for'];
-        const isAdviceQuery = adviceIndicators.some(indicator => queryLower.includes(indicator));
-        
-        if (isAdviceQuery) {
-            return { 
-                type: 'casual', 
-                confidence: 7, 
-                reason: 'Contains collection keywords but asking for advice, not data'
-            };
-        }
-
-        return { 
-            type: 'database', 
-            collections: matchedCollections,
-            confidence: 5,
-            reason: 'Contains collection-specific keywords'
-        };
     }
     
-    // Default to casual for unclear queries
-    return { 
-        type: 'casual', 
-        confidence: 1, 
-        reason: 'No clear database indicators found, defaulting to casual conversation'
-    };
+    // Check for general data questions that might need database
+    if (queryLower.includes('how many') && (queryLower.includes('student') || queryLower.includes('class') || queryLower.includes('famil'))) {
+        return { type: 'database', confidence: 8 };
+    }
+    
+    if (queryLower.includes('list') && (queryLower.includes('student') || queryLower.includes('class') || queryLower.includes('unpaid'))) {
+        return { type: 'database', confidence: 8 };
+    }
+    
+    if (queryLower.includes('show me') && (queryLower.includes('schedule') || queryLower.includes('unpaid') || queryLower.includes('revenue'))) {
+        return { type: 'database', confidence: 8 };
+    }
+
+    // Everything else is conversational - this is the default
+    return { type: 'casual', confidence: 10 };
 }
 
-// Enhanced contextual data fetching - only for database queries
-async function getSmartContextualData(classification, studioId) {
-    // Only query database for actual database queries
+// Smart contextual data fetching using the new efficient system
+async function getSmartContextualData(classification, studioId, userQuery) {
     if (classification.type === 'casual') {
-        console.log('Casual conversation detected - no database access needed');
+        console.log('Casual conversation - no database access needed');
         return null;
     }
     
-    console.log('Database query detected:', classification.reason);
+    console.log('Database query detected - getting relevant database context');
     
-    const queries = [];
-    const collectionsToQuery = new Set();
-    
-    // Add collections from classification
-    if (classification.collections && classification.collections.length > 0) {
-        classification.collections.forEach(match => {
-            collectionsToQuery.add(match.collection);
-        });
-    }
-    
-    // If no specific collections identified but high confidence database query
-    if (collectionsToQuery.size === 0 && classification.confidence >= 8) {
-        // Query key collections for general context
-        collectionsToQuery.add('Classes');
-        collectionsToQuery.add('Students');
-        collectionsToQuery.add('Families');
-        console.log('High confidence database query but no specific collections - querying key collections');
-    }
-    
-    // If no collections to query, return null (let AI handle without data)
-    if (collectionsToQuery.size === 0) {
-        console.log('No specific collections identified - AI will handle without database access');
-        return null;
-    }
-    
-    // Create optimized queries for each collection
-    for (const collectionName of collectionsToQuery) {
-        const collectionInfo = DATABASE_MAP.collections.Studios.subCollections[collectionName];
-        
-        if (!collectionInfo) continue;
-        
-        // Use query patterns if available
-        if (collectionInfo.queryPatterns) {
-            Object.entries(collectionInfo.queryPatterns).forEach(([patternName, pattern]) => {
-                queries.push({
-                    ...pattern,
-                    type: pattern.type || "list",
-                    collection: collectionName,
-                    patternName
-                });
-            });
-        } else {
-            // Default query for the collection
-            queries.push({
-                type: "list",
-                collection: collectionName,
-                limit: 20 // Smaller limit for efficiency
-            });
-        }
-    }
-    
-    // Execute queries
-    const results = {};
     try {
-        for (const query of queries) {
-            const data = await queryDatabase(query, studioId);
-            const key = query.patternName ? 
-                `${query.collection}_${query.patternName}` : 
-                query.collection;
-            results[key] = data;
+        // Use the new efficient collection loader
+        const databaseContext = getRelevantDatabaseContext(userQuery);
+        
+        if (!databaseContext) {
+            console.log('No relevant database context identified');
+            return null;
         }
         
-        console.log('Smart contextual data retrieved for:', Array.from(collectionsToQuery));
-        return results;
+        console.log('Relevant database context prepared:', Object.keys(databaseContext.relevantCollections));
+        return databaseContext;
+        
     } catch (error) {
-        console.error('Error fetching smart contextual data:', error);
-        return null; // Return null instead of empty object for cleaner handling
+        console.error('Error getting database context:', error);
+        return null;
     }
+}
+
+function getCurrentDay() {
+    const days = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+    return days[new Date().getDay()];
 }
 
 async function queryDatabase(query, studioId) {
@@ -298,7 +158,7 @@ async function queryDatabase(query, studioId) {
     }
 }
 
-// Enhanced AI query processing
+// Enhanced AI query processing with conversational priority and efficient database context
 async function queryOpenAI(userMessage, studioId) {
     try {
         const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
@@ -315,30 +175,41 @@ async function queryOpenAI(userMessage, studioId) {
             { role: "user", content: userMessage }
         ];
 
-        // Only fetch database context for database queries
+        // Only fetch database data for specific data requests
         if (classification.type === 'database') {
-            const contextualData = await getSmartContextualData(classification, studioId);
+            console.log('Specific data request detected - accessing studio database');
             
-            if (contextualData && Object.keys(contextualData).length > 0) {
+            const databaseContext = await getSmartContextualData(classification, studioId, userMessage);
+            
+            if (databaseContext) {
                 messages.push({
                     role: "assistant", 
-                    content: `I've retrieved relevant data from your studio's database. Let me analyze it to answer your question.`
+                    content: `I'll check your studio's database for the information you requested.`
                 });
                 messages.push({
                     role: "user", 
-                    content: `Database context: ${JSON.stringify(contextualData, null, 2)}`
+                    content: `Here's the relevant database structure for your query: ${JSON.stringify(databaseContext, null, 1)}\n\nPlease create appropriate database queries and provide a helpful response to: "${userMessage}"`
+                });
+            } else {
+                // If no database context available, provide general guidance
+                messages.push({
+                    role: "assistant", 
+                    content: `I understand you're looking for specific studio data. Let me provide guidance on this topic.`
+                });
+                messages.push({
+                    role: "user", 
+                    content: `The user asked: "${userMessage}" but I couldn't identify specific database collections needed. Please provide helpful guidance or suggest how to find this information.`
                 });
             }
-        } else {
-            console.log('Casual conversation - proceeding without database access');
         }
+        // For casual queries, just process with knowledge base - no mention of database
 
         const response = await axios.post(
             'https://api.openai.com/v1/chat/completions',
             {
                 model: "gpt-4-turbo-preview",
                 messages: messages,
-                max_tokens: 800, // Reduced for efficiency
+                max_tokens: 800,
                 temperature: 0.7
             },
             {
@@ -354,13 +225,12 @@ async function queryOpenAI(userMessage, studioId) {
     } catch (error) {
         console.error("Error processing query:", error);
         
-        // More specific error handling
         if (error.response?.status === 429) {
             return "I'm experiencing high demand right now. Please try again in a moment.";
         } else if (error.response?.status === 401) {
             return "I'm having trouble connecting to my AI service. Please contact support.";
         } else {
-            return "I apologize, but I encountered an error processing your request. Please try again.";
+            return "I apologize, but I encountered an error processing your request. I'm here to help with studio management questions - please try asking again or rephrase your question.";
         }
     }
 }
