@@ -887,16 +887,38 @@
 
         /* Chat Interface Styles */
         .chat-container {
-            height: calc(100vh - 200px);
-            background: #fff;
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            height: calc(100vh - 120px);  /* Adjusted height */
+            margin: 20px;
+            padding-bottom: env(safe-area-inset-bottom, 20px);
             display: flex;
             flex-direction: column;
-            margin: 20px;
-            overflow: hidden;
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            backdrop-filter: blur(10px);
+            position: relative;
+            border-radius: 16px;  /* Added rounded corners */
+            overflow: hidden;  /* Ensure content respects rounded corners */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Add verification message styles */
+        .verification-message {
+            font-size: 10px;
+            color: rgba(180, 180, 180, 0.9);  /* Slightly darker gray */
+            text-align: left;
+            margin-top: 4px;
+            margin-left: 24px;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+            font-style: italic;
+            font-weight: 300;
+            letter-spacing: 0.2px;
+        }
+
+        .verification-message.show {
+            opacity: 0.7;  /* Not fully opaque even when shown */
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .chat-header {
@@ -943,6 +965,9 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             line-height: 1.5;
             background: transparent;
+            font-size: 0.95rem;
+            white-space: pre-wrap;
+            word-wrap: break-word;
         }
 
         .user-message {
@@ -956,18 +981,25 @@
         .assistant-message {
             color: #1a1a1a;
             align-self: flex-start;
-            border-bottom-left-radius: 4px;
+            border-radius: 24px;
             margin-right: 15%;
             border: 1px solid rgba(0, 0, 0, 0.05);
             background: rgba(255, 255, 255, 0.5);
             backdrop-filter: blur(10px);
+            min-width: 200px;
         }
 
+        /* Update chat input container styles */
         .chat-input-container {
+            position: sticky;
+            bottom: 0;
+            background: white;
             padding: 24px;
-            background: #ffffff;
+            padding-bottom: calc(24px + env(safe-area-inset-bottom, 30px)); /* Increased bottom padding */
+            margin-bottom: 30px; /* Increased bottom margin */
             border-top: 1px solid rgba(0, 0, 0, 0.05);
             box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.03);
+            z-index: 100;
         }
 
         .chat-input-wrapper {
@@ -1060,18 +1092,19 @@
             display: flex;
             gap: 6px;
             padding: 16px 20px;
-            background: white;
-            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 24px;
             align-self: flex-start;
             margin: 4px 0;
-            animation: fadeIn 0.3s ease-in;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            margin-right: 15%;
             border: 1px solid rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(10px);
+            max-width: 85%;
         }
 
         .typing-dot {
-            width: 10px;
-            height: 10px;
+            width: 8px;
+            height: 8px;
             background: var(--primary-color);
             border-radius: 50%;
             opacity: 0.6;
@@ -1113,9 +1146,69 @@
         /* Responsive Design */
         @media (max-width: 768px) {
             .chat-container {
+                height: calc(100vh - 140px);
                 margin: 10px;
-                height: calc(100vh - 180px);
-                border-radius: 12px;
+                margin-bottom: calc(35px + env(safe-area-inset-bottom, 30px)); /* Increased bottom margin */
+            }
+
+            .chat-input-container {
+                padding: 16px;
+                padding-bottom: calc(20px + env(safe-area-inset-bottom, 30px)); /* Increased padding */
+                margin-bottom: 35px; /* Increased margin */
+            }
+
+            /* Add padding to body to prevent content from being hidden behind keyboard */
+            body {
+                padding-bottom: env(safe-area-inset-bottom, 20px);
+            }
+
+            /* Ensure messages don't get hidden behind input */
+            .chat-messages {
+                padding-bottom: calc(100px + env(safe-area-inset-bottom, 30px)); /* Increased padding */
+                margin-bottom: 30px; /* Increased margin */
+            }
+
+            /* Adjust input wrapper for better mobile experience */
+            .chat-input-wrapper {
+                border-radius: 20px;
+                padding: 8px;
+                background: #f8f9fa;
+                margin-bottom: env(safe-area-inset-bottom, 10px);
+            }
+
+            /* Make the input area more touch-friendly */
+            .chat-input {
+                font-size: 16px !important; /* Prevent zoom on iOS */
+                padding: 12px;
+                min-height: 44px; /* Minimum touch target size */
+                border-radius: 16px;
+            }
+
+            /* Make send button more touch-friendly */
+            .send-button {
+                width: 44px;
+                height: 44px;
+                padding: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 22px;
+            }
+
+            /* Add bottom space for iPhone models with home indicator */
+            @supports (padding: max(0px)) {
+                .chat-container {
+                    padding-bottom: max(30px, env(safe-area-inset-bottom, 30px)); /* Increased padding */
+                }
+
+                .chat-input-container {
+                    padding-bottom: max(25px, env(safe-area-inset-bottom, 30px)); /* Increased padding */
+                    margin-bottom: max(35px, env(safe-area-inset-bottom, 35px)); /* Increased margin */
+                }
+
+                .chat-messages {
+                    padding-bottom: max(100px, calc(100px + env(safe-area-inset-bottom, 30px))); /* Increased padding */
+                }
             }
 
             .message {
@@ -1191,26 +1284,25 @@
 
         /* Remove the old processing animation styles */
         .processing-animation {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 200px; /* Adjust based on your GIF size */
-            height: 200px; /* Adjust based on your GIF size */
+            order: 2;  /* This ensures it appears after user messages */
+            position: relative;
+            width: auto;
+            height: auto;
             display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 10;
-        }
-
-        .processing-animation.active {
-            display: flex;
-            animation: fadeIn 0.3s ease-in;
+            align-self: flex-start;
+            margin: 8px 0;
+            padding: 20px 24px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 24px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(10px);
+            max-width: 85%;
+            margin-right: 15%;
         }
 
         .processing-animation img {
-            width: 100%;
-            height: 100%;
+            width: 32px;
+            height: 32px;
             object-fit: contain;
         }
 
@@ -1218,6 +1310,222 @@
         .processing-circle,
         .processing-pulse {
             display: none;
+        }
+
+        .processing-animation {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: auto;
+            height: auto;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 24px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .processing-animation.active {
+            display: flex;
+        }
+
+        .processing-animation img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Mobile-specific styles */
+        @media (max-width: 768px) {
+            .chat-container {
+                height: calc(100vh - 120px);  /* Adjusted height for mobile */
+                margin: 10px;
+                border-radius: 12px;
+            }
+
+            .chat-header {
+                padding: 12px 16px;
+                position: sticky;
+                top: 0;
+                z-index: 100;
+            }
+
+            .chat-header h2 {
+                font-size: 1.3rem;
+            }
+
+            .chat-messages {
+                padding: 12px;
+                gap: 12px;
+            }
+
+            .message {
+                max-width: 90%;
+                padding: 12px 16px;
+                font-size: 0.9rem;
+            }
+
+            .chat-input-container {
+                padding: 12px;
+                position: sticky;
+                bottom: 0;
+                background: white;
+                z-index: 100;
+            }
+
+            .chat-input-wrapper {
+                padding: 6px;
+            }
+
+            .chat-input {
+                padding: 12px;
+                font-size: 0.95rem;
+                max-height: 100px;
+            }
+
+            .send-button {
+                padding: 12px;
+                height: 44px;
+                font-size: 1rem;
+            }
+
+            .example-queries {
+                padding: 12px;
+            }
+
+            .example-query {
+                padding: 8px 12px;
+                font-size: 0.85rem;
+                margin: 3px;
+            }
+
+            /* Improve touch targets */
+            .example-query, .send-button {
+                min-height: 44px;  /* iOS minimum touch target size */
+            }
+
+            /* Prevent zoom on input focus for iOS */
+            .chat-input {
+                font-size: 16px !important;  /* Prevents zoom on iOS */
+            }
+
+            /* Better scrolling on mobile */
+            .chat-messages {
+                -webkit-overflow-scrolling: touch;
+                overscroll-behavior: contain;
+            }
+
+            /* Adjust message bubbles for better mobile layout */
+            .user-message {
+                margin-left: 10%;
+                margin-right: 8px;
+            }
+
+            .assistant-message {
+                margin-right: 10%;
+                margin-left: 8px;
+            }
+
+            /* Improve mobile keyboard handling */
+            .chat-input-container {
+                padding-bottom: env(safe-area-inset-bottom, 12px);  /* iOS safe area support */
+            }
+        }
+
+        /* Extra small devices */
+        @media (max-width: 375px) {
+            .chat-container {
+                margin: 5px;
+                height: calc(100vh - 100px);
+            }
+
+            .chat-header h2 {
+                font-size: 1.2rem;
+            }
+
+            .message {
+                max-width: 95%;
+                font-size: 0.85rem;
+            }
+
+            .example-query {
+                font-size: 0.8rem;
+                padding: 6px 10px;
+            }
+        }
+
+        /* Handle landscape orientation */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .chat-container {
+                height: calc(100vh - 80px);
+            }
+
+            .chat-header {
+                padding: 8px 12px;
+            }
+
+            .chat-messages {
+                padding: 8px;
+            }
+
+            .example-queries {
+                padding: 8px;
+                max-height: 80px;
+                overflow-y: auto;
+            }
+
+            .chat-input-container {
+                padding: 8px;
+            }
+        }
+
+        /* Add viewport-specific adjustments */
+        @supports (-webkit-touch-callout: none) {
+            /* iOS-specific adjustments */
+            .chat-container {
+                height: -webkit-fill-available;
+            }
+
+            .chat-input-container {
+                padding-bottom: max(12px, env(safe-area-inset-bottom));
+            }
+        }
+
+        /* Improve mobile scrolling experience */
+        .chat-messages::-webkit-scrollbar {
+            width: 4px;  /* Thinner scrollbar for mobile */
+        }
+
+        /* Add smooth momentum scrolling */
+        .chat-messages {
+            scroll-behavior: smooth;
+            overflow-y: overlay;
+        }
+
+        /* Add pull-to-refresh prevention */
+        body {
+            overscroll-behavior-y: contain;
+        }
+
+        /* Add active states for touch interactions */
+        .send-button:active {
+            transform: scale(0.95);
+        }
+
+        .example-query:active {
+            transform: scale(0.98);
+            background-color: rgba(var(--primary-color-rgb), 0.1);
         }
     </style>
     <!-- Stripe JS -->
@@ -1238,6 +1546,140 @@
             document.head.appendChild(script);
         }
         loadPayarcScript('https://js.payarc.com/v1/payarc.js');
+    </script>
+
+    <!-- Loading Animation Script -->
+    <script>
+        function showProcessingAnimation() {
+            hideProcessingAnimation();
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'processing-animation';
+            loadingDiv.innerHTML = `<img src="assets/Loading.gif" alt="Loading..." />`;
+            document.body.appendChild(loadingDiv);
+            requestAnimationFrame(() => loadingDiv.classList.add('active'));
+        }
+
+        function hideProcessingAnimation() {
+            return new Promise(resolve => {
+                const existingAnimation = document.querySelector('.processing-animation');
+                if (existingAnimation) {
+                    existingAnimation.classList.remove('active');
+                    existingAnimation.addEventListener('transitionend', () => {
+                        existingAnimation.remove();
+                        resolve();
+                    }, { once: true });
+                    // Fallback in case transition doesn't fire
+                    setTimeout(() => {
+                        if (existingAnimation.parentElement) {
+                            existingAnimation.remove();
+                            resolve();
+                        }
+                    }, 300);
+                } else {
+                    resolve();
+                }
+            });
+        }
+
+        async function sendMessage() {
+            const message = chatInput.value.trim();
+            if (!message) return;
+
+            // Get studioId
+            const studioId = localStorage.getItem('currentStudioId');
+            if (!studioId) {
+                console.error('No studio ID found');
+                addMessage("I apologize, but I can't access your studio's information right now. Please try logging in again.", 'assistant');
+                return;
+            }
+
+            // Hide example queries and clear input
+            exampleQueries.classList.add('hiding');
+            chatInput.value = '';
+            chatInput.style.height = 'auto';
+
+            // Add user message
+            addMessage(message, 'user');
+
+            // Show loading animation
+            showProcessingAnimation();
+
+            try {
+                console.log('Sending query:', message);
+                
+                const response = await fetch('https://us-central1-studiosync-af73d.cloudfunctions.net/processSyncSenseQuery', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        query: message,
+                        studioId: studioId
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.text();
+                console.log('Received response:', result);
+
+                // Hide loading animation
+                hideProcessingAnimation();
+
+                // Add AI response
+                addMessage(result, 'assistant');
+
+                // Save conversation to Firebase
+                try {
+                    await firebase.firestore()
+                        .collection('Studios')
+                        .doc(studioId)
+                        .collection('SyncSense')
+                        .add({
+                            text: message,
+                            type: 'user',
+                            userId: firebase.auth().currentUser?.uid || null,
+                            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                            date: new Date().toISOString().split('T')[0]
+                        });
+
+                    await firebase.firestore()
+                        .collection('Studios')
+                        .doc(studioId)
+                        .collection('SyncSense')
+                        .add({
+                            text: result,
+                            type: 'assistant',
+                            userId: firebase.auth().currentUser?.uid || null,
+                            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                            date: new Date().toISOString().split('T')[0]
+                        });
+                } catch (error) {
+                    console.warn('Failed to save conversation:', error);
+                    // Continue even if saving fails
+                }
+
+            } catch (error) {
+                console.error('Error in conversation:', error);
+                hideProcessingAnimation();
+                addMessage("I apologize, but I encountered an error. Could you please try again?", 'assistant');
+            }
+        }
+
+        // Cleanup handlers
+        window.addEventListener('beforeunload', () => {
+            const loadingAnimation = document.querySelector('.processing-animation');
+            if (loadingAnimation) loadingAnimation.remove();
+        });
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'hidden') {
+                const loadingAnimation = document.querySelector('.processing-animation');
+                if (loadingAnimation) loadingAnimation.remove();
+            }
+        });
     </script>
 </head>
 <body>
@@ -1263,9 +1705,6 @@
                 </a>
                 <a class="list-group-item list-group-item-action p-3" href="class-calendar.html">
                     <i class="fas fa-calendar-alt me-2"></i>Class Calendar
-                </a>
-                <a class="list-group-item list-group-item-action p-3" href="syncsense.html">
-                    <i class="fas fa-brain me-2"></i>SyncSense
                 </a>
                 <a class="list-group-item list-group-item-action p-3 d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#classesDropdown" role="button" aria-expanded="false" aria-controls="classesDropdown">
                     <span><i class="fas fa-chalkboard-teacher me-2"></i>Classes</span>
@@ -1302,6 +1741,9 @@
                 </a>
                 <a class="list-group-item list-group-item-action p-3" href="charges-payments.html">
                     <i class="fas fa-dollar-sign me-2"></i>Charges/Payments
+                </a>
+                <a class="list-group-item list-group-item-action p-3" href="syncsense.html">
+                    <i class="fas fa-circle-nodes me-2"></i>SyncSense
                 </a>
                 <a class="list-group-item list-group-item-action p-3" href="reports.html">
                     <i class="fas fa-chart-bar me-2"></i>Reports
@@ -1371,7 +1813,7 @@
 
                 <div class="chat-messages" id="chatMessages">
                     <div class="assistant-message">
-                        Hi! I'm SyncSense, your smart studio assistant. I can help you with information about your studio, students, billing, or policies. What would you like to know?
+                        Hi! I'm SyncSense, your studio assistant. I can help you with information about classes, students, billing, or general questions about your studio. What would you like to know?
                     </div>
                 </div>
 
@@ -2388,28 +2830,34 @@
             chatMessages.appendChild(processingAnimation);
 
             function showProcessingAnimation() {
-                processingAnimation.classList.add('active');
+                // Create the loading animation element
+                const loadingDiv = document.createElement('div');
+                loadingDiv.className = 'processing-animation active';
+                loadingDiv.innerHTML = `<img src="assets/Loading.gif" alt="Loading..." />`;
+                
+                // Add it to the chat messages
+                chatMessages.appendChild(loadingDiv);
+                
+                // Scroll to the loading animation
+                loadingDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
             }
 
             function hideProcessingAnimation() {
-                processingAnimation.classList.remove('active');
+                const loadingAnimation = document.querySelector('.processing-animation');
+                if (loadingAnimation) {
+                    // Get the position of the loading animation before removing it
+                    const rect = loadingAnimation.getBoundingClientRect();
+                    loadingAnimation.remove();
+                    
+                    // Return the position where the AI response should appear
+                    return rect;
+                }
+                return null;
             }
 
-            // Handle input focus
-            chatInput.addEventListener('focus', () => {
-                exampleQueries.classList.add('hiding');
-            });
-
-            // Handle input blur
-            chatInput.addEventListener('blur', () => {
-                if (!chatInput.value.trim()) {
-                    exampleQueries.classList.remove('hiding');
-                    exampleQueries.classList.add('showing');
-                    setTimeout(() => {
-                        exampleQueries.classList.remove('showing');
-                    }, 300);
-                }
-            });
+            // Always show example queries when page loads
+            updateExampleQueries();
+            exampleQueries.style.display = 'block';
 
             // Add Firestore query saving function
             async function saveQuery(query, response) {
@@ -2417,13 +2865,16 @@
                     const studioId = localStorage.getItem('currentStudioId');
                     if (!studioId) return;
 
+                    // Handle the simplified response format
+                    const responseText = response?.response || "No response available";
+
                     await firebase.firestore()
                         .collection('Studios')
                         .doc(studioId)
                         .collection('SyncSense')
                         .add({
                             Query: query,
-                            Response: response,
+                            Response: responseText,
                             UserId: firebase.auth().currentUser?.uid || null,
                             Timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                             Status: 'Completed'
@@ -2433,57 +2884,107 @@
                 }
             }
 
-            // Modify the sendMessage function to use OpenAI
+            // Handle input focus
+            chatInput.addEventListener('focus', () => {
+                if (chatMessages.children.length > 1) { // If there are messages beyond the initial greeting
+                    exampleQueries.classList.add('hiding');
+                }
+            });
+
+            // Modify the sendMessage function
             async function sendMessage() {
                 const message = chatInput.value.trim();
                 if (!message) return;
 
+                // Get studioId
+                const studioId = localStorage.getItem('currentStudioId');
+                if (!studioId) {
+                    console.error('No studio ID found');
+                    addMessage("I apologize, but I can't access your studio's information right now. Please try logging in again.", 'assistant');
+                    return;
+                }
+
+                // Hide example queries and clear input
+                exampleQueries.classList.add('hiding');
+                chatInput.value = '';
+                chatInput.style.height = 'auto';
+
                 // Add user message
                 addMessage(message, 'user');
 
-                // Clear input and hide example queries
-                chatInput.value = '';
-                chatInput.style.height = 'auto';
-                exampleQueries.classList.add('hiding');
-
-                // Show processing animation
+                // Show loading animation
                 showProcessingAnimation();
 
                 try {
-                    const studioId = localStorage.getItem('currentStudioId');
-                    if (!studioId) throw new Error('No studio ID found');
-
-                    // Call the Firebase function
-                    const processQuery = functions.httpsCallable('processSyncSenseQuery');
-                    const result = await processQuery({ 
-                        query: message,
-                        studioId: studioId
+                    console.log('Sending query:', message);
+                    
+                    const response = await fetch('https://us-central1-studiosync-af73d.cloudfunctions.net/processSyncSenseQuery', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ 
+                            query: message,
+                            studioId: studioId
+                        })
                     });
 
-                    // Save query to Firestore
-                    await saveQuery(message, result.data.response);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
 
-                    // Hide animation and show response
+                    const result = await response.text();
+                    console.log('Received response:', result);
+
+                    // Hide loading animation
                     hideProcessingAnimation();
-                    addMessage(result.data.response, 'assistant');
+
+                    // Add AI response
+                    addMessage(result, 'assistant');
+
+                    // Save conversation to Firebase
+                    try {
+                        await firebase.firestore()
+                            .collection('Studios')
+                            .doc(studioId)
+                            .collection('SyncSense')
+                            .add({
+                                text: message,
+                                type: 'user',
+                                userId: firebase.auth().currentUser?.uid || null,
+                                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                                date: new Date().toISOString().split('T')[0]
+                            });
+
+                        await firebase.firestore()
+                            .collection('Studios')
+                            .doc(studioId)
+                            .collection('SyncSense')
+                            .add({
+                                text: result,
+                                type: 'assistant',
+                                userId: firebase.auth().currentUser?.uid || null,
+                                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                                date: new Date().toISOString().split('T')[0]
+                            });
+                    } catch (error) {
+                        console.warn('Failed to save conversation:', error);
+                        // Continue even if saving fails
+                    }
+
                 } catch (error) {
-                    console.error('Error processing message:', error);
+                    console.error('Error in conversation:', error);
                     hideProcessingAnimation();
-                    addMessage("Sorry, I encountered an error processing your request. Please try again later.", 'assistant');
+                    addMessage("I apologize, but I encountered an error. Could you please try again?", 'assistant');
                 }
             }
 
             // Update your event listeners
             sendButton.addEventListener('click', sendMessage);
             chatInput.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') {
-                    if (e.shiftKey) {
-                        // Let the default behavior happen (new line)
-                        return;
-                    } else {
-                        e.preventDefault(); // Prevent default to avoid new line
-                        sendMessage();
-                    }
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
                 }
             });
 
@@ -2496,17 +2997,73 @@
 
         // Add this function definition before it's used
         function addMessage(text, type) {
+            hideProcessingAnimation();
+            
+            const messageContainer = document.createElement('div');
+            messageContainer.style.display = 'flex';
+            messageContainer.style.flexDirection = 'column';
+            
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${type}-message`;
             messageDiv.textContent = text;
-            chatMessages.appendChild(messageDiv);
+            messageContainer.appendChild(messageDiv);
             
-            // Scroll to the new message
+            if (type === 'assistant') {
+                const verificationDiv = document.createElement('div');
+                verificationDiv.className = 'verification-message';
+                verificationDiv.textContent = 'SyncSense can make mistakes, please verify data';
+                messageContainer.appendChild(verificationDiv);
+                
+                // Increased delay to 1.2 seconds
+                setTimeout(() => {
+                    verificationDiv.classList.add('show');
+                }, 1200);
+            }
+            
+            chatMessages.appendChild(messageContainer);
             messageDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
             
-            // Also scroll the container to ensure the message is visible
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+            return messageDiv;
         }
+
+        // Update the initial greeting to be studio-agnostic
+        document.addEventListener('DOMContentLoaded', function() {
+            const initialGreeting = "Hi! I'm SyncSense, your studio assistant. I can help you with information about classes, students, billing, or general questions about your studio. What would you like to know?";
+            
+            if (chatMessages && chatMessages.children.length === 0) {
+                addMessage(initialGreeting, 'assistant');
+            }
+
+            // Example queries for studio management
+            const sampleQuestions = [
+                "How many active students do we have?",
+                "What's our current monthly revenue?",
+                "Show me classes that are almost full",
+                "How many families have unpaid balances?",
+                "What's our student retention rate?",
+                "List upcoming events",
+                "Show me instructor schedules",
+                "What's our peak class time?",
+                "How many new registrations this month?",
+                "What's our current studio capacity?"
+            ];
+
+            // Update example queries
+            const container = document.getElementById('questionContainer');
+            if (container) {
+                container.innerHTML = '';
+                getRandomQuestions(4).forEach(question => {
+                    const queryElement = document.createElement('div');
+                    queryElement.className = 'example-query';
+                    queryElement.textContent = question;
+                    queryElement.addEventListener('click', () => {
+                        document.getElementById('chatInput').value = question;
+                        document.getElementById('chatInput').dispatchEvent(new Event('input'));
+                    });
+                    container.appendChild(queryElement);
+                });
+            }
+        });
     </script>
 </body>
 </html>

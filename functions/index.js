@@ -12,6 +12,8 @@ const { processPayments } = require("./processPayments");
 const { postMonthlyCharges, processMonthlyCharges } = require("./PostCharges");
 const { processAutoPay } = require("./AutoPay");
 const { chargesCalculator } = require("./chargesCalculator");
+const { processSyncSenseQuery } = require("./syncSense");
+const { processDatabaseQuery } = require('./processDatabaseQuery');
 
 // PayArc Configuration
 const PAYARC_CONFIG = {
@@ -286,3 +288,5 @@ exports.processMonthlyCharges = processMonthlyCharges;
 exports.chargesCalculator = chargesCalculator;
 exports.postChargesHttp = require('./PostCharges').postChargesHttp;
 exports.processAutoPayHttp = require('./AutoPay').processAutoPayHttp;
+exports.processSyncSenseQuery = processSyncSenseQuery;
+exports.processDatabaseQuery = processDatabaseQuery;
