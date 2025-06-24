@@ -1,0 +1,14 @@
+{
+  "name": "studiosync",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "http-server ./public -p 8081",
+    "start-backend": "cd backend && npm start"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.1",
+    "firebase-functions": "^6.3.2",
+    "http-server": "^14.1.1"
+  }
+}
