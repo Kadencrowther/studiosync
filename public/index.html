@@ -1,1127 +1,1262 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Professional Dance Studio Software - Studio Sync - Dance Studio Management Made Simple</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="icon" type="image/svg+xml" href="assets/ssdancerfav.svg">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>
+      Professional Dance Studio Software - Studio Sync - Dance Studio Management
+      Made Simple
+    </title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="icon" type="image/svg+xml" href="assets/ssdancerfav.svg" />
     <style>
-        :root {
-            --primary-color: #3DCED7;
-            --primary-gradient: linear-gradient(135deg, #3DCED7, #2AB8C3);
-            --secondary-color: #3A506B;
-            --background-color: #F9FAFB;
-            --text-color: #333333;
-            --card-radius: 20px;
-            --button-radius: 30px;
-            --form-radius: 30px;
-            --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 10px 15px rgba(0, 0, 0, 0.07);
-            --shadow-lg: 0 20px 25px rgba(0, 0, 0, 0.08);
-            --transition-normal: all 0.3s ease;
-            --transition-bounce: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
+      :root {
+        --primary-color: #3dced7;
+        --primary-gradient: linear-gradient(135deg, #3dced7, #2ab8c3);
+        --secondary-color: #3a506b;
+        --background-color: #f9fafb;
+        --text-color: #333333;
+        --card-radius: 20px;
+        --button-radius: 30px;
+        --form-radius: 30px;
+        --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 10px 15px rgba(0, 0, 0, 0.07);
+        --shadow-lg: 0 20px 25px rgba(0, 0, 0, 0.08);
+        --transition-normal: all 0.3s ease;
+        --transition-bounce: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            overflow-x: hidden;
-            line-height: 1.6;
-        }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: var(--background-color);
+        color: var(--text-color);
+        overflow-x: hidden;
+        line-height: 1.6;
+      }
 
+      .header {
+        background-color: rgba(255, 255, 255, 0.98);
+        padding: 1.2rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: fixed;
+        width: 100%;
+        z-index: 1000;
+        box-shadow: var(--shadow-sm);
+        transition: var(--transition-normal);
+        box-sizing: border-box;
+        backdrop-filter: blur(10px);
+      }
+
+      .logo-container {
+        display: flex;
+        align-items: center;
+      }
+
+      .logo-container img {
+        width: 45px;
+        height: 45px;
+        margin-right: 12px;
+        content: url("assets/ssdancerblue.svg");
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+      }
+
+      .logo-text {
+        font-size: 2.2rem;
+        font-weight: 700;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        letter-spacing: -0.5px;
+      }
+
+      nav {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+      }
+
+      nav a {
+        color: var(--text-color);
+        text-decoration: none;
+        padding: 0.7rem 1.5rem;
+        border-radius: var(--button-radius);
+        font-weight: 500;
+        transition: var(--transition-bounce);
+        position: relative;
+        overflow: hidden;
+      }
+
+      nav a:hover {
+        background-color: rgba(61, 206, 215, 0.1);
+        color: var(--primary-color);
+        transform: translateY(-2px);
+      }
+
+      nav a::before {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 3px;
+        background: var(--primary-gradient);
+        transition: var(--transition-normal);
+        border-radius: 3px;
+      }
+
+      nav a:hover::before {
+        width: 60%;
+      }
+
+      nav a[href="#demo"] {
+        background: var(--primary-gradient);
+        color: white;
+        padding: 0.8rem 1.8rem;
+        font-weight: 600;
+        box-shadow: 0 4px 15px rgba(61, 206, 215, 0.3);
+      }
+
+      nav a[href="#demo"]:hover {
+        transform: translateY(-4px) scale(1.05);
+        box-shadow: 0 8px 25px rgba(61, 206, 215, 0.4);
+        color: white;
+      }
+
+      nav a[href="#demo"]::before {
+        display: none;
+      }
+
+      .hero {
+        text-align: center;
+        padding: 14rem 2rem 8rem;
+        background: linear-gradient(
+          to bottom,
+          #ffffff,
+          var(--background-color)
+        );
+        min-height: 90vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -20%;
+        width: 140%;
+        height: 200%;
+        background: radial-gradient(
+            circle at top right,
+            rgba(61, 206, 215, 0.05),
+            transparent 70%
+          ),
+          radial-gradient(
+            circle at bottom left,
+            rgba(58, 80, 107, 0.05),
+            transparent 70%
+          );
+        z-index: -1;
+        transform: rotate(-3deg);
+      }
+
+      .hero h1 {
+        font-size: 5.5rem;
+        margin-bottom: 2.5rem;
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        animation: fadeInUp 1s ease;
+        line-height: 1.1;
+        max-width: 1200px;
+        padding: 0 20px;
+        font-weight: 800;
+        letter-spacing: -1px;
+      }
+
+      .hero p.highlight-text {
+        font-size: 2rem;
+        margin-bottom: 2.5rem;
+        color: var(--secondary-color);
+        animation: fadeInUp 1s ease 0.2s;
+        line-height: 1.4;
+        max-width: 900px;
+        font-weight: 400;
+      }
+
+      .cta-buttons {
+        display: flex;
+        gap: 2.5rem;
+        justify-content: center;
+        align-items: center;
+        animation: fadeInUp 1s ease 0.4s;
+      }
+
+      .cta-button {
+        padding: 1.6rem 3.2rem;
+        font-size: 1.5rem;
+        border: none;
+        border-radius: var(--button-radius);
+        cursor: pointer;
+        transition: var(--transition-bounce);
+        text-decoration: none;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+      }
+
+      .primary-cta {
+        background: var(--primary-gradient);
+        color: white;
+        box-shadow: 0 10px 20px rgba(61, 206, 215, 0.3);
+      }
+
+      .primary-cta:hover {
+        transform: translateY(-6px) scale(1.05);
+        box-shadow: 0 15px 30px rgba(61, 206, 215, 0.4);
+      }
+
+      .features {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 3rem;
+        padding: 6rem 4rem;
+        background-color: white;
+        position: relative;
+      }
+
+      .feature {
+        text-align: center;
+        padding: 3rem 2.5rem;
+        border-radius: var(--card-radius);
+        background-color: white;
+        box-shadow: var(--shadow-md);
+        transition: var(--transition-normal);
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+      }
+
+      .feature::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          135deg,
+          rgba(61, 206, 215, 0.05),
+          transparent
+        );
+        z-index: -1;
+        opacity: 0;
+        transition: var(--transition-normal);
+      }
+
+      .feature:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .feature:hover::before {
+        opacity: 1;
+      }
+
+      .feature i {
+        font-size: 3.5rem;
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .feature h2 {
+        color: var(--secondary-color);
+        margin: 1.5rem 0;
+        font-size: 1.8rem;
+        font-weight: 700;
+      }
+
+      .feature p {
+        color: #666;
+        line-height: 1.7;
+        font-size: 1.1rem;
+      }
+
+      .demo-form {
+        background: white;
+        padding: 5rem 4rem;
+        border-radius: var(--form-radius);
+        margin: 5rem auto;
+        max-width: 800px;
+        box-shadow: var(--shadow-lg);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .demo-form::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 10px;
+        background: var(--primary-gradient);
+      }
+
+      .demo-form h2 {
+        text-align: center;
+        color: var(--secondary-color);
+        font-size: 2.8rem;
+        margin-bottom: 3rem;
+        font-weight: 700;
+      }
+
+      .demo-form input,
+      .demo-form textarea {
+        width: 100%;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        border: 2px solid rgba(61, 206, 215, 0.2);
+        border-radius: calc(var(--form-radius) / 2);
+        background-color: #ffffff;
+        color: var(--text-color);
+        font-size: 1.1rem;
+        transition: var(--transition-normal);
+      }
+
+      .demo-form input:focus,
+      .demo-form textarea:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 4px rgba(61, 206, 215, 0.1);
+        transform: translateY(-2px);
+      }
+
+      .demo-form button {
+        background: var(--primary-gradient);
+        color: white;
+        width: 100%;
+        padding: 1.5rem;
+        border: none;
+        border-radius: calc(var(--form-radius) / 2);
+        cursor: pointer;
+        font-size: 1.4rem;
+        font-weight: 600;
+        transition: var(--transition-bounce);
+        box-shadow: 0 10px 20px rgba(61, 206, 215, 0.3);
+      }
+
+      .demo-form button:hover {
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: 0 15px 30px rgba(61, 206, 215, 0.4);
+      }
+
+      .video-section {
+        padding: 4rem 2rem 8rem;
+        background: linear-gradient(
+          to bottom,
+          #ffffff,
+          var(--background-color)
+        );
+        text-align: center;
+        position: relative;
+      }
+
+      .video-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        position: relative;
+        border-radius: var(--card-radius);
+        overflow: hidden;
+        box-shadow: var(--shadow-lg);
+        transform: perspective(1000px) rotateX(2deg);
+      }
+
+      .video-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        padding: 3rem;
+        background: linear-gradient(
+          to bottom,
+          rgba(0, 0, 0, 0.5),
+          transparent 70%
+        );
+        color: white;
+        text-align: left;
+      }
+
+      .video-overlay h2 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: white;
+        font-weight: 700;
+      }
+
+      .video-overlay p {
+        font-size: 1.4rem;
+        opacity: 0.95;
+        max-width: 500px;
+      }
+
+      .trust-bar {
+        padding: 4rem 0;
+        background-color: #ffffff;
+        text-align: center;
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      }
+
+      .trust-bar h3 {
+        color: var(--secondary-color);
+        font-size: 2rem;
+        margin-bottom: 2.5rem;
+        font-weight: 700;
+      }
+
+      .logo-slider {
+        position: relative;
+        width: 100%;
+        height: 100px;
+        overflow: hidden;
+      }
+
+      .logo-slide-track {
+        display: flex;
+        animation: scroll 30s linear infinite;
+        width: calc(200px * 12);
+      }
+
+      .logo-slide {
+        width: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .logo-slide i {
+        font-size: 3rem;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        transition: var(--transition-normal);
+      }
+
+      .logo-slide i:hover {
+        transform: scale(1.2);
+      }
+
+      footer {
+        background-color: var(--secondary-color);
+        text-align: center;
+        padding: 3rem;
+        margin-top: 2rem;
+        color: #ffffff;
+      }
+
+      /* Responsive Styles */
+      @media (max-width: 768px) {
         .header {
-            background-color: rgba(255, 255, 255, 0.98);
-            padding: 1.2rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: fixed;
-            width: 100%;
-            z-index: 1000;
-            box-shadow: var(--shadow-sm);
-            transition: var(--transition-normal);
-            box-sizing: border-box;
-            backdrop-filter: blur(10px);
+          flex-direction: column;
+          padding: 1rem;
+          height: auto;
+          position: relative;
         }
 
         .logo-container {
-            display: flex;
-            align-items: center;
-        }
-
-        .logo-container img {
-            width: 45px;
-            height: 45px;
-            margin-right: 12px;
-            content: url('assets/ssdancerblue.svg');
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-        }
-
-        .logo-text {
-            font-size: 2.2rem;
-            font-weight: 700;
-            background: var(--primary-gradient);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            letter-spacing: -0.5px;
+          margin-bottom: 1rem;
         }
 
         nav {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+          gap: 0.8rem;
+          align-items: center;
         }
 
         nav a {
-            color: var(--text-color);
-            text-decoration: none;
-            padding: 0.7rem 1.5rem;
-            border-radius: var(--button-radius);
-            font-weight: 500;
-            transition: var(--transition-bounce);
-            position: relative;
-            overflow: hidden;
-        }
-
-        nav a:hover {
-            background-color: rgba(61, 206, 215, 0.1);
-            color: var(--primary-color);
-            transform: translateY(-2px);
-        }
-
-        nav a::before {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 3px;
-            background: var(--primary-gradient);
-            transition: var(--transition-normal);
-            border-radius: 3px;
-        }
-
-        nav a:hover::before {
-            width: 60%;
-        }
-
-        nav a[href="#demo"] {
-            background: var(--primary-gradient);
-            color: white;
-            padding: 0.8rem 1.8rem;
-            font-weight: 600;
-            box-shadow: 0 4px 15px rgba(61, 206, 215, 0.3);
-        }
-
-        nav a[href="#demo"]:hover {
-            transform: translateY(-4px) scale(1.05);
-            box-shadow: 0 8px 25px rgba(61, 206, 215, 0.4);
-            color: white;
-        }
-
-        nav a[href="#demo"]::before {
-            display: none;
+          width: 80%;
+          text-align: center;
+          margin: 0.2rem 0;
+          padding: 0.8rem;
         }
 
         .hero {
-            text-align: center;
-            padding: 14rem 2rem 8rem;
-            background: linear-gradient(to bottom, #ffffff, var(--background-color));
-            min-height: 90vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -20%;
-            width: 140%;
-            height: 200%;
-            background: radial-gradient(circle at top right, rgba(61, 206, 215, 0.05), transparent 70%),
-                      radial-gradient(circle at bottom left, rgba(58, 80, 107, 0.05), transparent 70%);
-            z-index: -1;
-            transform: rotate(-3deg);
+          padding: 4rem 1rem 6rem;
+          min-height: auto;
         }
 
         .hero h1 {
-            font-size: 5.5rem;
-            margin-bottom: 2.5rem;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            animation: fadeInUp 1s ease;
-            line-height: 1.1;
-            max-width: 1200px;
-            padding: 0 20px;
-            font-weight: 800;
-            letter-spacing: -1px;
+          font-size: 3rem;
+          padding: 0 10px;
+          margin-bottom: 1.5rem;
         }
 
         .hero p.highlight-text {
-            font-size: 2rem;
-            margin-bottom: 2.5rem;
-            color: var(--secondary-color);
-            animation: fadeInUp 1s ease 0.2s;
-            line-height: 1.4;
-            max-width: 900px;
-            font-weight: 400;
+          font-size: 1.4rem;
+          padding: 0 15px;
+          margin-bottom: 2rem;
         }
 
         .cta-buttons {
-            display: flex;
-            gap: 2.5rem;
-            justify-content: center;
-            align-items: center;
-            animation: fadeInUp 1s ease 0.4s;
+          flex-direction: column;
+          gap: 1.5rem;
+          width: 100%;
+          padding: 0 1rem;
         }
 
         .cta-button {
-            padding: 1.6rem 3.2rem;
-            font-size: 1.5rem;
-            border: none;
-            border-radius: var(--button-radius);
-            cursor: pointer;
-            transition: var(--transition-bounce);
-            text-decoration: none;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-
-        .primary-cta {
-            background: var(--primary-gradient);
-            color: white;
-            box-shadow: 0 10px 20px rgba(61, 206, 215, 0.3);
-        }
-
-        .primary-cta:hover {
-            transform: translateY(-6px) scale(1.05);
-            box-shadow: 0 15px 30px rgba(61, 206, 215, 0.4);
+          width: 100%;
+          padding: 1.2rem;
+          font-size: 1.3rem;
+          text-align: center;
         }
 
         .features {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 3rem;
-            padding: 6rem 4rem;
-            background-color: white;
-            position: relative;
+          padding: 4rem 1.5rem;
+          grid-template-columns: 1fr;
+          gap: 2rem;
         }
 
         .feature {
-            text-align: center;
-            padding: 3rem 2.5rem;
-            border-radius: var(--card-radius);
-            background-color: white;
-            box-shadow: var(--shadow-md);
-            transition: var(--transition-normal);
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
-        }
-
-        .feature::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(61, 206, 215, 0.05), transparent);
-            z-index: -1;
-            opacity: 0;
-            transition: var(--transition-normal);
-        }
-
-        .feature:hover {
-            transform: translateY(-10px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .feature:hover::before {
-            opacity: 1;
-        }
-
-        .feature i {
-            font-size: 3.5rem;
-            color: var(--primary-color);
-            margin-bottom: 1.5rem;
-            background: var(--primary-gradient);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .feature h2 {
-            color: var(--secondary-color);
-            margin: 1.5rem 0;
-            font-size: 1.8rem;
-            font-weight: 700;
-        }
-
-        .feature p {
-            color: #666;
-            line-height: 1.7;
-            font-size: 1.1rem;
+          padding: 2.5rem 2rem;
         }
 
         .demo-form {
-            background: white;
-            padding: 5rem 4rem;
-            border-radius: var(--form-radius);
-            margin: 5rem auto;
-            max-width: 800px;
-            box-shadow: var(--shadow-lg);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .demo-form::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 10px;
-            background: var(--primary-gradient);
+          padding: 4rem 2rem;
+          margin: 3rem 1rem;
+          border-radius: calc(var(--form-radius) / 1.5);
         }
 
         .demo-form h2 {
-            text-align: center;
-            color: var(--secondary-color);
-            font-size: 2.8rem;
-            margin-bottom: 3rem;
-            font-weight: 700;
+          font-size: 2.2rem;
         }
 
         .demo-form input,
         .demo-form textarea {
-            width: 100%;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            border: 2px solid rgba(61, 206, 215, 0.2);
-            border-radius: calc(var(--form-radius) / 2);
-            background-color: #ffffff;
-            color: var(--text-color);
-            font-size: 1.1rem;
-            transition: var(--transition-normal);
-        }
-
-        .demo-form input:focus,
-        .demo-form textarea:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 4px rgba(61, 206, 215, 0.1);
-            transform: translateY(-2px);
+          padding: 1.2rem;
         }
 
         .demo-form button {
-            background: var(--primary-gradient);
-            color: white;
-            width: 100%;
-            padding: 1.5rem;
-            border: none;
-            border-radius: calc(var(--form-radius) / 2);
-            cursor: pointer;
-            font-size: 1.4rem;
-            font-weight: 600;
-            transition: var(--transition-bounce);
-            box-shadow: 0 10px 20px rgba(61, 206, 215, 0.3);
-        }
-
-        .demo-form button:hover {
-            transform: translateY(-4px) scale(1.02);
-            box-shadow: 0 15px 30px rgba(61, 206, 215, 0.4);
-        }
-
-        .video-section {
-            padding: 4rem 2rem 8rem;
-            background: linear-gradient(to bottom, #ffffff, var(--background-color));
-            text-align: center;
-            position: relative;
+          padding: 1.2rem;
         }
 
         .video-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            position: relative;
-            border-radius: var(--card-radius);
-            overflow: hidden;
-            box-shadow: var(--shadow-lg);
-            transform: perspective(1000px) rotateX(2deg);
+          border-radius: calc(var(--card-radius) / 1.5);
         }
 
         .video-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            padding: 3rem;
-            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), transparent 70%);
-            color: white;
-            text-align: left;
+          padding: 1.5rem;
         }
 
         .video-overlay h2 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: white;
-            font-weight: 700;
+          font-size: 1.8rem;
         }
 
         .video-overlay p {
-            font-size: 1.4rem;
-            opacity: 0.95;
-            max-width: 500px;
+          font-size: 1.1rem;
         }
+      }
 
-        .trust-bar {
-            padding: 4rem 0;
-            background-color: #ffffff;
-            text-align: center;
-            border-top: 1px solid rgba(0, 0, 0, 0.05);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-        }
+      /* Add modern modal styling */
+      #pricingModal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1001;
+        overflow-y: auto;
+        backdrop-filter: blur(5px);
+        padding: 20px;
+        box-sizing: border-box;
+      }
 
-        .trust-bar h3 {
-            color: var(--secondary-color);
-            font-size: 2rem;
-            margin-bottom: 2.5rem;
-            font-weight: 700;
-        }
+      #pricingModal > div {
+        background: white;
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 60px;
+        border-radius: var(--form-radius);
+        box-shadow: var(--shadow-lg);
+        position: relative;
+      }
 
-        .logo-slider {
-            position: relative;
-            width: 100%;
-            height: 100px;
-            overflow: hidden;
-        }
+      #pricingModal h2 {
+        text-align: center;
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        margin-bottom: 40px;
+        font-size: 3rem;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+      }
 
-        .logo-slide-track {
-            display: flex;
-            animation: scroll 30s linear infinite;
-            width: calc(200px * 12);
-        }
+      .billing-frequency {
+        text-align: center;
+        margin-bottom: 50px;
+        position: relative;
+      }
 
-        .logo-slide {
-            width: 200px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+      .billing-frequency::after {
+        content: "";
+        position: absolute;
+        bottom: -25px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 3px;
+        background: var(--primary-gradient);
+        border-radius: 3px;
+      }
 
-        .logo-slide i {
-            font-size: 3rem;
-            background: var(--primary-gradient);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            transition: var(--transition-normal);
-        }
+      .billing-frequency select {
+        padding: 16px 30px;
+        border: 2px solid rgba(61, 206, 215, 0.3);
+        border-radius: var(--button-radius);
+        font-size: 1.1rem;
+        color: var(--secondary-color);
+        cursor: pointer;
+        background-color: white;
+        transition: var(--transition-normal);
+        font-weight: 500;
+        min-width: 300px;
+        text-align: center;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%233DCED7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 16px center;
+        background-size: 20px;
+        box-shadow: var(--shadow-sm);
+      }
 
-        .logo-slide i:hover {
-            transform: scale(1.2);
-        }
+      .billing-frequency select:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 4px rgba(61, 206, 215, 0.1);
+      }
 
-        footer {
-            background-color: var(--secondary-color);
-            text-align: center;
-            padding: 3rem;
-            margin-top: 2rem;
-            color: #ffffff;
-        }
+      .modal-plans {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin-top: 30px;
+        flex-wrap: wrap;
+      }
 
-        /* Responsive Styles */
-        @media (max-width: 768px) {
-            .header {
-                flex-direction: column;
-                padding: 1rem;
-                height: auto;
-                position: relative;
-            }
+      .modal-plan {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 480px;
+        background-color: white;
+        border-radius: var(--card-radius);
+        padding: 40px 30px;
+        margin: 10px;
+        flex: 1;
+        min-width: 280px;
+        max-width: 350px;
+        transition: var(--transition-bounce);
+        box-shadow: var(--shadow-md);
+        border: 2px solid rgba(61, 206, 215, 0.2);
+        position: relative;
+        overflow: hidden;
+      }
 
-            .logo-container {
-                margin-bottom: 1rem;
-            }
+      .modal-plan::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 8px;
+        background: var(--primary-gradient);
+      }
 
-            nav {
-                display: flex;
-                flex-direction: column;
-                width: 100%;
-                gap: 0.8rem;
-                align-items: center;
-            }
+      .modal-plan:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--shadow-lg);
+        border-color: var(--primary-color);
+      }
 
-            nav a {
-                width: 80%;
-                text-align: center;
-                margin: 0.2rem 0;
-                padding: 0.8rem;
-            }
+      .modal-plan .plan-content {
+        flex: 1;
+      }
 
-            .hero {
-                padding: 4rem 1rem 6rem;
-                min-height: auto;
-            }
+      .modal-plan h2 {
+        margin-top: 10px;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        font-size: 2rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 20px;
+      }
 
-            .hero h1 {
-                font-size: 3rem;
-                padding: 0 10px;
-                margin-bottom: 1.5rem;
-            }
+      .modal-plan-price {
+        font-size: 3rem;
+        font-weight: bold;
+        color: var(--secondary-color);
+        margin: 1rem 0;
+        text-align: center;
+      }
 
-            .hero p.highlight-text {
-                font-size: 1.4rem;
-                padding: 0 15px;
-                margin-bottom: 2rem;
-            }
+      .modal-plan-price span {
+        font-size: 1.2rem;
+        font-weight: normal;
+        color: #666;
+      }
 
-            .cta-buttons {
-                flex-direction: column;
-                gap: 1.5rem;
-                width: 100%;
-                padding: 0 1rem;
-            }
+      .original-price {
+        text-align: center;
+        color: #888;
+        text-decoration: line-through;
+        font-size: 1rem;
+        margin-top: -5px;
+        margin-bottom: 20px;
+        min-height: 20px;
+      }
 
-            .cta-button {
-                width: 100%;
-                padding: 1.2rem;
-                font-size: 1.3rem;
-                text-align: center;
-            }
+      .modal-plan-features {
+        list-style-type: none;
+        padding: 0;
+        margin: 25px 0;
+        font-size: 1.1rem;
+      }
 
-            .features {
-                padding: 4rem 1.5rem;
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
+      .modal-plan-features li {
+        margin-bottom: 1.2rem;
+        color: var(--text-color);
+        display: flex;
+        align-items: flex-start;
+        line-height: 1.4;
+      }
 
-            .feature {
-                padding: 2.5rem 2rem;
-            }
+      .modal-plan-features li::before {
+        content: "✓";
+        margin-right: 10px;
+        color: var(--primary-color);
+        font-weight: bold;
+        flex-shrink: 0;
+      }
 
-            .demo-form {
-                padding: 4rem 2rem;
-                margin: 3rem 1rem;
-                border-radius: calc(var(--form-radius) / 1.5);
-            }
+      .modal-select-plan {
+        display: block;
+        width: 100%;
+        padding: 16px;
+        background: var(--primary-gradient);
+        color: white;
+        border: none;
+        border-radius: calc(var(--form-radius) / 2);
+        cursor: pointer;
+        text-align: center;
+        text-decoration: none;
+        font-weight: 600;
+        margin-top: 30px;
+        font-size: 1.1rem;
+        transition: var(--transition-bounce);
+        box-shadow: 0 8px 15px rgba(61, 206, 215, 0.3);
+      }
 
-            .demo-form h2 {
-                font-size: 2.2rem;
-            }
+      .modal-select-plan:hover {
+        transform: translateY(-4px) scale(1.03);
+        box-shadow: 0 12px 25px rgba(61, 206, 215, 0.4);
+      }
 
-            .demo-form input, 
-            .demo-form textarea {
-                padding: 1.2rem;
-            }
+      #closePricingModal {
+        position: absolute;
+        top: 24px;
+        right: 24px;
+        background: none;
+        border: none;
+        font-size: 32px;
+        cursor: pointer;
+        color: var(--secondary-color);
+        transition: var(--transition-normal);
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        z-index: 10;
+      }
 
-            .demo-form button {
-                padding: 1.2rem;
-            }
+      #closePricingModal:hover {
+        background-color: rgba(58, 80, 107, 0.1);
+        transform: rotate(90deg);
+      }
 
-            .video-container {
-                border-radius: calc(var(--card-radius) / 1.5);
-            }
-
-            .video-overlay {
-                padding: 1.5rem;
-            }
-
-            .video-overlay h2 {
-                font-size: 1.8rem;
-            }
-
-            .video-overlay p {
-                font-size: 1.1rem;
-            }
-        }
-
-        /* Add modern modal styling */
-        #pricingModal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1001;
-            overflow-y: auto;
-            backdrop-filter: blur(5px);
-            padding: 20px;
-            box-sizing: border-box;
-        }
-
+      /* Responsive styles for pricing modal */
+      @media (max-width: 1200px) {
         #pricingModal > div {
-            background: white;
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 60px;
-            border-radius: var(--form-radius);
-            box-shadow: var(--shadow-lg);
-            position: relative;
-        }
-
-        #pricingModal h2 {
-            text-align: center;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 40px;
-            font-size: 3rem;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-        }
-
-        .billing-frequency {
-            text-align: center;
-            margin-bottom: 50px;
-            position: relative;
-        }
-
-        .billing-frequency::after {
-            content: '';
-            position: absolute;
-            bottom: -25px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 3px;
-            background: var(--primary-gradient);
-            border-radius: 3px;
-        }
-
-        .billing-frequency select {
-            padding: 16px 30px;
-            border: 2px solid rgba(61, 206, 215, 0.3);
-            border-radius: var(--button-radius);
-            font-size: 1.1rem;
-            color: var(--secondary-color);
-            cursor: pointer;
-            background-color: white;
-            transition: var(--transition-normal);
-            font-weight: 500;
-            min-width: 300px;
-            text-align: center;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%233DCED7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 16px center;
-            background-size: 20px;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .billing-frequency select:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 4px rgba(61, 206, 215, 0.1);
+          padding: 50px 40px;
+          margin: 30px auto;
         }
 
         .modal-plans {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-top: 30px;
-            flex-wrap: wrap;
+          gap: 20px;
+        }
+      }
+
+      @media (max-width: 992px) {
+        .modal-plan {
+          min-width: 250px;
+          padding: 30px 25px;
+        }
+
+        #pricingModal h2 {
+          font-size: 2.5rem;
+        }
+      }
+
+      @media (max-width: 768px) {
+        #pricingModal > div {
+          padding: 40px 20px;
+          margin: 20px auto;
+        }
+
+        .modal-plans {
+          flex-direction: column;
+          align-items: center;
         }
 
         .modal-plan {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            min-height: 480px;
-            background-color: white;
-            border-radius: var(--card-radius);
-            padding: 40px 30px;
-            margin: 10px;
-            flex: 1;
-            min-width: 280px;
-            max-width: 350px;
-            transition: var(--transition-bounce);
-            box-shadow: var(--shadow-md);
-            border: 2px solid rgba(61, 206, 215, 0.2);
-            position: relative;
-            overflow: hidden;
+          width: 100%;
+          max-width: 450px;
+          margin: 15px 0;
         }
 
-        .modal-plan::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 8px;
-            background: var(--primary-gradient);
+        .billing-frequency select {
+          min-width: 250px;
+          width: 80%;
         }
 
-        .modal-plan:hover {
-            transform: translateY(-10px);
-            box-shadow: var(--shadow-lg);
-            border-color: var(--primary-color);
+        #pricingModal h2 {
+          font-size: 2rem;
+          margin-bottom: 30px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        #pricingModal > div {
+          padding: 30px 15px;
+          margin: 10px auto;
         }
 
-        .modal-plan .plan-content {
-            flex: 1;
+        .modal-plan {
+          padding: 25px 20px;
         }
 
         .modal-plan h2 {
-            margin-top: 10px;
-            background: var(--primary-gradient);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            font-size: 2rem;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 20px;
+          font-size: 1.8rem;
         }
 
         .modal-plan-price {
-            font-size: 3rem;
-            font-weight: bold;
-            color: var(--secondary-color);
-            margin: 1rem 0;
-            text-align: center;
-        }
-
-        .modal-plan-price span {
-            font-size: 1.2rem;
-            font-weight: normal;
-            color: #666;
-        }
-
-        .original-price {
-            text-align: center;
-            color: #888;
-            text-decoration: line-through;
-            font-size: 1rem;
-            margin-top: -5px;
-            margin-bottom: 20px;
-            min-height: 20px;
+          font-size: 2.5rem;
         }
 
         .modal-plan-features {
-            list-style-type: none;
-            padding: 0;
-            margin: 25px 0;
-            font-size: 1.1rem;
+          font-size: 1rem;
         }
 
-        .modal-plan-features li {
-            margin-bottom: 1.2rem;
-            color: var(--text-color);
-            display: flex;
-            align-items: flex-start;
-            line-height: 1.4;
-        }
-
-        .modal-plan-features li::before {
-            content: '✓';
-            margin-right: 10px;
-            color: var(--primary-color);
-            font-weight: bold;
-            flex-shrink: 0;
-        }
-
-        .modal-select-plan {
-            display: block;
-            width: 100%;
-            padding: 16px;
-            background: var(--primary-gradient);
-            color: white;
-            border: none;
-            border-radius: calc(var(--form-radius) / 2);
-            cursor: pointer;
-            text-align: center;
-            text-decoration: none;
-            font-weight: 600;
-            margin-top: 30px;
-            font-size: 1.1rem;
-            transition: var(--transition-bounce);
-            box-shadow: 0 8px 15px rgba(61, 206, 215, 0.3);
-        }
-
-        .modal-select-plan:hover {
-            transform: translateY(-4px) scale(1.03);
-            box-shadow: 0 12px 25px rgba(61, 206, 215, 0.4);
+        .billing-frequency select {
+          padding: 12px 20px;
+          font-size: 1rem;
         }
 
         #closePricingModal {
-            position: absolute;
-            top: 24px;
-            right: 24px;
-            background: none;
-            border: none;
-            font-size: 32px;
-            cursor: pointer;
-            color: var(--secondary-color);
-            transition: var(--transition-normal);
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            z-index: 10;
+          top: 15px;
+          right: 15px;
+          width: 40px;
+          height: 40px;
+          font-size: 28px;
         }
+      }
 
-        #closePricingModal:hover {
-            background-color: rgba(58, 80, 107, 0.1);
-            transform: rotate(90deg);
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
         }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
 
-        /* Responsive styles for pricing modal */
-        @media (max-width: 1200px) {
-            #pricingModal > div {
-                padding: 50px 40px;
-                margin: 30px auto;
-            }
-            
-            .modal-plans {
-                gap: 20px;
-            }
+      @keyframes scroll {
+        0% {
+          transform: translateX(0);
         }
+        100% {
+          transform: translateX(calc(-200px * 6));
+        }
+      }
 
-        @media (max-width: 992px) {
-            .modal-plan {
-                min-width: 250px;
-                padding: 30px 25px;
-            }
-            
-            #pricingModal h2 {
-                font-size: 2.5rem;
-            }
+      /* Add responsive breakpoints for smaller screens */
+      @media (max-width: 992px) {
+        .features {
+          grid-template-columns: repeat(2, 1fr);
         }
+      }
 
-        @media (max-width: 768px) {
-            #pricingModal > div {
-                padding: 40px 20px;
-                margin: 20px auto;
-            }
-            
-            .modal-plans {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .modal-plan {
-                width: 100%;
-                max-width: 450px;
-                margin: 15px 0;
-            }
-            
-            .billing-frequency select {
-                min-width: 250px;
-                width: 80%;
-            }
-            
-            #pricingModal h2 {
-                font-size: 2rem;
-                margin-bottom: 30px;
-            }
+      @media (max-width: 768px) {
+        .features {
+          grid-template-columns: 1fr;
         }
-
-        @media (max-width: 480px) {
-            #pricingModal > div {
-                padding: 30px 15px;
-                margin: 10px auto;
-            }
-            
-            .modal-plan {
-                padding: 25px 20px;
-            }
-            
-            .modal-plan h2 {
-                font-size: 1.8rem;
-            }
-            
-            .modal-plan-price {
-                font-size: 2.5rem;
-            }
-            
-            .modal-plan-features {
-                font-size: 1rem;
-            }
-            
-            .billing-frequency select {
-                padding: 12px 20px;
-                font-size: 1rem;
-            }
-            
-            #closePricingModal {
-                top: 15px;
-                right: 15px;
-                width: 40px;
-                height: 40px;
-                font-size: 28px;
-            }
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes scroll {
-            0% {
-                transform: translateX(0);
-            }
-            100% {
-                transform: translateX(calc(-200px * 6));
-            }
-        }
-
-        /* Add responsive breakpoints for smaller screens */
-        @media (max-width: 992px) {
-            .features {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .features {
-                grid-template-columns: 1fr;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <header class="header">
-        <div class="logo-container">
-            <img src="assets/ssdancerblue.svg" alt="Studio Sync logo">
-            <span class="logo-text">Studio Sync</span>
-        </div>
-        <nav>
-            <a href="studiologin.html">Login</a>
-            <a href="register.html">Get Started</a>
-            <a href="#features">Features</a>
-            <a href="#" id="pricingButton">Pricing</a>
-            <a href="#demo">Book a Demo</a>
-        </nav>
+      <div class="logo-container">
+        <img src="assets/ssdancerblue.svg" alt="Studio Sync logo" />
+        <span class="logo-text">Studio Sync</span>
+      </div>
+      <nav>
+        <a href="studiologin.html">Login</a>
+        <a href="register.html">Get Started</a>
+        <a href="#features">Features</a>
+        <a href="#" id="pricingButton">Pricing</a>
+        <a href="#demo">Book a Demo</a>
+      </nav>
     </header>
 
     <main>
-        <section class="hero">
-            <h1>Studio Management Made Simple.</h1>
-            <p class="highlight-text">The all-in-one solution for class scheduling, student management, and studio operations.</p>
-            <p class="highlight-text">Created by Studio Owners for Studio Owners</p>
-            <div class="cta-buttons">
-                <a href="register.html" class="cta-button primary-cta">Free 30 Day Trial</a>
-                <a href="#demo" class="cta-button primary-cta">Book a Demo</a>
-            </div>
-        </section>
+      <section class="hero">
+        <h1>Studio Management Made Simple.</h1>
+        <p class="highlight-text">
+          The all-in-one solution for class scheduling, student management, and
+          studio operations.
+        </p>
+        <p class="highlight-text">Created by Studio Owners for Studio Owners</p>
+        <div class="cta-buttons">
+          <a href="register.html" class="cta-button primary-cta"
+            >Free 30 Day Trial</a
+          >
+          <a href="#demo" class="cta-button primary-cta">Book a Demo</a>
+        </div>
+      </section>
 
-        <section class="video-section">
-            <div class="video-container">
-                <iframe 
-                    width="100%" 
-                    height="600" 
-                    src="https://www.youtube.com/embed/djV11Xbc914?autoplay=1&mute=1&loop=1&playlist=djV11Xbc914" 
-                    frameborder="0" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                    allowfullscreen>
-                </iframe>
-                <div class="video-overlay">
-                    <h2>See Studio Sync in Action</h2>
-                    <p>Watch how easy it is to manage your dance studio</p>
-                </div>
-            </div>
-        </section>
+      <section class="video-section">
+        <div class="video-container">
+          <iframe
+            width="100%"
+            height="600"
+            src="https://www.youtube.com/embed/djV11Xbc914?autoplay=1&mute=1&loop=1&playlist=djV11Xbc914"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          >
+          </iframe>
+          <div class="video-overlay">
+            <h2>See Studio Sync in Action</h2>
+            <p>Watch how easy it is to manage your dance studio</p>
+          </div>
+        </div>
+      </section>
 
-        <section id="features" class="features">
-            <div class="feature">
-                <i class="fas fa-calendar-alt"></i>
-                <h2>Smart Scheduling</h2>
-                <p>Effortlessly manage classes, instructors, and studio space.</p>
-            </div>
-            <div class="feature">
-                <i class="fas fa-users"></i>
-                <h2>Student Management</h2>
-                <p>Track attendance, progress, and payments in one place.</p>
-            </div>
-            <div class="feature">
-                <i class="fas fa-chart-line"></i>
-                <h2>Business Analytics</h2>
-                <p>Make data-driven decisions with comprehensive reporting.</p>
-            </div>
-            <div class="feature">
-                <i class="fas fa-credit-card"></i>
-                <h2>Payment Processing</h2>
-                <p>Accept payments, manage invoices, and track tuition with ease.</p>
-            </div>
-            <div class="feature">
-                <i class="fas fa-chalkboard-teacher"></i>
-                <h2>Teacher Mobile App</h2>
-                <p>Track attendance, manage student skills, and use time clock features on the go.</p>
-            </div>
-            <div class="feature">
-                <i class="fas fa-mobile-alt"></i>
-                <h2>Parent Mobile App</h2>
-                <p>Manage classes, receive communications, and make payments from anywhere.</p>
-            </div>
-            <div class="feature">
-                <i class="fas fa-tshirt"></i>
-                <h2>Costume Manager</h2>
-                <p>Track costumes, sizes, assignments, and budgets for performances.</p>
-            </div>
-            <div class="feature">
-                <i class="fas fa-comments"></i>
-                <h2>Communication Hub</h2>
-                <p>Send announcements, reminders, and updates to students and parents.</p>
-            </div>
-            <div class="feature">
-                <i class="fas fa-palette"></i>
-                <h2>Custom Studio Branding</h2>
-                <p>Personalize the software with your studio's colors, logo, and styling for a seamless brand experience.</p>
-            </div>
-        </section>
+      <section id="features" class="features">
+        <div class="feature">
+          <i class="fas fa-calendar-alt"></i>
+          <h2>Smart Scheduling</h2>
+          <p>Effortlessly manage classes, instructors, and studio space.</p>
+        </div>
+        <div class="feature">
+          <i class="fas fa-users"></i>
+          <h2>Student Management</h2>
+          <p>Track attendance, progress, and payments in one place.</p>
+        </div>
+        <div class="feature">
+          <i class="fas fa-chart-line"></i>
+          <h2>Business Analytics</h2>
+          <p>Make data-driven decisions with comprehensive reporting.</p>
+        </div>
+        <div class="feature">
+          <i class="fas fa-credit-card"></i>
+          <h2>Payment Processing</h2>
+          <p>Accept payments, manage invoices, and track tuition with ease.</p>
+        </div>
+        <div class="feature">
+          <i class="fas fa-chalkboard-teacher"></i>
+          <h2>Teacher Mobile App</h2>
+          <p>
+            Track attendance, manage student skills, and use time clock features
+            on the go.
+          </p>
+        </div>
+        <div class="feature">
+          <i class="fas fa-mobile-alt"></i>
+          <h2>Parent Mobile App</h2>
+          <p>
+            Manage classes, receive communications, and make payments from
+            anywhere.
+          </p>
+        </div>
+        <div class="feature">
+          <i class="fas fa-tshirt"></i>
+          <h2>Costume Manager</h2>
+          <p>
+            Track costumes, sizes, assignments, and budgets for performances.
+          </p>
+        </div>
+        <div class="feature">
+          <i class="fas fa-comments"></i>
+          <h2>Communication Hub</h2>
+          <p>
+            Send announcements, reminders, and updates to students and parents.
+          </p>
+        </div>
+        <div class="feature">
+          <i class="fas fa-palette"></i>
+          <h2>Custom Studio Branding</h2>
+          <p>
+            Personalize the software with your studio's colors, logo, and
+            styling for a seamless brand experience.
+          </p>
+        </div>
+      </section>
 
-        <section class="trust-bar">
-            <h3>Trusted by 100+ Dance Studios</h3>
-            <div class="logo-slider">
-                <div class="logo-slide-track">
-                    <!-- Duplicate logos for infinite scroll effect -->
-                    <div class="logo-slide">
-                        <i class="fas fa-ballet-shoes"></i>
-                    </div>
-                    <div class="logo-slide">
-                        <i class="fas fa-music"></i>
-                    </div>
-                    <div class="logo-slide">
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <div class="logo-slide">
-                        <i class="fas fa-crown"></i>
-                    </div>
-                    <div class="logo-slide">
-                        <i class="fas fa-heart"></i>
-                    </div>
-                    <div class="logo-slide">
-                        <i class="fas fa-sparkles"></i>
-                    </div>
-                    <!-- Duplicate for smooth loop -->
-                    <div class="logo-slide">
-                        <i class="fas fa-ballet-shoes"></i>
-                    </div>
-                    <div class="logo-slide">
-                        <i class="fas fa-music"></i>
-                    </div>
-                    <div class="logo-slide">
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <div class="logo-slide">
-                        <i class="fas fa-crown"></i>
-                    </div>
-                    <div class="logo-slide">
-                        <i class="fas fa-heart"></i>
-                    </div>
-                    <div class="logo-slide">
-                        <i class="fas fa-sparkles"></i>
-                    </div>
-                </div>
+      <section class="trust-bar">
+        <h3>Trusted by 100+ Dance Studios</h3>
+        <div class="logo-slider">
+          <div class="logo-slide-track">
+            <!-- Duplicate logos for infinite scroll effect -->
+            <div class="logo-slide">
+              <i class="fas fa-ballet-shoes"></i>
             </div>
-        </section>
+            <div class="logo-slide">
+              <i class="fas fa-music"></i>
+            </div>
+            <div class="logo-slide">
+              <i class="fas fa-star"></i>
+            </div>
+            <div class="logo-slide">
+              <i class="fas fa-crown"></i>
+            </div>
+            <div class="logo-slide">
+              <i class="fas fa-heart"></i>
+            </div>
+            <div class="logo-slide">
+              <i class="fas fa-sparkles"></i>
+            </div>
+            <!-- Duplicate for smooth loop -->
+            <div class="logo-slide">
+              <i class="fas fa-ballet-shoes"></i>
+            </div>
+            <div class="logo-slide">
+              <i class="fas fa-music"></i>
+            </div>
+            <div class="logo-slide">
+              <i class="fas fa-star"></i>
+            </div>
+            <div class="logo-slide">
+              <i class="fas fa-crown"></i>
+            </div>
+            <div class="logo-slide">
+              <i class="fas fa-heart"></i>
+            </div>
+            <div class="logo-slide">
+              <i class="fas fa-sparkles"></i>
+            </div>
+          </div>
+        </div>
+      </section>
 
-        <section id="demo" class="demo-form">
-            <h2>Book a Demo</h2>
-            <form>
-                <input type="text" placeholder="Studio Name" required>
-                <input type="text" placeholder="Your Name" required>
-                <input type="email" placeholder="Email Address" required>
-                <input type="tel" placeholder="Phone Number" required>
-                <textarea placeholder="Tell us about your studio..." rows="4"></textarea>
-                <button type="submit">Schedule Demo</button>
-            </form>
-        </section>
+      <section id="demo" class="demo-form">
+        <h2>Book a Demo</h2>
+        <form>
+          <input type="text" placeholder="Studio Name" required />
+          <input type="text" placeholder="Your Name" required />
+          <input type="email" placeholder="Email Address" required />
+          <input type="tel" placeholder="Phone Number" required />
+          <textarea
+            placeholder="Tell us about your studio..."
+            rows="4"
+          ></textarea>
+          <button type="submit">Schedule Demo</button>
+        </form>
+      </section>
     </main>
 
     <footer>
-        <p>&copy; 2024 Studio Sync. All rights reserved.</p>
+      <p>&copy; 2024 Studio Sync. All rights reserved.</p>
     </footer>
 
-    <div id="pricingModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1001; overflow-y: auto;">
-        <div style="position: relative; background: white; max-width: 1200px; margin: 30px auto; padding: 60px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
-            <button id="closePricingModal" style="position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 24px; cursor: pointer; color: var(--secondary-color);">&times;</button>
-            
-            <h2 style="text-align: center; color: var(--secondary-color); margin-bottom: 40px; font-size: 2.5rem;">Choose Your Plan</h2>
-            
-            <div class="billing-frequency" style="text-align: center; margin-bottom: 40px;">
-                <select id="modal-billing-frequency" style="padding: 12px 30px; border: 2px solid var(--primary-color); border-radius: 25px; font-size: 16px; color: var(--primary-color); cursor: pointer; background-color: white;">
-                    <option value="monthly">Monthly</option>
-                    <option value="quarterly">Quarterly (5% discount)</option>
-                    <option value="semi-annually">Semi-Annually (10% discount)</option>
-                    <option value="annually">Annually (15% discount)</option>
-                </select>
-            </div>
-            
-            <div class="modal-plans">
-                <div class="modal-plan">
-                    <div class="plan-content">
-                        <h2>Studio Pro</h2>
-                        <p class="modal-plan-price">$39<span style="font-size: 1rem;">/month</span></p>
-                        <p class="original-price"></p>
-                        <ul class="modal-plan-features">
-                            <li>✓ Up to 150 students</li>
-                            <li>✓ Class scheduling</li>
-                            <li>✓ Student management</li>
-                            <li>✓ Basic reporting</li>
-                            <li>✓ Email support</li>
-                        </ul>
-                    </div>
-                    <a href="register.html" class="modal-select-plan">Get Started For Free</a>
-                </div>
-                <div class="modal-plan">
-                    <div class="plan-content">
-                        <h2>Studio Advanced</h2>
-                        <p class="modal-plan-price">$69<span style="font-size: 1rem;">/month</span></p>
-                        <p class="original-price"></p>
-                        <ul class="modal-plan-features">
-                            <li>✓ Up to 300 students</li>
-                            <li>✓ Advanced scheduling</li>
-                            <li>✓ Enhanced management</li>
-                            <li>✓ Advanced reporting</li>
-                            <li>✓ Priority support</li>
-                        </ul>
-                    </div>
-                    <a href="register.html" class="modal-select-plan">Get Started For Free</a>
-                </div>
-                <div class="modal-plan">
-                    <div class="plan-content">
-                        <h2>Studio Enterprise</h2>
-                        <p class="modal-plan-price">$99<span style="font-size: 1rem;">/month</span></p>
-                        <p class="original-price"></p>
-                        <ul class="modal-plan-features">
-                            <li>✓ Unlimited students</li>
-                            <li>✓ Premium features</li>
-                            <li>✓ Custom solutions</li>
-                            <li>✓ Enterprise reporting</li>
-                            <li>✓ 24/7 dedicated support</li>
-                        </ul>
-                    </div>
-                    <a href="register.html" class="modal-select-plan">Get Started For Free</a>
-                </div>
-            </div>
+    <div
+      id="pricingModal"
+      style="
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1001;
+        overflow-y: auto;
+      "
+    >
+      <div
+        style="
+          position: relative;
+          background: white;
+          max-width: 1200px;
+          margin: 30px auto;
+          padding: 60px;
+          border-radius: 15px;
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        "
+      >
+        <button
+          id="closePricingModal"
+          style="
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--secondary-color);
+          "
+        >
+          &times;
+        </button>
+
+        <h2
+          style="
+            text-align: center;
+            color: var(--secondary-color);
+            margin-bottom: 40px;
+            font-size: 2.5rem;
+          "
+        >
+          Choose Your Plan
+        </h2>
+
+        <div
+          class="billing-frequency"
+          style="text-align: center; margin-bottom: 40px"
+        >
+          <select
+            id="modal-billing-frequency"
+            style="
+              padding: 12px 30px;
+              border: 2px solid var(--primary-color);
+              border-radius: 25px;
+              font-size: 16px;
+              color: var(--primary-color);
+              cursor: pointer;
+              background-color: white;
+            "
+          >
+            <option value="monthly">Monthly</option>
+            <option value="quarterly">Quarterly (5% discount)</option>
+            <option value="semi-annually">Semi-Annually (10% discount)</option>
+            <option value="annually">Annually (15% discount)</option>
+          </select>
         </div>
+
+        <div class="modal-plans">
+          <div class="modal-plan">
+            <div class="plan-content">
+              <h2>Studio Pro</h2>
+              <p class="modal-plan-price">
+                $39<span style="font-size: 1rem">/month</span>
+              </p>
+              <p class="original-price"></p>
+              <ul class="modal-plan-features">
+                <li>✓ Up to 150 students</li>
+                <li>✓ Class scheduling</li>
+                <li>✓ Student management</li>
+                <li>✓ Basic reporting</li>
+                <li>✓ Email support</li>
+              </ul>
+            </div>
+            <a href="register.html" class="modal-select-plan"
+              >Get Started For Free</a
+            >
+          </div>
+          <div class="modal-plan">
+            <div class="plan-content">
+              <h2>Studio Advanced</h2>
+              <p class="modal-plan-price">
+                $69<span style="font-size: 1rem">/month</span>
+              </p>
+              <p class="original-price"></p>
+              <ul class="modal-plan-features">
+                <li>✓ Up to 300 students</li>
+                <li>✓ Advanced scheduling</li>
+                <li>✓ Enhanced management</li>
+                <li>✓ Advanced reporting</li>
+                <li>✓ Priority support</li>
+              </ul>
+            </div>
+            <a href="register.html" class="modal-select-plan"
+              >Get Started For Free</a
+            >
+          </div>
+          <div class="modal-plan">
+            <div class="plan-content">
+              <h2>Studio Enterprise</h2>
+              <p class="modal-plan-price">
+                $99<span style="font-size: 1rem">/month</span>
+              </p>
+              <p class="original-price"></p>
+              <ul class="modal-plan-features">
+                <li>✓ Unlimited students</li>
+                <li>✓ Premium features</li>
+                <li>✓ Custom solutions</li>
+                <li>✓ Enterprise reporting</li>
+                <li>✓ 24/7 dedicated support</li>
+              </ul>
+            </div>
+            <a href="register.html" class="modal-select-plan"
+              >Get Started For Free</a
+            >
+          </div>
+        </div>
+      </div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -1130,183 +1265,210 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-functions-compat.js"></script>
 
     <script>
-        // Initialize Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyDRSW3u6gJSs98Z2Mkp5DYSC__ibDXXHAE",
-            authDomain: "studiosync-af73d.firebaseapp.com",
-            projectId: "studiosync-af73d",
-            storageBucket: "studiosync-af73d.appspot.com",
-            messagingSenderId: "172555302276",
-            appId: "1:172555302276:web:55b661f9849441e2de59d1",
-            measurementId: "G-EK7EFQGMSG"
+      // Initialize Firebase
+      const firebaseConfig = {
+        apiKey: "AIzaSyDRSW3u6gJSs98Z2Mkp5DYSC__ibDXXHAE",
+        authDomain: "studiosync-af73d.firebaseapp.com",
+        projectId: "studiosync-af73d",
+        storageBucket: "studiosync-af73d.appspot.com",
+        messagingSenderId: "172555302276",
+        appId: "1:172555302276:web:55b661f9849441e2de59d1",
+        measurementId: "G-EK7EFQGMSG",
+      };
+
+      // Initialize Firebase app
+      firebase.initializeApp(firebaseConfig);
+
+      // Get Firestore reference
+      const db = firebase.firestore();
+
+      // Get the demo form element
+      const demoForm = document.querySelector("#demo form");
+
+      // Add submit event listener to the demo form
+      demoForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        // Get form values
+        const studioName = demoForm.querySelector(
+          'input[placeholder="Studio Name"]'
+        ).value;
+        const ownerName = demoForm.querySelector(
+          'input[placeholder="Your Name"]'
+        ).value;
+        const email = demoForm.querySelector(
+          'input[placeholder="Email Address"]'
+        ).value;
+        const phone = demoForm.querySelector(
+          'input[placeholder="Phone Number"]'
+        ).value;
+        const studioInfo = demoForm.querySelector("textarea").value;
+
+        // Create timestamp
+        const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+
+        // Create demo request data with PascalCase field names
+        const demoData = {
+          StudioName: studioName,
+          OwnerName: ownerName,
+          Email: email,
+          Phone: phone,
+          StudioInfo: studioInfo,
+          Status: "New",
+          CreatedAt: timestamp,
+          Source: "Website Demo Form",
         };
-        
-        // Initialize Firebase app
-        firebase.initializeApp(firebaseConfig);
-        
-        // Get Firestore reference
-        const db = firebase.firestore();
-        
-        // Get the demo form element
-        const demoForm = document.querySelector('#demo form');
-        
-        // Add submit event listener to the demo form
-        demoForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Get form values
-            const studioName = demoForm.querySelector('input[placeholder="Studio Name"]').value;
-            const ownerName = demoForm.querySelector('input[placeholder="Your Name"]').value;
-            const email = demoForm.querySelector('input[placeholder="Email Address"]').value;
-            const phone = demoForm.querySelector('input[placeholder="Phone Number"]').value;
-            const studioInfo = demoForm.querySelector('textarea').value;
-            
-            // Create timestamp
-            const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-            
-            // Create demo request data with PascalCase field names
-            const demoData = {
-                StudioName: studioName,
-                OwnerName: ownerName,
-                Email: email,
-                Phone: phone,
-                StudioInfo: studioInfo,
-                Status: "New",
-                CreatedAt: timestamp,
-                Source: "Website Demo Form"
-            };
-            
-            // Add document to Demos collection
-            db.collection('Demos').add(demoData)
-                .then(function(docRef) {
-                    console.log("Demo request saved with ID: ", docRef.id);
-                    
-                    // Show success message to user
-                    const formContainer = document.querySelector('.demo-form');
-                    const originalContent = formContainer.innerHTML;
-                    
-                    // Replace form with success message
-                    formContainer.innerHTML = `
+
+        // Add document to Demos collection
+        db.collection("Demos")
+          .add(demoData)
+          .then(function (docRef) {
+            console.log("Demo request saved with ID: ", docRef.id);
+
+            // Show success message to user
+            const formContainer = document.querySelector(".demo-form");
+            const originalContent = formContainer.innerHTML;
+
+            // Replace form with success message
+            formContainer.innerHTML = `
                         <div style="text-align: center; padding: 2rem;">
                             <i class="fas fa-check-circle" style="font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem;"></i>
                             <h2>Thanks for Your Interest!</h2>
                             <p>Your demo request has been submitted successfully. One of our representatives will contact you shortly.</p>
                         </div>
                     `;
-                    
-                    // Reset form fields
-                    demoForm.reset();
-                    
-                    // Restore original form after 5 seconds (optional)
-                    setTimeout(() => {
-                        formContainer.innerHTML = originalContent;
-                        // Reattach event listener to the new form
-                        document.querySelector('#demo form').addEventListener('submit', arguments.callee);
-                    }, 5000);
-                })
-                .catch(function(error) {
-                    console.error("Error adding demo request: ", error);
-                    alert("There was an error submitting your request. Please try again or contact us directly.");
-                });
+
+            // Reset form fields
+            demoForm.reset();
+
+            // Restore original form after 5 seconds (optional)
+            setTimeout(() => {
+              formContainer.innerHTML = originalContent;
+              // Reattach event listener to the new form
+              document
+                .querySelector("#demo form")
+                .addEventListener("submit", arguments.callee);
+            }, 5000);
+          })
+          .catch(function (error) {
+            console.error("Error adding demo request: ", error);
+            alert(
+              "There was an error submitting your request. Please try again or contact us directly."
+            );
+          });
+      });
+
+      // Add smooth scrolling
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          e.preventDefault();
+          document.querySelector(this.getAttribute("href")).scrollIntoView({
+            behavior: "smooth",
+          });
         });
+      });
 
-        // Add smooth scrolling
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
-        });
-
-        // Header scroll effect - keeping white background
-        window.addEventListener('scroll', () => {
-            const header = document.querySelector('.header');
-            if (window.scrollY > 50) {
-                header.style.backgroundColor = '#ffffff';
-                header.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
-            } else {
-                header.style.backgroundColor = '#ffffff';
-                header.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
-            }
-        });
-
-        const pricingButton = document.getElementById('pricingButton');
-        const pricingModal = document.getElementById('pricingModal');
-        const closePricingModal = document.getElementById('closePricingModal');
-        const modalBillingFrequency = document.getElementById('modal-billing-frequency');
-
-        pricingButton.addEventListener('click', function(e) {
-            e.preventDefault();
-            pricingModal.style.display = 'block';
-            document.body.style.overflow = 'hidden';
-            updateModalPrices();
-        });
-
-        closePricingModal.addEventListener('click', function() {
-            pricingModal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        });
-
-        pricingModal.addEventListener('click', function(e) {
-            if (e.target === pricingModal) {
-                pricingModal.style.display = 'none';
-                document.body.style.overflow = 'auto';
-            }
-        });
-
-        modalBillingFrequency.addEventListener('change', updateModalPrices);
-
-        function updateModalPrices() {
-            const frequency = modalBillingFrequency.value;
-            const discounts = {
-                'monthly': 1,
-                'quarterly': 0.95,
-                'semi-annually': 0.90,
-                'annually': 0.85
-            };
-            const discount = discounts[frequency];
-            const billingPeriod = {
-                'monthly': '/month',
-                'quarterly': '/quarter',
-                'semi-annually': '/6 months',
-                'annually': '/year'
-            };
-
-            const plans = [
-                { selector: '.modal-plan:nth-child(1)', basePrice: 39 },
-                { selector: '.modal-plan:nth-child(2)', basePrice: 69 },
-                { selector: '.modal-plan:nth-child(3)', basePrice: 99 }
-            ];
-
-            plans.forEach(plan => {
-                const planElement = document.querySelector(plan.selector);
-                const priceElement = planElement.querySelector('.modal-plan-price');
-                const originalPriceElement = planElement.querySelector('.original-price');
-                
-                const discountedPrice = plan.basePrice * discount;
-                const totalPrice = discountedPrice * (
-                    frequency === 'monthly' ? 1 : 
-                    frequency === 'quarterly' ? 3 : 
-                    frequency === 'semi-annually' ? 6 : 12
-                );
-                
-                priceElement.innerHTML = `$${totalPrice.toFixed(2)}<span style="font-size: 1rem;">${billingPeriod[frequency]}</span>`;
-                
-                if (discount < 1) {
-                    const originalTotal = plan.basePrice * (
-                        frequency === 'monthly' ? 1 : 
-                        frequency === 'quarterly' ? 3 : 
-                        frequency === 'semi-annually' ? 6 : 12
-                    );
-                    originalPriceElement.textContent = `Original: $${originalTotal.toFixed(2)}${billingPeriod[frequency]}`;
-                } else {
-                    originalPriceElement.textContent = '';
-                }
-            });
+      // Header scroll effect - keeping white background
+      window.addEventListener("scroll", () => {
+        const header = document.querySelector(".header");
+        if (window.scrollY > 50) {
+          header.style.backgroundColor = "#ffffff";
+          header.style.boxShadow = "0 2px 10px rgba(0, 0, 0, 0.1)";
+        } else {
+          header.style.backgroundColor = "#ffffff";
+          header.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.1)";
         }
-    </script>
-</body>
-</html>
+      });
 
+      const pricingButton = document.getElementById("pricingButton");
+      const pricingModal = document.getElementById("pricingModal");
+      const closePricingModal = document.getElementById("closePricingModal");
+      const modalBillingFrequency = document.getElementById(
+        "modal-billing-frequency"
+      );
+
+      pricingButton.addEventListener("click", function (e) {
+        e.preventDefault();
+        pricingModal.style.display = "block";
+        document.body.style.overflow = "hidden";
+        updateModalPrices();
+      });
+
+      closePricingModal.addEventListener("click", function () {
+        pricingModal.style.display = "none";
+        document.body.style.overflow = "auto";
+      });
+
+      pricingModal.addEventListener("click", function (e) {
+        if (e.target === pricingModal) {
+          pricingModal.style.display = "none";
+          document.body.style.overflow = "auto";
+        }
+      });
+
+      modalBillingFrequency.addEventListener("change", updateModalPrices);
+
+      function updateModalPrices() {
+        const frequency = modalBillingFrequency.value;
+        const discounts = {
+          monthly: 1,
+          quarterly: 0.95,
+          "semi-annually": 0.9,
+          annually: 0.85,
+        };
+        const discount = discounts[frequency];
+        const billingPeriod = {
+          monthly: "/month",
+          quarterly: "/quarter",
+          "semi-annually": "/6 months",
+          annually: "/year",
+        };
+
+        const plans = [
+          { selector: ".modal-plan:nth-child(1)", basePrice: 39 },
+          { selector: ".modal-plan:nth-child(2)", basePrice: 69 },
+          { selector: ".modal-plan:nth-child(3)", basePrice: 99 },
+        ];
+
+        plans.forEach((plan) => {
+          const planElement = document.querySelector(plan.selector);
+          const priceElement = planElement.querySelector(".modal-plan-price");
+          const originalPriceElement =
+            planElement.querySelector(".original-price");
+
+          const discountedPrice = plan.basePrice * discount;
+          const totalPrice =
+            discountedPrice *
+            (frequency === "monthly"
+              ? 1
+              : frequency === "quarterly"
+              ? 3
+              : frequency === "semi-annually"
+              ? 6
+              : 12);
+
+          priceElement.innerHTML = `$${totalPrice.toFixed(
+            2
+          )}<span style="font-size: 1rem;">${billingPeriod[frequency]}</span>`;
+
+          if (discount < 1) {
+            const originalTotal =
+              plan.basePrice *
+              (frequency === "monthly"
+                ? 1
+                : frequency === "quarterly"
+                ? 3
+                : frequency === "semi-annually"
+                ? 6
+                : 12);
+            originalPriceElement.textContent = `Original: $${originalTotal.toFixed(
+              2
+            )}${billingPeriod[frequency]}`;
+          } else {
+            originalPriceElement.textContent = "";
+          }
+        });
+      }
+    </script>
+  </body>
+</html>
